@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>aspmc.compile.circuit API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aspmc.compile.circuit</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from operator import index
+import queue
+import numpy as np
+import copy
+import logging
+import networkx as nx
+from aspmc.util import *
+
+
+logger = logging.getLogger(&#34;aspmc&#34;)
+
+class Node(object):
+    &#34;&#34;&#34;A node class corresponding to nodes in a `Circuit`.
+    
+    Args:
+        type (:obj:`int`): Which type the node has. One of `Node.AND, Node.OR, Node.NEG, Node.IN`.
+        name (:obj:`int`): Unique identifier of the node.
+        children (:obj:`iterable`, optional): The children of the node. Defaults to `[]`.
+        ancestors (:obj:`iterable`, optional): The ancestors of the node. Defaults to `[]`.
+
+    Attributes:
+        type (:obj:`int`): Which type the node has. One of `Node.AND, Node.OR, Node.NEG, Node.IN`.
+        name (:obj:`int`): Unique identifier of the node. 
+        If `type` is `Node.NEG` or `Node.IN` this is the name of the (negated) input variable.
+        children (:obj:`iterable`): The children of the node.
+        ancestors (:obj:`iterable`): The ancestors of the node. 
+
+    &#34;&#34;&#34;
+    AND = 0
+    &#34;&#34;&#34;Node type `AND` with value 0. Means that the children are conjoined.&#34;&#34;&#34;
+    OR = 1
+    &#34;&#34;&#34;Node type `OR` with value 1. Means that the children are disjoined.&#34;&#34;&#34;
+    NEG = 2
+    &#34;&#34;&#34;Node type `NEG` with value 2. Means that this is a negative input variable.&#34;&#34;&#34;
+    IN = 3
+    &#34;&#34;&#34;Node type `IN` with value 3. Means that this is a positive input variable.&#34;&#34;&#34;
+    def __init__(self, type, name, children = [], ancestors = []):
+        self.type = type
+        self.name = name
+        self.children = children
+        self.ancestors = ancestors
+
+class Circuit(object):    
+    &#34;&#34;&#34;A circuit class that can store for example d-DNNFs and SDDs. 
+
+    Offers methods to perform algebraic model counting on the circuit in linear time in the size of the (smooth) circuit.
+    Also offers the same methods statically to avoid storing the circuit in memory. 
+    Then the algebraic model counting is performed while reading the circuit.
+
+    Supports the d-DNNF format of c2d and miniC2D for constructing circuits.
+    
+    Args:
+        path (:obj:`string`): The path to the file that contains the circuit.
+
+    Attributes:
+        literals (:obj:`list`): The literals in the circuit. The node for literal `v` is in `literals[2*(v-1)]`, the one for `-v` is in `literals[2*(v-1)+1]`
+        nodes (:obj:`list`): All the nodes of the circuit that are not literals.
+    &#34;&#34;&#34;
+    def __init__(self, path):
+        with open(path) as ddnnf:
+            _, _, _, nr_leafs = ddnnf.readline().split()
+            self.literals = []
+            for var in range(1, int(nr_leafs) + 1):
+                self.literals.append(Node(Node.IN, var))
+                self.literals.append(Node(Node.NEG, -var))
+            self.nodes = []
+            idx = 0
+            for line in ddnnf:
+                line = line.strip().split()
+                if line[0] == &#39;L&#39;:
+                    node = self.literals[to_pos(int(line[1]))]
+                    node.vars = (abs(int(line[1])),)
+                elif line[0] == &#39;A&#39;:
+                    node = Node(Node.AND, idx, children = [self.nodes[int(x)] for x in line[2:]])
+                    node.vars = set()
+                    for child in node.children:
+                        child.ancestors.append(node)
+                        node.vars.update(child.vars)
+                    node.vars = tuple(node.vars)
+                elif line[0] == &#39;O&#39;:
+                    node = Node(Node.OR, idx, children = [self.nodes[int(x)] for x in line[3:]])
+                    node.vars = set()
+                    for child in node.children:
+                        child.ancestors.append(node)
+                        node.vars.update(child.vars)
+                    node.vars = tuple(node.vars)
+                self.nodes.append(node)
+                idx += 1
+
+    def non_smooth_wmc(self, weights):    
+        &#34;&#34;&#34;Performs weighted model counting over a circuit that is not smooth. Should be avoided since it is quite inefficient.
+        
+        Args:
+            weights (:obj:`string`): The weights of the literals. 
+                The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+
+        Returns:
+            (:obj:`object`): The weighted model count.
+        &#34;&#34;&#34;
+        for i in range(len(self.literals)//2):
+            self.literals[i*2].weight = weights[i*2]
+            self.literals[i*2 + 1].weight = weights[i*2 + 1]
+
+        todo = [ len(node.children) for node in self.nodes ]
+        q = queue.Queue()
+        for i in range(len(self.nodes)):
+            if todo[i] == 0:
+                q.put(self.nodes[i])
+        while not q.empty():
+            node = q.get()
+            for anc in node.ancestors:
+                todo[anc.name] -= 1
+                if todo[anc.name] == 0:
+                    q.put(anc)
+            if node.type == Node.AND:
+                value = np.full(len(weights[0]), 1.0)
+                for child in node.children:
+                    value *= child.weight
+                node.weight = value
+            elif node.type == Node.OR:
+                value = np.full(len(weights[0]), 0.0)
+                for child in node.children:
+                    to_add = copy.deepcopy(child.weight)
+                    for i in set(node.vars).difference(set(child.vars)):
+                        to_add *= self.literals[to_pos(i)].weight + self.literals[neg(to_pos(i))].weight
+                    value += to_add
+                node.weight = value
+        for i in set(range(1, 1 + len(self.literals)//2)).difference(set(node.vars)):
+            node.weight *= self.literals[to_pos(i)].weight + self.literals[neg(to_pos(i))].weight
+        return node.weight
+
+    def wmc(self, weights):
+        &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth.
+        
+        Args:
+            weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+
+        Returns:
+            (:obj:`object`): The algebraic model count.
+        &#34;&#34;&#34;
+        for i in range(len(self.literals)//2):
+            self.literals[i*2].weight = weights[i*2]
+            self.literals[i*2 + 1].weight = weights[i*2 + 1]
+
+        todo = [ len(node.children) for node in self.nodes ]
+        q = queue.Queue()
+        for i in range(len(self.nodes)):
+            if todo[i] == 0:
+                q.put(self.nodes[i])
+        while not q.empty():
+            node = q.get()
+            for anc in node.ancestors:
+                todo[anc.name] -= 1
+                if todo[anc.name] == 0:
+                    q.put(anc)
+            if node.type == Node.AND:
+                node.weight = np.full(len(weights[0]), 1.0)
+                for child in node.children:
+                    node.weight *= child.weight
+            elif node.type == Node.OR:
+                node.weight = np.full(len(weights[0]), 0.0)
+                for child in node.children:
+                    node.weight += child.weight
+        return node.weight
+
+    @staticmethod
+    def parse_wmc(path, weights, zero = 0.0, one = 1.0, dtype = float, solver=&#34;c2d&#34;, vtree = None):
+        &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth while parsing it.
+        
+        Args:
+            path (:obj:`string`): The path to the file that contains the circuit.
+            weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+            zero (:obj:`object`, optional): The neutral element of addition. Defaults to `0.0`.
+            one (:obj:`object`, optional): The neutral element of multiplication. Defaults to `1.0`.
+            dtype (:obj:`type`, optional): Which type the numpy arrays used to store the weights should have. Defaults to `float`.
+            solver (:obj:`string`, optional): Which knowledge compiler this d-DNNF is from. Defaults to `c2d`.
+            vtree (:obj:`aspmc.compile.vtree.Vtree`, optional): The underlying vtree if this is a non-smooth SDD. Defaults to `None`.
+        Returns:
+            (:obj:`object`): The algebraic model count.
+        &#34;&#34;&#34;
+        if solver == &#34;d4&#34;:
+            return Circuit._parse_wmc_d4(path, weights, zero = zero, one = one, dtype = dtype)
+        if solver == &#34;miniC2D&#34;:
+            return Circuit._parse_wmc_miniC2D(path, weights, zero = zero, one = one, dtype = dtype, vtree = vtree)
+        shape = (np.shape(weights[0])[0], ) + np.shape(one)
+        with open(path) as ddnnf:
+            _, v, e, n = ddnnf.readline().split()
+            logger.debug(f&#34;d-DNNF size: {v} nodes, {e} edges, {n} variables&#34;)
+            mem = [] # np.empty((int(v), ) + shape, dtype=dtype) (this seems to perform worse than using mem.append() in a loop !?)
+            idx = 0
+            for line in ddnnf:
+                line = line.strip().split()
+                mem.append(np.empty(shape, dtype = dtype))
+                if line[0] == &#39;L&#39;:
+                    mem[idx][:] = weights[to_pos(int(line[1]))]
+                elif line[0] == &#39;A&#39;:
+                    mem[idx][:] = one
+                    for x in line[2:]:
+                        mem[idx] *= mem[int(x)]
+                elif line[0] == &#39;O&#39;:
+                    mem[idx][:] = zero
+                    for x in line[3:]:
+                        mem[idx] += mem[int(x)]
+                idx += 1
+            return mem[idx - 1]
+
+    @staticmethod
+    def live_parse_wmc(pipe, weights, zero = 0.0, one = 1.0, dtype = float):
+        &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth while parsing it.
+        
+        Args:
+            pipe (:obj:`stream`): The pipe where the circuit is printed.
+            weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+            zero (:obj:`object`, optional): The neutral element of addition. Defaults to `0.0`.
+            one (:obj:`object`, optional): The neutral element of multiplication. Defaults to `1.0`.
+            dtype (:obj:`type`, optional): Which type the numpy arrays used to store the weights should have. Defaults to `float`.
+        Returns:
+            (:obj:`object`): The algebraic model count.
+        &#34;&#34;&#34;
+        mem = [] 
+        shape = (np.shape(weights[0])[0], ) + np.shape(one)
+        idx = 0
+        for line in pipe:
+            line = line.decode().strip().split()
+            if line[0] == &#39;c&#39;:
+                continue
+            mem.append(np.empty(shape, dtype = dtype))
+            if line[0] == &#39;L&#39;:
+                mem[idx][:] = weights[to_pos(int(line[1]))]
+            elif line[0] == &#39;A&#39;:
+                mem[idx][:] = one
+                for x in line[2:]:
+                    mem[idx] *= mem[int(x)]
+            elif line[0] == &#39;O&#39;:
+                mem[idx][:] = zero
+                for x in line[3:]:
+                    mem[idx] += mem[int(x)]
+            idx += 1
+        return mem[idx - 1]
+
+    @staticmethod
+    def _parse_wmc_d4(path, weights, zero = 0.0, one = 1.0, dtype = float):
+        shape = (np.shape(weights[0])[0], ) + np.shape(one)
+        with open(path) as ddnnf:
+            mem = [ None ] # the values of the nodes
+            mem_type = [ False ] # whether the nodes are multiplicative
+            for line in ddnnf:
+                line = line.strip().split()
+                if line[0] == &#39;t&#39;: # add a true node
+                    mem.append(np.full(shape, one, dtype=dtype))
+                    mem_type.append(True)
+                elif line[0] == &#39;f&#39;: # add a false node
+                    mem.append(np.full(shape, zero, dtype=dtype))
+                    mem_type.append(False)
+                elif line[0] == &#39;a&#39;: # add an and node
+                    mem.append(np.full(shape, one, dtype=dtype))
+                    mem_type.append(True)
+                elif line[0] == &#39;o&#39;: # add an or node
+                    mem.append(np.full(shape, zero, dtype=dtype))
+                    mem_type.append(False)
+                elif mem_type[int(line[0])]: # add edge of an and node
+                    mem[int(line[0])] *= mem[int(line[1])]
+                else: # add edge of an or node                    
+                    val = copy.deepcopy(mem[int(line[1])])
+                    idx = 2
+                    lit = int(line[idx])
+                    while lit != 0:
+                        val *= weights[to_pos(lit)]
+                        idx += 1
+                        lit = int(line[idx])
+                    idx += 1
+                    var = int(line[idx])
+                    while var != 0:
+                        val *= weights[to_pos(var)] + weights[neg(to_pos(var))]
+                        idx += 1
+                        var = int(line[idx])
+                    mem[int(line[0])] += val
+            return mem[1]
+
+    @staticmethod
+    def _parse_wmc_miniC2D(path, weights, zero = 0.0, one = 1.0, dtype = float, vtree = None):
+        # setup phase: 
+        # get the least common ancestors to speed up queries
+        vtree_graph = vtree.to_networkx()
+        vtree.index()
+        lca = [ [ -1 for _ in range(vtree.leaf_count()*2) ] for _ in range(vtree.leaf_count()*2) ]
+        for p,l in nx.tree_all_pairs_lowest_common_ancestor(vtree_graph):
+            lca[p[1]][p[0]] = l
+            lca[p[0]][p[1]] = l
+
+        shape = (np.shape(weights[0])[0], ) + np.shape(one)
+
+        index_to_node = { node.idx : node for node in vtree }
+        index_to_node = [ index_to_node[i] for i in range(1, vtree.leaf_count()*2) ]
+        # method to get the weight of the free variables not included in the SDD between node i and j
+        def factor(i, j):
+            res = np.full(shape, one, dtype=dtype)
+            if lca[i][j] == j: # i should always be above j
+                i,j = j,i
+            if i == j:
+                return res
+            upper = index_to_node[i - 1]
+            lower = index_to_node[j - 1]
+            stack = queue.LifoQueue()
+            cur = upper
+            down = True
+            while cur != upper or down:
+                if down:
+                    if cur == lower:
+                        down = False
+                    elif cur.val is None:
+                        stack.put(cur)
+                        cur = cur.left
+                    else:
+                        res *= weights[to_pos(cur.val)] + weights[neg(to_pos(cur.val))]
+                        down = False
+                else:
+                    last = cur
+                    cur = stack.get()
+                    if cur.left == last:
+                        stack.put(cur)
+                        cur = cur.right
+                        down = True
+            return res
+
+        # the actual counting phase
+        with open(path) as ddnnf:
+            _, v, e, n = ddnnf.readline().split()
+            logger.debug(f&#34;d-DNNF size: {v} nodes, {e} edges, {n} variables&#34;)
+            mem = []
+            vtree_nodes = []
+            idx = 0
+            for line in ddnnf:
+                line = line.strip().split()
+                if line[0] == &#39;L&#39;:
+                    val = weights[to_pos(int(line[1]))]
+                    vtree_node = abs(int(line[1]))
+                else:
+                    if line[0] == &#39;A&#39;:
+                        vtree_node = lca[vtree_nodes[int(line[2])]][vtree_nodes[int(line[3])]]
+                        left = index_to_node[vtree_node-1].left.idx
+                        right = index_to_node[vtree_node-1].right.idx
+                        if lca[right][vtree_nodes[int(line[2])]] != right:
+                            right, left = left, right
+                        val = mem[int(line[2])]*factor(right, vtree_nodes[int(line[2])])*mem[int(line[3])]*factor(left, vtree_nodes[int(line[3])])
+                    elif line[0] == &#39;O&#39;:
+                        vtree_node = lca[vtree_nodes[int(line[3])]][vtree_nodes[int(line[4])]]  
+                        for x in line[3:]:
+                            vtree_node = lca[vtree_node][vtree_nodes[int(x)]]         
+                        val = np.full(shape, zero, dtype=dtype)
+                        for x in line[3:]:
+                            val += mem[int(x)]*factor(vtree_node, vtree_nodes[int(x)])
+                mem.append(val)
+                vtree_nodes.append(vtree_node)
+                idx += 1
+            mem[idx - 1] *= factor(vtree_node, vtree.idx)
+            return mem[idx - 1]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="aspmc.compile.circuit.Circuit"><code class="flex name class">
+<span>class <span class="ident">Circuit</span></span>
+<span>(</span><span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A circuit class that can store for example d-DNNFs and SDDs. </p>
+<p>Offers methods to perform algebraic model counting on the circuit in linear time in the size of the (smooth) circuit.
+Also offers the same methods statically to avoid storing the circuit in memory.
+Then the algebraic model counting is performed while reading the circuit.</p>
+<p>Supports the d-DNNF format of c2d and miniC2D for constructing circuits.</p>
+<h2 id="args">Args</h2>
+<p>path (:obj:<code>string</code>): The path to the file that contains the circuit.</p>
+<h2 id="attributes">Attributes</h2>
+<p>literals (:obj:<code>list</code>): The literals in the circuit. The node for literal <code>v</code> is in <code>literals[2*(v-1)]</code>, the one for <code>-v</code> is in <code>literals[2*(v-1)+1]</code>
+nodes (:obj:<code>list</code>): All the nodes of the circuit that are not literals.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Circuit(object):    
+    &#34;&#34;&#34;A circuit class that can store for example d-DNNFs and SDDs. 
+
+    Offers methods to perform algebraic model counting on the circuit in linear time in the size of the (smooth) circuit.
+    Also offers the same methods statically to avoid storing the circuit in memory. 
+    Then the algebraic model counting is performed while reading the circuit.
+
+    Supports the d-DNNF format of c2d and miniC2D for constructing circuits.
+    
+    Args:
+        path (:obj:`string`): The path to the file that contains the circuit.
+
+    Attributes:
+        literals (:obj:`list`): The literals in the circuit. The node for literal `v` is in `literals[2*(v-1)]`, the one for `-v` is in `literals[2*(v-1)+1]`
+        nodes (:obj:`list`): All the nodes of the circuit that are not literals.
+    &#34;&#34;&#34;
+    def __init__(self, path):
+        with open(path) as ddnnf:
+            _, _, _, nr_leafs = ddnnf.readline().split()
+            self.literals = []
+            for var in range(1, int(nr_leafs) + 1):
+                self.literals.append(Node(Node.IN, var))
+                self.literals.append(Node(Node.NEG, -var))
+            self.nodes = []
+            idx = 0
+            for line in ddnnf:
+                line = line.strip().split()
+                if line[0] == &#39;L&#39;:
+                    node = self.literals[to_pos(int(line[1]))]
+                    node.vars = (abs(int(line[1])),)
+                elif line[0] == &#39;A&#39;:
+                    node = Node(Node.AND, idx, children = [self.nodes[int(x)] for x in line[2:]])
+                    node.vars = set()
+                    for child in node.children:
+                        child.ancestors.append(node)
+                        node.vars.update(child.vars)
+                    node.vars = tuple(node.vars)
+                elif line[0] == &#39;O&#39;:
+                    node = Node(Node.OR, idx, children = [self.nodes[int(x)] for x in line[3:]])
+                    node.vars = set()
+                    for child in node.children:
+                        child.ancestors.append(node)
+                        node.vars.update(child.vars)
+                    node.vars = tuple(node.vars)
+                self.nodes.append(node)
+                idx += 1
+
+    def non_smooth_wmc(self, weights):    
+        &#34;&#34;&#34;Performs weighted model counting over a circuit that is not smooth. Should be avoided since it is quite inefficient.
+        
+        Args:
+            weights (:obj:`string`): The weights of the literals. 
+                The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+
+        Returns:
+            (:obj:`object`): The weighted model count.
+        &#34;&#34;&#34;
+        for i in range(len(self.literals)//2):
+            self.literals[i*2].weight = weights[i*2]
+            self.literals[i*2 + 1].weight = weights[i*2 + 1]
+
+        todo = [ len(node.children) for node in self.nodes ]
+        q = queue.Queue()
+        for i in range(len(self.nodes)):
+            if todo[i] == 0:
+                q.put(self.nodes[i])
+        while not q.empty():
+            node = q.get()
+            for anc in node.ancestors:
+                todo[anc.name] -= 1
+                if todo[anc.name] == 0:
+                    q.put(anc)
+            if node.type == Node.AND:
+                value = np.full(len(weights[0]), 1.0)
+                for child in node.children:
+                    value *= child.weight
+                node.weight = value
+            elif node.type == Node.OR:
+                value = np.full(len(weights[0]), 0.0)
+                for child in node.children:
+                    to_add = copy.deepcopy(child.weight)
+                    for i in set(node.vars).difference(set(child.vars)):
+                        to_add *= self.literals[to_pos(i)].weight + self.literals[neg(to_pos(i))].weight
+                    value += to_add
+                node.weight = value
+        for i in set(range(1, 1 + len(self.literals)//2)).difference(set(node.vars)):
+            node.weight *= self.literals[to_pos(i)].weight + self.literals[neg(to_pos(i))].weight
+        return node.weight
+
+    def wmc(self, weights):
+        &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth.
+        
+        Args:
+            weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+
+        Returns:
+            (:obj:`object`): The algebraic model count.
+        &#34;&#34;&#34;
+        for i in range(len(self.literals)//2):
+            self.literals[i*2].weight = weights[i*2]
+            self.literals[i*2 + 1].weight = weights[i*2 + 1]
+
+        todo = [ len(node.children) for node in self.nodes ]
+        q = queue.Queue()
+        for i in range(len(self.nodes)):
+            if todo[i] == 0:
+                q.put(self.nodes[i])
+        while not q.empty():
+            node = q.get()
+            for anc in node.ancestors:
+                todo[anc.name] -= 1
+                if todo[anc.name] == 0:
+                    q.put(anc)
+            if node.type == Node.AND:
+                node.weight = np.full(len(weights[0]), 1.0)
+                for child in node.children:
+                    node.weight *= child.weight
+            elif node.type == Node.OR:
+                node.weight = np.full(len(weights[0]), 0.0)
+                for child in node.children:
+                    node.weight += child.weight
+        return node.weight
+
+    @staticmethod
+    def parse_wmc(path, weights, zero = 0.0, one = 1.0, dtype = float, solver=&#34;c2d&#34;, vtree = None):
+        &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth while parsing it.
+        
+        Args:
+            path (:obj:`string`): The path to the file that contains the circuit.
+            weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+            zero (:obj:`object`, optional): The neutral element of addition. Defaults to `0.0`.
+            one (:obj:`object`, optional): The neutral element of multiplication. Defaults to `1.0`.
+            dtype (:obj:`type`, optional): Which type the numpy arrays used to store the weights should have. Defaults to `float`.
+            solver (:obj:`string`, optional): Which knowledge compiler this d-DNNF is from. Defaults to `c2d`.
+            vtree (:obj:`aspmc.compile.vtree.Vtree`, optional): The underlying vtree if this is a non-smooth SDD. Defaults to `None`.
+        Returns:
+            (:obj:`object`): The algebraic model count.
+        &#34;&#34;&#34;
+        if solver == &#34;d4&#34;:
+            return Circuit._parse_wmc_d4(path, weights, zero = zero, one = one, dtype = dtype)
+        if solver == &#34;miniC2D&#34;:
+            return Circuit._parse_wmc_miniC2D(path, weights, zero = zero, one = one, dtype = dtype, vtree = vtree)
+        shape = (np.shape(weights[0])[0], ) + np.shape(one)
+        with open(path) as ddnnf:
+            _, v, e, n = ddnnf.readline().split()
+            logger.debug(f&#34;d-DNNF size: {v} nodes, {e} edges, {n} variables&#34;)
+            mem = [] # np.empty((int(v), ) + shape, dtype=dtype) (this seems to perform worse than using mem.append() in a loop !?)
+            idx = 0
+            for line in ddnnf:
+                line = line.strip().split()
+                mem.append(np.empty(shape, dtype = dtype))
+                if line[0] == &#39;L&#39;:
+                    mem[idx][:] = weights[to_pos(int(line[1]))]
+                elif line[0] == &#39;A&#39;:
+                    mem[idx][:] = one
+                    for x in line[2:]:
+                        mem[idx] *= mem[int(x)]
+                elif line[0] == &#39;O&#39;:
+                    mem[idx][:] = zero
+                    for x in line[3:]:
+                        mem[idx] += mem[int(x)]
+                idx += 1
+            return mem[idx - 1]
+
+    @staticmethod
+    def live_parse_wmc(pipe, weights, zero = 0.0, one = 1.0, dtype = float):
+        &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth while parsing it.
+        
+        Args:
+            pipe (:obj:`stream`): The pipe where the circuit is printed.
+            weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+            zero (:obj:`object`, optional): The neutral element of addition. Defaults to `0.0`.
+            one (:obj:`object`, optional): The neutral element of multiplication. Defaults to `1.0`.
+            dtype (:obj:`type`, optional): Which type the numpy arrays used to store the weights should have. Defaults to `float`.
+        Returns:
+            (:obj:`object`): The algebraic model count.
+        &#34;&#34;&#34;
+        mem = [] 
+        shape = (np.shape(weights[0])[0], ) + np.shape(one)
+        idx = 0
+        for line in pipe:
+            line = line.decode().strip().split()
+            if line[0] == &#39;c&#39;:
+                continue
+            mem.append(np.empty(shape, dtype = dtype))
+            if line[0] == &#39;L&#39;:
+                mem[idx][:] = weights[to_pos(int(line[1]))]
+            elif line[0] == &#39;A&#39;:
+                mem[idx][:] = one
+                for x in line[2:]:
+                    mem[idx] *= mem[int(x)]
+            elif line[0] == &#39;O&#39;:
+                mem[idx][:] = zero
+                for x in line[3:]:
+                    mem[idx] += mem[int(x)]
+            idx += 1
+        return mem[idx - 1]
+
+    @staticmethod
+    def _parse_wmc_d4(path, weights, zero = 0.0, one = 1.0, dtype = float):
+        shape = (np.shape(weights[0])[0], ) + np.shape(one)
+        with open(path) as ddnnf:
+            mem = [ None ] # the values of the nodes
+            mem_type = [ False ] # whether the nodes are multiplicative
+            for line in ddnnf:
+                line = line.strip().split()
+                if line[0] == &#39;t&#39;: # add a true node
+                    mem.append(np.full(shape, one, dtype=dtype))
+                    mem_type.append(True)
+                elif line[0] == &#39;f&#39;: # add a false node
+                    mem.append(np.full(shape, zero, dtype=dtype))
+                    mem_type.append(False)
+                elif line[0] == &#39;a&#39;: # add an and node
+                    mem.append(np.full(shape, one, dtype=dtype))
+                    mem_type.append(True)
+                elif line[0] == &#39;o&#39;: # add an or node
+                    mem.append(np.full(shape, zero, dtype=dtype))
+                    mem_type.append(False)
+                elif mem_type[int(line[0])]: # add edge of an and node
+                    mem[int(line[0])] *= mem[int(line[1])]
+                else: # add edge of an or node                    
+                    val = copy.deepcopy(mem[int(line[1])])
+                    idx = 2
+                    lit = int(line[idx])
+                    while lit != 0:
+                        val *= weights[to_pos(lit)]
+                        idx += 1
+                        lit = int(line[idx])
+                    idx += 1
+                    var = int(line[idx])
+                    while var != 0:
+                        val *= weights[to_pos(var)] + weights[neg(to_pos(var))]
+                        idx += 1
+                        var = int(line[idx])
+                    mem[int(line[0])] += val
+            return mem[1]
+
+    @staticmethod
+    def _parse_wmc_miniC2D(path, weights, zero = 0.0, one = 1.0, dtype = float, vtree = None):
+        # setup phase: 
+        # get the least common ancestors to speed up queries
+        vtree_graph = vtree.to_networkx()
+        vtree.index()
+        lca = [ [ -1 for _ in range(vtree.leaf_count()*2) ] for _ in range(vtree.leaf_count()*2) ]
+        for p,l in nx.tree_all_pairs_lowest_common_ancestor(vtree_graph):
+            lca[p[1]][p[0]] = l
+            lca[p[0]][p[1]] = l
+
+        shape = (np.shape(weights[0])[0], ) + np.shape(one)
+
+        index_to_node = { node.idx : node for node in vtree }
+        index_to_node = [ index_to_node[i] for i in range(1, vtree.leaf_count()*2) ]
+        # method to get the weight of the free variables not included in the SDD between node i and j
+        def factor(i, j):
+            res = np.full(shape, one, dtype=dtype)
+            if lca[i][j] == j: # i should always be above j
+                i,j = j,i
+            if i == j:
+                return res
+            upper = index_to_node[i - 1]
+            lower = index_to_node[j - 1]
+            stack = queue.LifoQueue()
+            cur = upper
+            down = True
+            while cur != upper or down:
+                if down:
+                    if cur == lower:
+                        down = False
+                    elif cur.val is None:
+                        stack.put(cur)
+                        cur = cur.left
+                    else:
+                        res *= weights[to_pos(cur.val)] + weights[neg(to_pos(cur.val))]
+                        down = False
+                else:
+                    last = cur
+                    cur = stack.get()
+                    if cur.left == last:
+                        stack.put(cur)
+                        cur = cur.right
+                        down = True
+            return res
+
+        # the actual counting phase
+        with open(path) as ddnnf:
+            _, v, e, n = ddnnf.readline().split()
+            logger.debug(f&#34;d-DNNF size: {v} nodes, {e} edges, {n} variables&#34;)
+            mem = []
+            vtree_nodes = []
+            idx = 0
+            for line in ddnnf:
+                line = line.strip().split()
+                if line[0] == &#39;L&#39;:
+                    val = weights[to_pos(int(line[1]))]
+                    vtree_node = abs(int(line[1]))
+                else:
+                    if line[0] == &#39;A&#39;:
+                        vtree_node = lca[vtree_nodes[int(line[2])]][vtree_nodes[int(line[3])]]
+                        left = index_to_node[vtree_node-1].left.idx
+                        right = index_to_node[vtree_node-1].right.idx
+                        if lca[right][vtree_nodes[int(line[2])]] != right:
+                            right, left = left, right
+                        val = mem[int(line[2])]*factor(right, vtree_nodes[int(line[2])])*mem[int(line[3])]*factor(left, vtree_nodes[int(line[3])])
+                    elif line[0] == &#39;O&#39;:
+                        vtree_node = lca[vtree_nodes[int(line[3])]][vtree_nodes[int(line[4])]]  
+                        for x in line[3:]:
+                            vtree_node = lca[vtree_node][vtree_nodes[int(x)]]         
+                        val = np.full(shape, zero, dtype=dtype)
+                        for x in line[3:]:
+                            val += mem[int(x)]*factor(vtree_node, vtree_nodes[int(x)])
+                mem.append(val)
+                vtree_nodes.append(vtree_node)
+                idx += 1
+            mem[idx - 1] *= factor(vtree_node, vtree.idx)
+            return mem[idx - 1]</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="aspmc.compile.circuit.Circuit.live_parse_wmc"><code class="name flex">
+<span>def <span class="ident">live_parse_wmc</span></span>(<span>pipe, weights, zero=0.0, one=1.0, dtype=builtins.float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Performs algebraic model counting over a circuit that is smooth while parsing it.</p>
+<h2 id="args">Args</h2>
+<p>pipe (:obj:<code>stream</code>): The pipe where the circuit is printed.
+weights (:obj:<code>string</code>): The weights of the literals. The weight for literal <code>v</code> is in <code>weights[2*(v-1)]</code>, the one for <code>-v</code> is in <code>weights[2*(v-1)+1]</code>
+zero (:obj:<code>object</code>, optional): The neutral element of addition. Defaults to <code>0.0</code>.
+one (:obj:<code>object</code>, optional): The neutral element of multiplication. Defaults to <code>1.0</code>.
+dtype (:obj:<code>type</code>, optional): Which type the numpy arrays used to store the weights should have. Defaults to <code>float</code>.</p>
+<h2 id="returns">Returns</h2>
+<p>(:obj:<code>object</code>): The algebraic model count.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def live_parse_wmc(pipe, weights, zero = 0.0, one = 1.0, dtype = float):
+    &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth while parsing it.
+    
+    Args:
+        pipe (:obj:`stream`): The pipe where the circuit is printed.
+        weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+        zero (:obj:`object`, optional): The neutral element of addition. Defaults to `0.0`.
+        one (:obj:`object`, optional): The neutral element of multiplication. Defaults to `1.0`.
+        dtype (:obj:`type`, optional): Which type the numpy arrays used to store the weights should have. Defaults to `float`.
+    Returns:
+        (:obj:`object`): The algebraic model count.
+    &#34;&#34;&#34;
+    mem = [] 
+    shape = (np.shape(weights[0])[0], ) + np.shape(one)
+    idx = 0
+    for line in pipe:
+        line = line.decode().strip().split()
+        if line[0] == &#39;c&#39;:
+            continue
+        mem.append(np.empty(shape, dtype = dtype))
+        if line[0] == &#39;L&#39;:
+            mem[idx][:] = weights[to_pos(int(line[1]))]
+        elif line[0] == &#39;A&#39;:
+            mem[idx][:] = one
+            for x in line[2:]:
+                mem[idx] *= mem[int(x)]
+        elif line[0] == &#39;O&#39;:
+            mem[idx][:] = zero
+            for x in line[3:]:
+                mem[idx] += mem[int(x)]
+        idx += 1
+    return mem[idx - 1]</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.circuit.Circuit.parse_wmc"><code class="name flex">
+<span>def <span class="ident">parse_wmc</span></span>(<span>path, weights, zero=0.0, one=1.0, dtype=builtins.float, solver='c2d', vtree=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Performs algebraic model counting over a circuit that is smooth while parsing it.</p>
+<h2 id="args">Args</h2>
+<p>path (:obj:<code>string</code>): The path to the file that contains the circuit.
+weights (:obj:<code>string</code>): The weights of the literals. The weight for literal <code>v</code> is in <code>weights[2*(v-1)]</code>, the one for <code>-v</code> is in <code>weights[2*(v-1)+1]</code>
+zero (:obj:<code>object</code>, optional): The neutral element of addition. Defaults to <code>0.0</code>.
+one (:obj:<code>object</code>, optional): The neutral element of multiplication. Defaults to <code>1.0</code>.
+dtype (:obj:<code>type</code>, optional): Which type the numpy arrays used to store the weights should have. Defaults to <code>float</code>.
+solver (:obj:<code>string</code>, optional): Which knowledge compiler this d-DNNF is from. Defaults to <code>c2d</code>.
+vtree (:obj:<code><a title="aspmc.compile.vtree.Vtree" href="vtree.html#aspmc.compile.vtree.Vtree">Vtree</a></code>, optional): The underlying vtree if this is a non-smooth SDD. Defaults to <code>None</code>.</p>
+<h2 id="returns">Returns</h2>
+<p>(:obj:<code>object</code>): The algebraic model count.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def parse_wmc(path, weights, zero = 0.0, one = 1.0, dtype = float, solver=&#34;c2d&#34;, vtree = None):
+    &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth while parsing it.
+    
+    Args:
+        path (:obj:`string`): The path to the file that contains the circuit.
+        weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+        zero (:obj:`object`, optional): The neutral element of addition. Defaults to `0.0`.
+        one (:obj:`object`, optional): The neutral element of multiplication. Defaults to `1.0`.
+        dtype (:obj:`type`, optional): Which type the numpy arrays used to store the weights should have. Defaults to `float`.
+        solver (:obj:`string`, optional): Which knowledge compiler this d-DNNF is from. Defaults to `c2d`.
+        vtree (:obj:`aspmc.compile.vtree.Vtree`, optional): The underlying vtree if this is a non-smooth SDD. Defaults to `None`.
+    Returns:
+        (:obj:`object`): The algebraic model count.
+    &#34;&#34;&#34;
+    if solver == &#34;d4&#34;:
+        return Circuit._parse_wmc_d4(path, weights, zero = zero, one = one, dtype = dtype)
+    if solver == &#34;miniC2D&#34;:
+        return Circuit._parse_wmc_miniC2D(path, weights, zero = zero, one = one, dtype = dtype, vtree = vtree)
+    shape = (np.shape(weights[0])[0], ) + np.shape(one)
+    with open(path) as ddnnf:
+        _, v, e, n = ddnnf.readline().split()
+        logger.debug(f&#34;d-DNNF size: {v} nodes, {e} edges, {n} variables&#34;)
+        mem = [] # np.empty((int(v), ) + shape, dtype=dtype) (this seems to perform worse than using mem.append() in a loop !?)
+        idx = 0
+        for line in ddnnf:
+            line = line.strip().split()
+            mem.append(np.empty(shape, dtype = dtype))
+            if line[0] == &#39;L&#39;:
+                mem[idx][:] = weights[to_pos(int(line[1]))]
+            elif line[0] == &#39;A&#39;:
+                mem[idx][:] = one
+                for x in line[2:]:
+                    mem[idx] *= mem[int(x)]
+            elif line[0] == &#39;O&#39;:
+                mem[idx][:] = zero
+                for x in line[3:]:
+                    mem[idx] += mem[int(x)]
+            idx += 1
+        return mem[idx - 1]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.compile.circuit.Circuit.non_smooth_wmc"><code class="name flex">
+<span>def <span class="ident">non_smooth_wmc</span></span>(<span>self, weights)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Performs weighted model counting over a circuit that is not smooth. Should be avoided since it is quite inefficient.</p>
+<h2 id="args">Args</h2>
+<p>weights (:obj:<code>string</code>): The weights of the literals.
+The weight for literal <code>v</code> is in <code>weights[2*(v-1)]</code>, the one for <code>-v</code> is in <code>weights[2*(v-1)+1]</code></p>
+<h2 id="returns">Returns</h2>
+<p>(:obj:<code>object</code>): The weighted model count.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def non_smooth_wmc(self, weights):    
+    &#34;&#34;&#34;Performs weighted model counting over a circuit that is not smooth. Should be avoided since it is quite inefficient.
+    
+    Args:
+        weights (:obj:`string`): The weights of the literals. 
+            The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+
+    Returns:
+        (:obj:`object`): The weighted model count.
+    &#34;&#34;&#34;
+    for i in range(len(self.literals)//2):
+        self.literals[i*2].weight = weights[i*2]
+        self.literals[i*2 + 1].weight = weights[i*2 + 1]
+
+    todo = [ len(node.children) for node in self.nodes ]
+    q = queue.Queue()
+    for i in range(len(self.nodes)):
+        if todo[i] == 0:
+            q.put(self.nodes[i])
+    while not q.empty():
+        node = q.get()
+        for anc in node.ancestors:
+            todo[anc.name] -= 1
+            if todo[anc.name] == 0:
+                q.put(anc)
+        if node.type == Node.AND:
+            value = np.full(len(weights[0]), 1.0)
+            for child in node.children:
+                value *= child.weight
+            node.weight = value
+        elif node.type == Node.OR:
+            value = np.full(len(weights[0]), 0.0)
+            for child in node.children:
+                to_add = copy.deepcopy(child.weight)
+                for i in set(node.vars).difference(set(child.vars)):
+                    to_add *= self.literals[to_pos(i)].weight + self.literals[neg(to_pos(i))].weight
+                value += to_add
+            node.weight = value
+    for i in set(range(1, 1 + len(self.literals)//2)).difference(set(node.vars)):
+        node.weight *= self.literals[to_pos(i)].weight + self.literals[neg(to_pos(i))].weight
+    return node.weight</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.circuit.Circuit.wmc"><code class="name flex">
+<span>def <span class="ident">wmc</span></span>(<span>self, weights)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Performs algebraic model counting over a circuit that is smooth.</p>
+<h2 id="args">Args</h2>
+<p>weights (:obj:<code>string</code>): The weights of the literals. The weight for literal <code>v</code> is in <code>weights[2*(v-1)]</code>, the one for <code>-v</code> is in <code>weights[2*(v-1)+1]</code></p>
+<h2 id="returns">Returns</h2>
+<p>(:obj:<code>object</code>): The algebraic model count.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wmc(self, weights):
+    &#34;&#34;&#34;Performs algebraic model counting over a circuit that is smooth.
+    
+    Args:
+        weights (:obj:`string`): The weights of the literals. The weight for literal `v` is in `weights[2*(v-1)]`, the one for `-v` is in `weights[2*(v-1)+1]`
+
+    Returns:
+        (:obj:`object`): The algebraic model count.
+    &#34;&#34;&#34;
+    for i in range(len(self.literals)//2):
+        self.literals[i*2].weight = weights[i*2]
+        self.literals[i*2 + 1].weight = weights[i*2 + 1]
+
+    todo = [ len(node.children) for node in self.nodes ]
+    q = queue.Queue()
+    for i in range(len(self.nodes)):
+        if todo[i] == 0:
+            q.put(self.nodes[i])
+    while not q.empty():
+        node = q.get()
+        for anc in node.ancestors:
+            todo[anc.name] -= 1
+            if todo[anc.name] == 0:
+                q.put(anc)
+        if node.type == Node.AND:
+            node.weight = np.full(len(weights[0]), 1.0)
+            for child in node.children:
+                node.weight *= child.weight
+        elif node.type == Node.OR:
+            node.weight = np.full(len(weights[0]), 0.0)
+            for child in node.children:
+                node.weight += child.weight
+    return node.weight</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.compile.circuit.Node"><code class="flex name class">
+<span>class <span class="ident">Node</span></span>
+<span>(</span><span>type, name, children=[], ancestors=[])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A node class corresponding to nodes in a <code><a title="aspmc.compile.circuit.Circuit" href="#aspmc.compile.circuit.Circuit">Circuit</a></code>.</p>
+<h2 id="args">Args</h2>
+<p>type (:obj:<code>int</code>): Which type the node has. One of <code><a title="aspmc.compile.circuit.Node.AND" href="#aspmc.compile.circuit.Node.AND">Node.AND</a>, <a title="aspmc.compile.circuit.Node.OR" href="#aspmc.compile.circuit.Node.OR">Node.OR</a>, <a title="aspmc.compile.circuit.Node.NEG" href="#aspmc.compile.circuit.Node.NEG">Node.NEG</a>, <a title="aspmc.compile.circuit.Node.IN" href="#aspmc.compile.circuit.Node.IN">Node.IN</a></code>.
+name (:obj:<code>int</code>): Unique identifier of the node.
+children (:obj:<code>iterable</code>, optional): The children of the node. Defaults to <code>[]</code>.
+ancestors (:obj:<code>iterable</code>, optional): The ancestors of the node. Defaults to <code>[]</code>.</p>
+<h2 id="attributes">Attributes</h2>
+<p>type (:obj:<code>int</code>): Which type the node has. One of <code><a title="aspmc.compile.circuit.Node.AND" href="#aspmc.compile.circuit.Node.AND">Node.AND</a>, <a title="aspmc.compile.circuit.Node.OR" href="#aspmc.compile.circuit.Node.OR">Node.OR</a>, <a title="aspmc.compile.circuit.Node.NEG" href="#aspmc.compile.circuit.Node.NEG">Node.NEG</a>, <a title="aspmc.compile.circuit.Node.IN" href="#aspmc.compile.circuit.Node.IN">Node.IN</a></code>.
+name (:obj:<code>int</code>): Unique identifier of the node.
+If <code>type</code> is <code><a title="aspmc.compile.circuit.Node.NEG" href="#aspmc.compile.circuit.Node.NEG">Node.NEG</a></code> or <code><a title="aspmc.compile.circuit.Node.IN" href="#aspmc.compile.circuit.Node.IN">Node.IN</a></code> this is the name of the (negated) input variable.
+children (:obj:<code>iterable</code>): The children of the node.
+ancestors (:obj:<code>iterable</code>): The ancestors of the node.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Node(object):
+    &#34;&#34;&#34;A node class corresponding to nodes in a `Circuit`.
+    
+    Args:
+        type (:obj:`int`): Which type the node has. One of `Node.AND, Node.OR, Node.NEG, Node.IN`.
+        name (:obj:`int`): Unique identifier of the node.
+        children (:obj:`iterable`, optional): The children of the node. Defaults to `[]`.
+        ancestors (:obj:`iterable`, optional): The ancestors of the node. Defaults to `[]`.
+
+    Attributes:
+        type (:obj:`int`): Which type the node has. One of `Node.AND, Node.OR, Node.NEG, Node.IN`.
+        name (:obj:`int`): Unique identifier of the node. 
+        If `type` is `Node.NEG` or `Node.IN` this is the name of the (negated) input variable.
+        children (:obj:`iterable`): The children of the node.
+        ancestors (:obj:`iterable`): The ancestors of the node. 
+
+    &#34;&#34;&#34;
+    AND = 0
+    &#34;&#34;&#34;Node type `AND` with value 0. Means that the children are conjoined.&#34;&#34;&#34;
+    OR = 1
+    &#34;&#34;&#34;Node type `OR` with value 1. Means that the children are disjoined.&#34;&#34;&#34;
+    NEG = 2
+    &#34;&#34;&#34;Node type `NEG` with value 2. Means that this is a negative input variable.&#34;&#34;&#34;
+    IN = 3
+    &#34;&#34;&#34;Node type `IN` with value 3. Means that this is a positive input variable.&#34;&#34;&#34;
+    def __init__(self, type, name, children = [], ancestors = []):
+        self.type = type
+        self.name = name
+        self.children = children
+        self.ancestors = ancestors</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="aspmc.compile.circuit.Node.AND"><code class="name">var <span class="ident">AND</span></code></dt>
+<dd>
+<div class="desc"><p>Node type <code>AND</code> with value 0. Means that the children are conjoined.</p></div>
+</dd>
+<dt id="aspmc.compile.circuit.Node.IN"><code class="name">var <span class="ident">IN</span></code></dt>
+<dd>
+<div class="desc"><p>Node type <code>IN</code> with value 3. Means that this is a positive input variable.</p></div>
+</dd>
+<dt id="aspmc.compile.circuit.Node.NEG"><code class="name">var <span class="ident">NEG</span></code></dt>
+<dd>
+<div class="desc"><p>Node type <code>NEG</code> with value 2. Means that this is a negative input variable.</p></div>
+</dd>
+<dt id="aspmc.compile.circuit.Node.OR"><code class="name">var <span class="ident">OR</span></code></dt>
+<dd>
+<div class="desc"><p>Node type <code>OR</code> with value 1. Means that the children are disjoined.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aspmc.compile" href="index.html">aspmc.compile</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="aspmc.compile.circuit.Circuit" href="#aspmc.compile.circuit.Circuit">Circuit</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.compile.circuit.Circuit.live_parse_wmc" href="#aspmc.compile.circuit.Circuit.live_parse_wmc">live_parse_wmc</a></code></li>
+<li><code><a title="aspmc.compile.circuit.Circuit.non_smooth_wmc" href="#aspmc.compile.circuit.Circuit.non_smooth_wmc">non_smooth_wmc</a></code></li>
+<li><code><a title="aspmc.compile.circuit.Circuit.parse_wmc" href="#aspmc.compile.circuit.Circuit.parse_wmc">parse_wmc</a></code></li>
+<li><code><a title="aspmc.compile.circuit.Circuit.wmc" href="#aspmc.compile.circuit.Circuit.wmc">wmc</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.compile.circuit.Node" href="#aspmc.compile.circuit.Node">Node</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.compile.circuit.Node.AND" href="#aspmc.compile.circuit.Node.AND">AND</a></code></li>
+<li><code><a title="aspmc.compile.circuit.Node.IN" href="#aspmc.compile.circuit.Node.IN">IN</a></code></li>
+<li><code><a title="aspmc.compile.circuit.Node.NEG" href="#aspmc.compile.circuit.Node.NEG">NEG</a></code></li>
+<li><code><a title="aspmc.compile.circuit.Node.OR" href="#aspmc.compile.circuit.Node.OR">OR</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

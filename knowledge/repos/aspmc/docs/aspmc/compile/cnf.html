@@ -1,0 +1,3427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>aspmc.compile.cnf API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aspmc.compile.cnf</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import subprocess
+import networkx as nx
+import tempfile
+import inspect
+import os
+import logging
+import subprocess
+import time
+import importlib
+import numpy as np
+import psutil
+
+from aspmc.graph.hypergraph import Hypergraph
+
+from aspmc.util import *
+
+import aspmc.compile.constrained_compile as concom
+from aspmc.compile.constrained_sdd import ConstrainedSDD
+from aspmc.compile.constrained_ddnnf import ConstrainedDDNNF
+from aspmc.compile.circuit import Circuit
+import aspmc.compile.dtree as dtree
+import aspmc.compile.vtree as vtree
+
+import aspmc.signal_handling as my_signals
+
+import aspmc.config as config
+
+src_path = os.path.abspath(os.path.realpath(inspect.getfile(inspect.currentframe())))
+src_path = os.path.realpath(os.path.join(src_path, &#39;../../external&#39;))
+
+logger = logging.getLogger(&#34;aspmc&#34;)
+
+class SolvingError(Exception):
+    &#39;&#39;&#39;raise this when a solver errors&#39;&#39;&#39;
+
+
+class CNF(object):
+    &#34;&#34;&#34;This class is an extended cnf class, which can be used to compile and 
+    evaluate algebraic model counting problems over cnfs using the knowledge compiler in aspmc.config.
+
+    The syntax of extended cnf files is as follows:
+
+        * format string: one line specifying the number of variables and clauses.
+
+            `p cnf &lt;nr_vars&gt; &lt;len(clauses)&gt;`
+        * clauses: one line for each clause `c = [lit_1, lit_2, ..., lit_n]`.
+
+            `&lt;lit_1&gt; &lt;lit_2&gt; ... &lt;lit_n&gt; 0`
+        * auxilliary: one line specifying a list `[v_1, ..., v_n]` of variables that may be projected away without changing the evaluation result.
+        
+            `c p auxilliary &lt;v_1&gt; &lt;v_2&gt; ... &lt;v_n&gt; 0`
+        * weights: one line for each weight &#34;w = np.array([w_1, w_2, ..., w_n])&#34; of a literal `lit`.
+
+            `c p weight &lt;lit&gt; &lt;w_1&gt;;&lt;w_2&gt;;...;&lt;w_n&gt; 0`
+        * semirings: one line containing all the names of the semiring modules `semirings = [s_1, s_2, ..., s_n]`.
+
+            `c p semirings &lt;s_1.__name__&gt; &lt;s_2.__name__&gt; ... &lt;s_n.__name__&gt; 0`
+        * quantified: one line for each list `q_i = [v_1, ..., v_n]` in quantified. Lowest index quantified variables first.
+
+            `c p quantify &lt;v_1&gt; &lt;v_2&gt; ... &lt;v_n&gt; 0`
+        * tranform: one line containing the transformation function from semiring[1] to semiring[0] in string representation.
+            Must be such that `eval(repr(transform))` works independently of the imported modules.
+            
+            `c p transform &lt;repr(transform)&gt; 0`
+
+    Args:
+        path (:obj:`string`, optional): Optional parameter specifying the location of an extended cnf file to load. Defaults to None.
+
+    Attributes:
+        clauses (list): A list of clauses with literals in minisat format.
+        nr_vars (int): The number of variables that the cnf is specified over.
+        auxilliary (set): A set of variables that may be projected away without changing the evaluation result.
+        weights (dict): A dictionary that can contain for each integer from {-nr_vars, ..., -1, 1, ..., nr_vars} a weight over a semiring.
+            Note that even if there is only one semiring value it must be encapsulated in a numpy array.
+        semirings (list): A list of semiring modules that are used in this cnf.
+            See aspmc.semirings for how these modules should look.
+            Currently at most two semirings are supported.
+        quantified (list): A list of lists of variables (integers) specifying, which variables are &#34;quantified&#34; over which semirings.
+            Must have the same length as `semirings`.
+            The variables in quantified[i] are over semirings[i].
+            The variables in quantified[i] are quantified before the ones in quantified[i+i].
+        transform (string): A string representation of a python function that takes a values from semiring[i] and returns a value `x` that can be given to 
+            `semirings[i-1].from_value(x)` to obtain a value in semirings[i-1].
+
+    &#34;&#34;&#34;
+    def __init__(self, path = None, string = None):
+        assert(path is None or string is None)
+        self.clauses = []
+        self.nr_vars = 0
+        self.auxilliary = set()
+        self.weights = {}
+        self.semirings = []
+        self.quantified = []
+        self.transforms = []
+        if path is not None:
+            with open(path) as in_file:
+                for line in in_file:
+                    line = line.split()
+                    if len(line) == 0:
+                        continue
+                    if line[0] == &#39;c&#39;:
+                        if len(line) &gt; 2 and line[1] == &#39;p&#39;:
+                            if line[2] == &#34;weight&#34;:
+                                if int(line[3]) != 0:
+                                    self.weights[int(line[3])] = &#39; &#39;.join(line[4:-1])
+                            elif line[2] == &#34;semirings&#34;:
+                                self.semirings = [ importlib.import_module(mod) for mod in line[3:-1] ]
+                            elif line[2] == &#34;transform&#34;:
+                                self.transforms.append(&#39; &#39;.join(line[3:-1]))
+                            elif line[2] == &#34;quantify&#34;:
+                                self.quantified.append([int(x) for x in line[3:-1]])
+                            elif line[2] == &#34;auxilliary&#34;:
+                                self.auxilliary.update([int(x) for x in line[3:-1]])
+                            else:
+                                logger.error(f&#34;Unknown property {line[2]}!&#34;)
+                            if line[-1] != &#39;0&#39;:
+                                logger.error(&#34;Property line not ended with 0!&#34;)
+                    elif line[0] == &#39;p&#39;:
+                        self.nr_vars = int(line[2])
+                    else:
+                        line = [int(l) for l in line]
+                        self.clauses.append(line[:-1])
+                        
+        if string is not None:
+            for line in string.split(&#34;\n&#34;):
+                line = line.split()
+                if len(line) == 0:
+                    continue
+                if line[0] == &#39;c&#39;:
+                    if len(line) &gt; 2 and line[1] == &#39;p&#39;:
+                        if line[2] == &#34;weight&#34;:
+                            self.weights[int(line[3])] = &#39; &#39;.join(line[4:-1])
+                        elif line[2] == &#34;semirings&#34;:
+                            self.semirings = [ importlib.import_module(mod) for mod in line[3:-1] ]
+                        elif line[2] == &#34;transform&#34;:
+                            self.transforms.append(&#39; &#39;.join(line[3:-1]))
+                        elif line[2] == &#34;quantify&#34;:
+                            self.quantified.append([int(x) for x in line[3:-1]])
+                        elif line[2] == &#34;auxilliary&#34;:
+                                self.auxilliary.update([int(x) for x in line[3:-1]])
+                        else:
+                            logger.error(f&#34;Unknown property {line[2]}!&#34;)
+                        if line[-1] != &#39;0&#39;:
+                            logger.error(&#34;Property line not ended with 0!&#34;)
+                elif line[0] == &#39;p&#39;:
+                    self.nr_vars = int(line[2])
+                else:
+                    line = [int(l) for l in line]
+                    self.clauses.append(line[:-1])
+
+        # check whether the input is reasonable
+        if len(self.quantified) != len(self.semirings):
+            logger.error(&#34;We must have the same number of semirings and quantifiers!&#34;)
+            exit(-1)
+        if len(self.semirings) != len(self.transforms) + 1 and (path is not None or string is not None):
+            logger.error(&#34;If there are multiple semirings, we need a transforms between them.&#34;)
+            exit(-1)
+        if len(self.weights) &gt; 0 and len(self.quantified) == 0:
+            self.quantified = [ set(range(1,self.nr_vars + 1)) ]
+            import aspmc.semirings.probabilistic
+            self.semirings = [ aspmc.semirings.probabilistic ]
+            
+        var_to_val_type = [ len(self.semirings) - 1 for _ in range(self.nr_vars + 1) ]
+        for val_type, vars in enumerate(self.quantified):
+            for var in vars:
+                var_to_val_type[var] = val_type
+                
+        for idx in self.weights:
+            val_type = var_to_val_type[idx]
+            self.weights[idx] = np.array([ self.semirings[val_type].parse(w) for w in self.weights[idx].split(&#34;;&#34;) ])
+
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        ret = f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;
+        for c in self.clauses:
+            ret += f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;
+        for idx in self.weights:
+            if abs(idx) in self.quantified[0]:
+                weight = &#39;;&#39;.join([ self.semirings[0].to_string(w) for w in self.weights[idx] ])
+            else:
+                weight = &#39;;&#39;.join([ self.semirings[1].to_string(w) for w in self.weights[idx] ])
+            ret += f&#34;c p weight {idx} {weight} 0\n&#34;
+        if len(self.semirings) &gt; 0:
+            ret += f&#34;c p semirings {&#39; &#39;.join([ x.__name__ for x in self.semirings])} 0\n&#34;
+        for transform in self.transforms:
+            ret += f&#34;c p transform {transform} 0\n&#34;
+        for l in self.quantified:
+            ret += f&#34;c p quantify {&#39; &#39;.join([str(x) for x in l])} 0\n&#34;
+        ret += f&#34;c p auxilliary {&#39; &#39;.join([str(x) for x in self.auxilliary])} 0\n&#34;
+        return ret
+
+    def write_kc_cnf(self, out_file):
+        out_file.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;.encode())
+        for c in self.clauses:
+            out_file.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+        for idx in range(1, self.nr_vars + 1):
+            if idx not in self.auxilliary:
+                out_file.write(f&#34;c p weight {idx} {idx} 0\n&#34;.encode())
+                out_file.write(f&#34;c p weight {-idx} {-idx} 0\n&#34;.encode())
+
+    def write_maxsat_cnf(self, out_file):
+        import math
+        real_weights = { l : w[0].value for l,w in self.weights.items() }
+        if self.semirings[0].__name__ == &#34;aspmc.semirings.maxtimes&#34;:
+            # we first need to convert into maxplus weights
+            real_weights = { l : math.log(w) if w &gt; 0 else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+        elif self.semirings[0].__name__ == &#34;aspmc.semirings.minplus&#34;:
+            # we first need to convert into maxplus weights
+            real_weights = { l : -w if w != float(&#34;inf&#34;) else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+        elif self.semirings[0].__name__ != &#34;aspmc.semirings.maxplus&#34;:
+            logger.error(f&#34;MaxSAT evaluation is currently not supported for semiring {self.semirings[0].__name__}&#34;)
+            exit(-1)
+        # sort out variables that are irrelevant
+        real_weights = { l : w for l,w in real_weights.items() if w != real_weights[-l]}
+        # handle hard constraints from literals with weight -inf and keep the rest
+        negated_units = [ l for l,w in real_weights.items() if w == float(&#39;-inf&#39;)]
+        real_weights = { l : w for l,w in real_weights.items() if w != float(&#39;-inf&#39;)}
+        # make sure every variable has exactly one weight and that weight is greater than 0
+        for i in range(1, self.nr_vars + 1):
+            if i in real_weights:
+                if -i in real_weights:
+                    if real_weights[i] &lt; real_weights[-i]:
+                        real_weights[-i] -= real_weights[i]
+                        del real_weights[i]
+                    else:
+                        real_weights[i] -= real_weights[-i]
+                        del real_weights[-i]
+                else:
+                    if real_weights[i] &lt; 0:
+                        real_weights[-i] = -real_weights[i]
+                        del real_weights[i]
+            else:
+                if -i in real_weights:
+                    if real_weights[-i] &lt; 0:
+                        real_weights[i] = -real_weights[-i]
+                        del real_weights[-i]
+        max_exp = max([ math.ceil(-math.log10(w)) for w in real_weights.values() if w &gt; 0 ] + [0])
+        real_weights = { l : math.floor(w*10**(8 + max_exp)) for l,w in real_weights.items() if abs(w) &gt;= 0.1**(8 + max_exp) }
+        gcd = 0
+        for w in real_weights.values():
+            gcd = math.gcd(w, gcd)
+        real_weights = { l : w//gcd for l,w in real_weights.items() }
+        top = sum(real_weights.values()) + 2
+        if top &gt;= 2**63:
+            logger.error(f&#34;Cannot reduce this instance to a maxsat instance.&#34;)
+            exit(-1)
+        out_file.write(f&#34;p wcnf {self.nr_vars} {len(self.clauses) + len(real_weights)} {top}\n&#34;.encode())
+        for c in self.clauses:
+            out_file.write(f&#34;{top} {&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+        for l in negated_units:
+            out_file.write(f&#34;{top} {-l} 0\n&#34;.encode())
+        for l, w in real_weights.items():
+            out_file.write(f&#34;{w} {l} 0\n&#34;.encode())
+
+        #c = CNF()
+        #c.clauses = self.clauses
+        #import aspmc.semirings.maxplus as maxplus
+        #c.weights = { i : np.array([maxplus.one()]) for i in range(-self.nr_vars, self.nr_vars + 1)}
+        #del c.weights[0]
+        #c.semirings = [maxplus]
+        #c.quantified = [list(range(1,self.nr_vars + 1))]
+        #for l, w in real_weights.items():
+        #    c.weights[l] = np.array([maxplus.MaxPlusFloat(-w)])
+        #c.nr_vars = self.nr_vars
+        #print(c)
+
+
+    def get_defined(self, P, timeout = &#34;150&#34;):
+        &#34;&#34;&#34;Figures out the subset of variables of the cnf that are defined by `P` w.r.t. the cnf.
+        Calls a C++ binary for performance reasons.
+
+        Args:
+            P (iterable): The set of input variables that can be used for definitions.
+
+        Returns:
+            list: The list of variables that are defined by the inputs `P` w.r.t. the cnf.
+        &#34;&#34;&#34;
+        (cnf_fd, cnf_tmp) = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        (input_fd, input_tmp) = tempfile.mkstemp()
+        my_signals.tempfiles.add(input_tmp)
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.to_stream(cnf_file)
+        with os.fdopen(input_fd, &#39;w&#39;) as input_file:
+            input_file.write(&#34; &#34;.join([str(p) for p in list(P) + [0]]))
+        p = subprocess.Popen([&#34;timeout&#34;,  timeout, os.path.join(src_path, &#34;minisat-definitions/bin/defined&#34;), cnf_tmp, input_tmp], stdout=subprocess.PIPE)
+        p.wait()
+        ret = p.stdout.read().decode().split(&#39; &#39;)[:-1]
+        ret = [ int(v) for v in ret ]
+        p.stdout.close()
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.remove(cnf_tmp)
+        os.remove(input_tmp)
+        my_signals.tempfiles.remove(input_tmp)
+        return ret
+        
+    def is_sat(self):
+        &#34;&#34;&#34;Calls `minisat` to check if the cnf is satisfiable.
+
+        Returns:
+            bool: `True` if the cnf is satisfiable, `False` otherwise.
+        &#34;&#34;&#34;
+        p = subprocess.Popen([os.path.join(src_path, &#34;minisat-definitions/bin/minisat&#34;)], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        p.stdin.write(str(self).encode())
+        p.stdin.close()
+        p.wait()
+        for line in p.stdout.read().decode().split(&#39;\n&#39;):
+            line = line.split()
+            if len(line) == 0:
+                continue
+            if line[0] == &#39;UNSATISFIABLE&#39;:
+                p.stdout.close()
+                return False
+            elif line[0] == &#39;SATISFIABLE&#39;:
+                p.stdout.close()
+                return True
+
+    def to_file(self, path, extras = False):
+        &#34;&#34;&#34;Write the cnf to the file with the name `path`.
+
+        Args:
+            path (string): The path of the file the cnf should be written to.
+            extras (bool, optional): Whether the extra information like weights should be written. Defaults to False.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        with open(path, mode = &#39;w&#39;) as file_out:
+            file_out.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;)
+            for c in self.clauses:
+                file_out.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;)
+            if extras:
+                for idx in self.weights:
+                    if abs(idx) in self.quantified[0]:
+                        weight = &#39;;&#39;.join([ self.semirings[0].to_string(w) for w in self.weights[idx] ])
+                    else:
+                        weight = &#39;;&#39;.join([ self.semirings[1].to_string(w) for w in self.weights[idx] ])
+                    file_out.write(f&#34;c p weight {idx} {weight} 0\n&#34;)
+                if len(self.semirings) &gt; 0:
+                    file_out.write(f&#34;c p semirings {&#39; &#39;.join([ x.__name__ for x in self.semirings])} 0\n&#34;)
+                for transform in self.transforms:
+                    file_out.write(f&#34;c p transform {transform} 0\n&#34;)
+                for l in self.quantified:
+                    file_out.write(f&#34;c p quantify {&#39; &#39;.join([str(x) for x in l])} 0\n&#34;)
+                file_out.write(f&#34;c p auxilliary {&#39; &#39;.join([str(x) for x in self.auxilliary])} 0\n&#34;)
+            
+
+    def to_stream(self, stream, extras = False):
+        &#34;&#34;&#34;Write the cnf to the stream `stream`.
+
+        Args:
+            stream (stream): The stream the cnf should be written to. Must accept binary encoding.
+            extras (bool, optional): Whether the extra information like weights should be written. Defaults to False.
+
+        Returns:
+            None
+        &#34;&#34;&#34;            
+        stream.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;.encode())
+        for c in self.clauses:
+            stream.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+        if extras:
+            for idx in self.weights:
+                if abs(idx) in self.quantified[0]:
+                    weight = &#39;;&#39;.join([ self.semirings[0].to_string(w) for w in self.weights[idx] ])
+                else:
+                    weight = &#39;;&#39;.join([ self.semirings[1].to_string(w) for w in self.weights[idx] ])
+                stream.write(f&#34;c p weight {idx} {weight} 0\n&#34;.encode())
+            if len(self.semirings) &gt; 0:
+                stream.write(f&#34;c p semirings {&#39; &#39;.join([ x.__name__ for x in self.semirings])} 0\n&#34;.encode())
+            for transform in self.transforms:
+                stream.write(f&#34;c p transform {transform} 0\n&#34;.encode())
+            for l in self.quantified:
+                stream.write(f&#34;c p quantify {&#39; &#39;.join([str(x) for x in l])} 0\n&#34;.encode())
+            stream.write(f&#34;c p auxilliary {&#39; &#39;.join([str(x) for x in self.auxilliary])} 0\n&#34;.encode())
+
+    def primal_graph(self):
+        &#34;&#34;&#34;Construct the an `nx.Graph` that corresponds to the primal graph of the cnf.
+
+        Returns:
+            nx.Graph: The primal graph of the cnf. 
+        &#34;&#34;&#34;
+        graph = nx.Graph()
+        graph.add_nodes_from(range(1, self.nr_vars+1))
+        for c in self.clauses:
+            graph.add_edges_from(sum([[(abs(l),abs(lp)) for l in c if abs(l) != abs(lp)] for lp in c], []))
+        return graph
+
+    def primal_hypergraph(self):        
+        &#34;&#34;&#34;Construct the an `aspmc.graph.Hypergraph` that corresponds to the primal hypergraph of the cnf.
+
+        Returns:
+            aspmc.graph.Hypergraph: The primal hypergraph of the cnf. 
+        &#34;&#34;&#34;
+        graph = Hypergraph()
+        graph.add_nodes_from(range(1, self.nr_vars+1))
+        for c in self.clauses:
+            graph.add_edge([ abs(l) for l in c ])
+        return graph
+
+    def get_weights(self):
+        &#34;&#34;&#34;Get some relevant information about the weights of the cnf in a convenient format.
+
+        Returns:
+            (list, object, object, type): 
+            
+            The weights of the literals. `weights[2*(i-1)]` is the weight of `i` and `weights[2*(i-1) + 1]` is the weight of `-i`.
+            
+            The zero of the (outermost) AMC instance.
+            
+            The one of the (outermost) AMC instance.
+            
+            The type of the weights that should be used for numpy arrays.
+        &#34;&#34;&#34;
+        if len(self.semirings) == 0:
+            weights = [ np.array([ 1 ], dtype = object) for _ in range(self.nr_vars*2) ]
+            zero = 0
+            one = 1
+            dtype = object
+        elif len(self.semirings) &gt;= 1:
+            weights = []
+            for i in range(len(self.weights)):
+                weights.append(self.weights[to_dimacs(i)])
+            zero = self.semirings[0].zero()
+            one = self.semirings[0].one()
+            dtype = self.semirings[0].dtype
+        return (weights, zero, one, dtype)
+
+    def remove_trivial_clauses(self):
+        &#34;&#34;&#34;Removes all the trivial clauses from the cnf. Trivial clauses are those clauses that contain both `v` and `-v` for some variables `v`.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        new_clauses = []
+        for c in self.clauses:
+            if not any([ any([ c[i] == -c[j] for j in range(i+1, len(c)) ]) for i in range(len(c)) ]):
+                new_clauses.append(c)
+        self.clauses = new_clauses
+
+
+    def evaluate_trivial(self):
+        &#34;&#34;&#34;Checks if this is a trivial instance and if so returns its value. Before the check all the trivial clauses are removed.
+
+        An instance is trivial if one of the following is true:
+            * It contains no clauses.
+            * It is unsatisfiable.
+
+        Returns:
+            object: The value of the AMC instance if it is trivial and `None` otherwise.
+        &#34;&#34;&#34;
+        self.remove_trivial_clauses()
+        if len(self.semirings) == 0:
+            if len(self.clauses) == 0:
+                if self.nr_vars == 0:
+                    return [ 1 ]
+                else:
+                    weights, zero, one, dtype = self.get_weights()
+                    first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+                    res = np.empty(first_shape, dtype=dtype)
+                    res[:] = one
+                    for i in range(self.nr_vars):
+                        res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                    return res
+            elif not self.is_sat():
+                return [ 0 ]
+        elif len(self.semirings) == 1:
+            if len(self.clauses) == 0:
+                if self.nr_vars == 0:
+                    return [ self.semirings[0].one() ]
+                else:
+                    weights, zero, one, dtype = self.get_weights()
+                    first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+                    res = np.empty(first_shape, dtype=dtype)
+                    res[:] = one
+                    for i in range(self.nr_vars):
+                        res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                    return res
+            elif not self.is_sat():        
+                weights, zero, one, dtype = self.get_weights()
+                first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+                res = np.empty(first_shape, dtype=dtype)
+                res[:] = zero
+                return res
+        elif len(self.semirings) == 2:
+            if len(self.clauses) == 0:
+                if self.nr_vars == 0:
+                    return [ self.semirings[0].one() ]
+                else:
+                    weights, _, _, _ = self.get_weights()
+                    second_shape = (np.shape(weights[0])[0], ) + np.shape(self.semirings[1].one())
+                    res = np.empty(second_shape, dtype=self.semirings[1].dtype)
+                    res[:] = self.semirings[1].one()
+                    first = set(self.quantified[0])
+                    second = set(range(1, self.nr_vars + 1))
+                    second.difference_update(first)
+                    for i in second:
+                        res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                    f_transform = eval(self.transforms[0])
+                    transform = lambda x : self.semirings[0].from_value(f_transform(x))
+                    res = np.array([ transform(w) for w in res ], dtype = self.semirings[0].dtype)
+                    for i in first:
+                        res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                    return res
+            elif not self.is_sat():
+                first_shape = (np.shape(self.weights[0])[0], ) + np.shape(self.semirings[0].one())
+                res = np.empty(first_shape, dtype=self.semirings[0].dtype)
+                res[:] = self.semirings[0].zero()
+                return res
+        # TODO: implement for more semirings
+                        
+    
+    @staticmethod
+    def compile_single(file_name, knowledge_compiler = &#34;c2d&#34;):
+        &#34;&#34;&#34;Compiles a CNF into a tractable circuit. The output circuit is in the file `file_name + &#34;.nnf&#34;`.
+
+        Currently supports c2d, miniC2D, d4 and sharpsat-td as knowledge compilers. 
+
+        For c2d assumes that there is:
+            * a cnf file `file_name`.
+            * a dtree file `file_name + &#34;.dtree&#34;`.
+            * (optionally) a variable file `file_name + &#34;.exist&#34;`,
+                specifying that the variables in the file should be projected away.
+                auxilliary variables are safe to project away.
+                the resulting circuit will not be smooth if the exist file is provided!
+
+        For miniC2D assumes that there is:
+            * a cnf file `file_name`.
+            * a vtree file `file_name + &#34;.vtree&#34;`.
+
+        For d4 assumes that there is:
+            * a cnf file `file_name`.
+
+        For sharpsat-td assumes that there is: 
+            * a cnf file `file_name`, which has knowledge compilation weights (see `CNF.write_kc_cnf()` for how that should look).
+
+        An D/Vtree can be generated by using the functionality of aspmc.compile.dtree / aspmc.compile.vtree.
+
+        Args:
+            file_name (:obj:`string`): Path to the CNF and files containing the parameters for the knowledge compiler.
+            knowledge_compiler (:obj:`string`, optional): The knowledge compiler to use. Defaults to `sharpsat-td`.
+        Returns:
+            None
+        &#34;&#34;&#34;        
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+
+        my_signals.tempfiles.add(file_name + &#39;.nnf&#39;)
+        logger.debug(&#34;Knowledge compiler output:&#34;)
+        if knowledge_compiler == &#34;c2d&#34;:
+            if os.path.isfile(f&#34;{file_name}.exist&#34;):
+                p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-reduce&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-cache_size&#34;, str(available_memory), &#34;-exist&#34;, file_name + &#34;.exist&#34;], stdout=subprocess.PIPE)
+            else:
+                p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-smooth_all&#34;, &#34;-reduce&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-cache_size&#34;, str(available_memory)], stdout=subprocess.PIPE)
+        elif knowledge_compiler == &#34;miniC2D&#34;:            
+            p = subprocess.Popen([os.path.join(src_path, &#34;miniC2D/bin/linux/miniC2D&#34;), &#34;-c&#34;, file_name, &#34;-v&#34;, file_name + &#34;.vtree&#34;, &#34;-s&#34; , str(available_memory)], stdout=subprocess.PIPE)
+        elif knowledge_compiler == &#34;sharpsat-td&#34;:
+            decot = float(config.config[&#34;decot&#34;])
+            decot = max(decot, 0.1)
+            p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-dDNNF&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), file_name, &#34;-dDNNF_out&#34;, file_name + &#34;.nnf&#34;], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+        elif knowledge_compiler == &#34;d4&#34;:
+            p = subprocess.Popen([os.path.join(src_path, &#34;d4/d4_static&#34;), file_name, &#34;-dDNNF&#34;, f&#34;-out={file_name}.nnf&#34;, &#34;-smooth&#34;], stdout=subprocess.PIPE)
+        
+        for line in iter(p.stdout.readline, b&#39;&#39;):
+            line = line.decode()
+            logger.debug(line[:-1])
+        p.wait()
+        p.stdout.close()
+
+        if p.returncode != 0:
+            logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+            exit(-1) 
+
+    def solve_compilation_single(self):
+        &#34;&#34;&#34;Compiles an AMC instance over a single semiring and performs the algebraic model counting over the compiled circuit.
+
+        Currently supports c2d, miniC2D, d4 , sharpsat-td-live and sharpsat-td as knowledge compilers. 
+        Generates a D/Vtree from a tree decomposition of the cnf for all knowledge compilers except d4.
+        How the tree decomposition is generated and which knowledge compiler is used is configured in aspmc.config.
+
+        Returns:
+            object: The value of the AMC instance.
+        &#34;&#34;&#34;
+        start = time.time()
+        cnf_fd, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        # sharpsat-td-live is a special case since it does not fall into the `first compile then evaluate category`
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td-live&#34;:
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.write_kc_cnf(cnf_file)
+            decot = float(config.config[&#34;decot&#34;])
+            decot = max(decot, 0.1)
+            # compute the available memory to set the cache size
+            available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+            p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-instant&#34;, &#34;-dDNNF&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+            weights, zero, one, dtype = self.get_weights()
+            results = Circuit.live_parse_wmc(p.stdout, weights, zero = zero, one = one, dtype = dtype)
+            p.wait()
+            p.stdout.close()        
+            if p.returncode != 0:
+                logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+                exit(-1) 
+            end = time.time()
+            logger.info(f&#34;Counting &amp; Compilation time:  {end - start}&#34;)
+            os.remove(cnf_tmp)
+            my_signals.tempfiles.remove(cnf_tmp)
+            return results
+        
+        # prepare everything for the compilation
+        v3 = None
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+            d3 = dtree.TD_dtree(self, solver = config.config[&#34;decos&#34;], timeout = config.config[&#34;decot&#34;])
+            d3.write(cnf_tmp + &#39;.dtree&#39;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.dtree&#39;)
+            end = time.time()
+            logger.info(f&#34;Dtree time:               {end - start}&#34;)
+            if len(self.semirings) == 1 and self.semirings[0].__name__ == &#34;aspmc.semirings.probabilistic&#34;:
+                # careful: with other semirings this does not generally work, since the &#34;-smooth_all&#34; option of c2d is necessary in general then
+                # this is a problem since -smooth_all also adds the variables that were existentially quantified away again
+                with open(cnf_tmp + &#39;.exist&#39;, &#39;w&#39;) as exist_file:
+                    exist_file.write(f&#34;{len(self.auxilliary)} {&#39; &#39;.join( str(v) for v in self.auxilliary )}&#34;)
+                my_signals.tempfiles.add(cnf_tmp + &#39;.exist&#39;)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:            
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+            v3 = vtree.TD_vtree(self, solver = config.config[&#34;decos&#34;], timeout = config.config[&#34;decot&#34;])
+            v3.write(cnf_tmp + &#34;.vtree&#34;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.vtree&#39;)
+            end = time.time()
+            logger.info(f&#34;Vtree time:               {end - start}&#34;)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;:
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.write_kc_cnf(cnf_file)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;d4&#34;:
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+                
+        # perform the actual compilation
+        start = time.time()
+        CNF.compile_single(cnf_tmp, knowledge_compiler = config.config[&#34;knowledge_compiler&#34;])
+        end = time.time()
+        logger.info(f&#34;Compilation time:         {end - start}&#34;)
+        # perform the counting on the circuit
+        weights, zero, one, dtype = self.get_weights()
+        start = time.time()
+        results = Circuit.parse_wmc(cnf_tmp + &#34;.nnf&#34;, weights, zero = zero, one = one, dtype = dtype, solver = config.config[&#34;knowledge_compiler&#34;], vtree = v3)
+        end = time.time()
+        logger.info(f&#34;Counting time:            {end - start}&#34;)
+        
+        # remove the temporary files
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.remove(cnf_tmp)
+        os.remove(cnf_tmp+&#34;.nnf&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.nnf&#39;)
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            os.remove(cnf_tmp + &#34;.dtree&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.dtree&#39;)
+            if (cnf_tmp + &#34;.exist&#34;) in my_signals.tempfiles:
+                os.remove(cnf_tmp + &#34;.exist&#34;)
+                my_signals.tempfiles.remove(cnf_tmp + &#39;.exist&#39;)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:
+            os.remove(cnf_tmp + &#34;.vtree&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.vtree&#39;)
+        return results
+
+
+    @staticmethod
+    def compile_nested(file_name, knowledge_compiler = &#34;c2d&#34;):        
+        &#34;&#34;&#34;Compiles a CNF into an X/D-constrained circuit. The output circuit is in the file `file_name + &#34;.nnf&#34;`.
+
+        Currently supports c2d (and miniC2D for only one level of nesting) as knowledge compilers. 
+
+        For c2d assumes that there is:
+            * a cnf file `file_name` 
+            * a dtree file `file_name + &#34;.dtree&#34;`
+            * a force file `file_name + &#34;.force&#34;`
+
+        For miniC2D assumes that there is:
+            * a cnf file `file_name` 
+            * a vtree file `file_name + &#34;.vtree&#34;`
+            
+        An X/D-constrained D/Vtree can be generated by using the functionality of aspmc.compile.constrained_compile.
+
+        Args:
+            file_name (:obj:`string`): Path to the CNF and files containing the parameters for the knowledge compiler.
+            knowledge_compiler (:obj:`string`, optional): The knowledge compiler to use. Defaults to `c2d`.
+        Returns:
+            None
+        &#34;&#34;&#34;
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+
+        my_signals.tempfiles.add(file_name + &#39;.nnf&#39;)
+        logger.debug(&#34;Knowledge compiler output:&#34;)
+
+        if knowledge_compiler == &#34;c2d&#34;:
+            p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-cache_size&#34;, str(available_memory), &#34;-keep_trivial_cls&#34;, &#34;-smooth_all&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-force&#34;, file_name + &#34;.force&#34;], stdout=subprocess.PIPE)
+        elif knowledge_compiler == &#34;miniC2D&#34;:
+            p = subprocess.Popen([os.path.join(src_path, &#34;miniC2D/bin/linux/miniC2D&#34;), &#34;-c&#34;, file_name, &#34;-v&#34;, file_name + &#34;.vtree&#34;, &#34;-s&#34; , str(available_memory)], stdout=subprocess.PIPE)
+        else:
+            logger.error(f&#34;Knowledge compiler {config.config[&#39;knowledge_compiler&#39;]} does not support X/D-constrained compilation&#34;)
+            exit(-1)
+
+        for line in iter(p.stdout.readline, b&#39;&#39;):
+            line = line.decode()
+            logger.debug(line[:-1])
+        p.wait()
+        p.stdout.close()
+
+        if p.returncode != 0:
+            logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+            exit(-1) 
+
+    def solve_compilation_nested(self):
+        &#34;&#34;&#34;Compiles a kAMC instance over a k semirings into an X/D-constrained circuit and performs the algebraic model counting over the compiled circuit.
+
+        Currently supports c2d (and miniC2D for 2AMC) as knowledge compilers. 
+        Generates an X/D-constrained D/Vtree by using the function in aspmc.compile.constrained_compile.
+        How the tree decompositions are generated and which knowledge compiler is used is configured in aspmc.config.
+
+        Returns:
+            object: The value of the kAMC instance.
+        &#34;&#34;&#34;
+        start = time.time()
+        cnf_fd, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            (force_vars, d3) = concom.tree_from_cnf(self, tree_type = dtree.Dtree)
+            d3.write(cnf_tmp + &#34;.dtree&#34;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.dtree&#39;)
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.force&#39;)
+            with open(cnf_tmp + &#34;.force&#34;, &#39;w&#39;) as force_out:
+                force_out.write(f&#34;{len(force_vars)} {&#39; &#39;.join([ str(v) for v in force_vars ])}&#34;)
+            end = time.time()
+            logger.info(f&#34;Dtree time:               {end - start}&#34;)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:
+            assert(len(self.semirings) == 2)
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+            (_, v3) = concom.tree_from_cnf(self, tree_type=vtree.Vtree)
+            v3.write(cnf_tmp + &#34;.vtree&#34;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.vtree&#39;)
+            end = time.time()
+            logger.info(f&#34;Vtree time:               {end - start}&#34;)
+        else:
+            logger.error(f&#34;Knowledge compiler {config.config[&#39;knowledge_compiler&#39;]} does not support X/D-constrained compilation&#34;)
+            exit(-1)
+        # perform the compilation
+        start = time.time()
+        CNF.compile_nested(cnf_tmp, knowledge_compiler = config.config[&#34;knowledge_compiler&#34;])
+        end = time.time()
+        logger.info(f&#34;Compilation time:         {end - start}&#34;)
+        # prepare the inputs
+        start = time.time()
+        P = set(self.quantified[0])
+        weights = []
+        for i in range(len(self.weights)):
+            weights.append(self.weights[to_dimacs(i)])
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            circ = ConstrainedDDNNF
+        else:
+            circ = ConstrainedSDD(path = None, v3 = v3)
+        end = time.time()
+        logger.info(f&#34;Preparation time:         {end - start}&#34;)
+        start = time.time()
+        results = circ.parse_wmc(cnf_tmp + &#39;.nnf&#39;, weights, self)
+        end = time.time()
+        logger.info(f&#34;Counting time:            {end - start}&#34;)
+        # clean up the files
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.remove(cnf_tmp)
+        os.remove(cnf_tmp+&#34;.nnf&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.nnf&#39;)
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            os.remove(cnf_tmp + &#34;.dtree&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.dtree&#39;)
+            os.remove(cnf_tmp + &#34;.force&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.force&#39;)
+        else:
+            os.remove(cnf_tmp + &#34;.vtree&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.vtree&#39;)
+        return results
+
+    def preprocessing(self):
+        start = time.time()
+        if len(self.semirings) == 1 and self.semirings[0].is_idempotent(): # TODO make sure is_idempotent() is always implemented
+            mode = &#34;idemp&#34;
+        else:
+            mode = &#34;general&#34;
+        
+        (cnf_file_fd, cnf_file_tmp) = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_file_tmp)
+
+        with os.fdopen(cnf_file_fd, mode = &#39;w&#39;) as cnf_file:
+            cnf_file.write(str(self)) 
+        
+        q = subprocess.Popen([os.path.join(src_path, &#34;preprocessor/bin/sharpSAT&#34;), &#34;-m&#34;, mode, &#34;-t&#34;, &#34;FPVEG&#34;, cnf_file_tmp], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        output, err = q.communicate()
+        
+        self.clauses = [] 
+        cnf_reached = False
+        for line in output.decode().split(&#39;\n&#39;):
+            line = line.split()
+            if len(line) &gt; 0 and not line[0] == &#39;c&#39;:
+                if line[0] == &#39;p&#39; and line[1] == &#34;cnf&#34;:
+                    cnf_reached = True
+                    self.nr_vars = int(line[2]) # TODO: instead check if value has changed (which should not happen)
+                elif cnf_reached:
+                    line = [int(l) for l in line]
+                    self.clauses.append(line[:-1])
+        end = time.time()
+        os.remove(cnf_file_tmp)
+        my_signals.tempfiles.remove(cnf_file_tmp)
+        logger.info(f&#34;Preprocessing time:       {end - start}&#34;)
+
+    def evaluate(self, strategy = &#34;flexible&#34;, preprocessing = False):
+        &#34;&#34;&#34;Evaluates an AMC instance by using the given strategy `strategy`.
+        
+        The strategy can be one of 
+            * `&#34;flexible&#34;`: do what is assumed best. 
+                Currently, uses maxsat for idempotent semirings and knowledge compilation otherwise.
+            * `&#34;compilation&#34;`: compile regardless of the properties of the semiring.
+
+        Calls `solve_compilation` or `solve_maxsat` depending on the problem and strategy.
+        How the tree decompositions are generated and which knowledge compiler/maxsat solver is used is configured in aspmc.config.
+
+        Args:
+            strategy (:obj:`string`, optional): Which strategy to use for evaluation. Default is `&#34;flexible&#34;`.
+        Returns:
+            object: The value of the AMC instance.
+        &#34;&#34;&#34;
+        if strategy == &#34;flexible&#34;:
+            if len(self.semirings) == 1 and self.semirings[0].is_idempotent():
+                return self.solve_maxsat()
+            elif len(self.semirings) == 1 and config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;\
+                 and self.semirings[0].__name__ == &#34;aspmc.semirings.probabilistic&#34;:
+                return self.solve_wmc()
+            elif len(self.semirings) == 0 and config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;:
+                return self.solve_mc()
+            else:
+                return self.solve_compilation(preprocessing = preprocessing)
+        elif strategy == &#34;compilation&#34;:
+            return self.solve_compilation(preprocessing = preprocessing)
+        else: 
+            logger.error(f&#34;Unknown evaluation strategy {strategy}.&#34;)
+            exit(-1)
+
+    def solve_compilation(self, preprocessing = False):   
+        &#34;&#34;&#34;Compiles an AMC instance and performs the algebraic model counting over the compiled circuit.
+
+        Calls `compile_single` or `compile_nested`.
+        How the tree decompositions are generated and which knowledge compiler is used is configured in aspmc.config.
+
+        Returns:
+            object: The value of the AMC instance.
+        &#34;&#34;&#34;
+        if preprocessing:
+            logger.info(&#34;Preprocessing enabled&#34;)
+            self.preprocessing()
+            logger.info(&#34;------------------------------------------------------------&#34;)
+        else:
+            logger.info(&#34;Preprocessing disabled&#34;)
+        results = self.evaluate_trivial()
+        if results is not None:
+            return results
+        logger.info(&#34;   Stats Compilation&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        if len(self.semirings) &lt;= 1:
+            results = self.solve_compilation_single()
+        else:
+            results = self.solve_compilation_nested()
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        return results
+
+    def solve_maxsat(self):
+        cnf_fd, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        logger.debug(f&#34;    MaxSAT CNF file: {cnf_tmp}&#34;)
+        # first we check whether this is actually a MaxSAT instance or whether it is just a SAT instance in disguise
+        import math
+        real_weights = { l : w[0].value for l,w in self.weights.items() }
+        if self.semirings[0].__name__ == &#34;aspmc.semirings.maxtimes&#34;:
+            # we first need to convert into maxplus weights
+            real_weights = { l : math.log(w) if w &gt; 0 else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+        elif self.semirings[0].__name__ == &#34;aspmc.semirings.minplus&#34;:
+            # we first need to convert into maxplus weights
+            real_weights = { l : -w if w != float(&#34;inf&#34;) else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+        elif self.semirings[0].__name__ != &#34;aspmc.semirings.maxplus&#34;:
+            logger.error(f&#34;MaxSAT evaluation is currently not supported for semiring {self.semirings[0].__name__}&#34;)
+            exit(-1)
+        # sort out variables that are irrelevant
+        real_weights = { l : w for l,w in real_weights.items() if w != real_weights[-l]}
+        # handle hard constraints from literals with weight -inf and keep the rest
+        negated_units = [ l for l,w in real_weights.items() if w == float(&#39;-inf&#39;)]
+        real_weights = { l : w for l,w in real_weights.items() if w != float(&#39;-inf&#39;) and abs(w) &gt; 0}
+
+
+        (weights, zero, one, dtype) = self.get_weights()
+        first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+        if len(real_weights) == 0:
+            # this is a SAT instance!
+            with os.fdopen(cnf_fd, mode=&#39;wb&#39;) as cnf_out:
+                # create result file
+                res_fd, res_tmp = tempfile.mkstemp()
+                my_signals.tempfiles.add(res_tmp)
+                # write the cnf with the additional negated unit literals
+                cnf_out.write(f&#34;p cnf {self.nr_vars} {len(self.clauses) + len(negated_units)}\n&#34;.encode())
+                for c in self.clauses:
+                    cnf_out.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+                for lit in negated_units:
+                    cnf_out.write(f&#34;{-lit} 0\n&#34;.encode())
+                # solve
+                p = subprocess.Popen([os.path.join(src_path, &#34;minisat-definitions/bin/minisat&#34;), cnf_tmp, res_tmp], stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds = True)
+                p.wait()
+                output = p.stdout.read().decode().split(&#34;\n&#34;)
+                for line in output:
+                    line = line.split()
+                    if len(line) == 0:
+                        continue
+                    if line[0] == &#39;UNSATISFIABLE&#39;:
+                        weight = np.empty(first_shape, dtype=dtype)
+                        weight[:] = zero
+                        solution = list(range(1,self.nr_vars + 1))
+                        p.stdout.close()
+                    elif line[0] == &#39;SATISFIABLE&#39;:
+                        with os.fdopen(res_fd, mode=&#39;r&#39;) as result_file:
+                            solution = result_file.read().split(&#39;\n&#39;)[1]
+                        solution = [ int(v) for v in solution.split(&#39; &#39;) if v != &#39;&#39; ]
+                        weight = np.empty(first_shape, dtype=dtype)
+                        weight[:] = one
+                        for lit in solution:
+                            weight *= weights[to_pos(lit)]
+                        p.stdout.close()
+                os.remove(res_tmp)
+                my_signals.tempfiles.remove(res_tmp)
+        else:
+            logger.info(&#34;   Stats MaxSAT&#34;)
+            logger.info(&#34;------------------------------------------------------------&#34;)
+            start = time.time()
+            with os.fdopen(cnf_fd, mode=&#39;wb&#39;) as cnf_out:
+                self.write_maxsat_cnf(cnf_out)
+            p = subprocess.Popen([os.path.join(src_path, &#34;UWrMaxSAT/uwrmaxsat/build/release/bin/uwrmaxsat&#34;), &#34;-no-bin&#34;, &#34;-no-sat&#34;, &#34;-m&#34;, &#34;-bm&#34;, &#34;-maxpre-time=10&#34;, cnf_tmp], stdout=subprocess.PIPE, close_fds = True)#, stderr=subprocess.PIPE)
+            solution = None
+            while p.poll() is None or solution is None:
+                line = p.stdout.readline().decode()
+                if len(line) == 0:
+                    continue
+                if line.startswith(&#34;s&#34;):
+                    if line[2:] == &#34;OPTIMUM FOUND&#34;:
+                        continue
+                    elif line[2:] == &#34;UNKNOWN&#34;:
+                        raise SolvingError(&#34;MaxSAT solver returned UNKNOWN&#34;)
+                    elif line[2:] == &#34;SATISFIABLE&#34;:
+                        raise SolvingError(&#34;MaxSAT solver returned SATISFIABLE. Probably it was interrupted during execution&#34;)
+                    elif line[2:] == &#34;UNSATISFIABLE&#34;:
+                        weight = np.empty(first_shape, dtype=dtype)
+                        weight[:] = zero
+                        solution = list(range(1,self.nr_vars + 1))
+                elif line[0] == &#39;v&#39;:
+                    bitset = line[2:-1]
+                    solution = [ i if bitset[i-1] == &#39;1&#39; else -i for i in range(1,self.nr_vars + 1)]
+                    weight = np.empty(first_shape, dtype=dtype)
+                    weight[:] = one
+                    for lit in solution:
+                        weight *= weights[to_pos(lit)]
+            p.stdout.close()
+            if solution is None:
+                raise SolvingError(&#34;MaxSAT solver did not print an assignment!&#34;)
+            
+            logger.info(f&#34;Solving time:         {time.time() - start}&#34;)
+            logger.info(&#34;------------------------------------------------------------&#34;)
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.add(cnf_tmp)
+        return weight
+
+
+    def solve_wmc(self):
+        _, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        logger.debug(f&#34;    WCNF file: {cnf_tmp}&#34;)
+        self.to_file(cnf_tmp, extras=True)
+        logger.info(&#34;   Stats Model Counter&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        start = time.time()
+        decot = float(config.config[&#34;decot&#34;])
+        decot = max(decot, 0.1)
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+        first = None
+        for weight in self.weights.values():
+            first = weight
+            break
+        p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-MWD&#34;, str(len(first)), &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+        result = None
+        logger.debug(&#34;Solver output:&#34;)
+        for line in iter(p.stdout.readline, b&#39;&#39;):
+            line = line.decode()
+            if line.startswith(&#34;c s exact arb float &#34;):
+                result = np.array([ float(part) for part in line[len(&#34;c s exact arb float &#34;):-1].split(&#34;;&#34;) ])
+            logger.debug(line[:-1])
+        p.wait()
+        p.stdout.close()
+        if result is None:
+            raise SolvingError(&#34;Model Counter did not print a solution!&#34;)
+        
+        logger.info(f&#34;Counting time:         {time.time() - start}&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.add(cnf_tmp)
+        return result
+
+    def solve_mc(self):
+        _, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        logger.debug(f&#34;    CNF file: {cnf_tmp}&#34;)
+        self.to_file(cnf_tmp, extras=False)
+        logger.info(&#34;   Stats Model Counter&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        start = time.time()
+        decot = float(config.config[&#34;decot&#34;])
+        decot = max(decot, 0.1)
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+        p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+        result = None
+        logger.debug(&#34;Solver output:&#34;)
+        for line in iter(p.stdout.readline, b&#39;&#39;):
+            line = line.decode()
+            if line.startswith(&#34;c s exact arb int &#34;):
+                result = np.array([ int(line[len(&#34;c s exact arb int &#34;):-1]) ])
+            logger.debug(line[:-1])
+        p.wait()
+        p.stdout.close()
+        if result is None:
+            raise SolvingError(&#34;Model Counter did not print a solution!&#34;)
+        
+        logger.info(f&#34;Counting time:         {time.time() - start}&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.add(cnf_tmp)
+        return result</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="aspmc.compile.cnf.CNF"><code class="flex name class">
+<span>class <span class="ident">CNF</span></span>
+<span>(</span><span>path=None, string=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class is an extended cnf class, which can be used to compile and
+evaluate algebraic model counting problems over cnfs using the knowledge compiler in aspmc.config.</p>
+<p>The syntax of extended cnf files is as follows:</p>
+<pre><code>* format string: one line specifying the number of variables and clauses.
+
+    `p cnf &lt;nr_vars&gt; &lt;len(clauses)&gt;`
+* clauses: one line for each clause `c = [lit_1, lit_2, ..., lit_n]`.
+
+    `&lt;lit_1&gt; &lt;lit_2&gt; ... &lt;lit_n&gt; 0`
+* auxilliary: one line specifying a list &lt;code&gt;\[v\_1, ..., v\_n]&lt;/code&gt; of variables that may be projected away without changing the evaluation result.
+
+    `c p auxilliary &lt;v_1&gt; &lt;v_2&gt; ... &lt;v_n&gt; 0`
+* weights: one line for each weight "w = np.array([w_1, w_2, ..., w_n])" of a literal &lt;code&gt;lit&lt;/code&gt;.
+
+    `c p weight &lt;lit&gt; &lt;w_1&gt;;&lt;w_2&gt;;...;&lt;w_n&gt; 0`
+* semirings: one line containing all the names of the semiring modules `semirings = [s_1, s_2, ..., s_n]`.
+
+    `c p semirings &lt;s_1.__name__&gt; &lt;s_2.__name__&gt; ... &lt;s_n.__name__&gt; 0`
+* quantified: one line for each list `q_i = [v_1, ..., v_n]` in quantified. Lowest index quantified variables first.
+
+    `c p quantify &lt;v_1&gt; &lt;v_2&gt; ... &lt;v_n&gt; 0`
+* tranform: one line containing the transformation function from semiring[1] to semiring[0] in string representation.
+    Must be such that &lt;code&gt;eval(repr(transform))&lt;/code&gt; works independently of the imported modules.
+
+    `c p transform &lt;repr(transform)&gt; 0`
+</code></pre>
+<h2 id="args">Args</h2>
+<p>path (:obj:<code>string</code>, optional): Optional parameter specifying the location of an extended cnf file to load. Defaults to None.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>clauses</code></strong> :&ensp;<code>list</code></dt>
+<dd>A list of clauses with literals in minisat format.</dd>
+<dt><strong><code>nr_vars</code></strong> :&ensp;<code>int</code></dt>
+<dd>The number of variables that the cnf is specified over.</dd>
+<dt><strong><code>auxilliary</code></strong> :&ensp;<code>set</code></dt>
+<dd>A set of variables that may be projected away without changing the evaluation result.</dd>
+<dt><strong><code>weights</code></strong> :&ensp;<code>dict</code></dt>
+<dd>A dictionary that can contain for each integer from {-nr_vars, &hellip;, -1, 1, &hellip;, nr_vars} a weight over a semiring.
+Note that even if there is only one semiring value it must be encapsulated in a numpy array.</dd>
+<dt><strong><code>semirings</code></strong> :&ensp;<code>list</code></dt>
+<dd>A list of semiring modules that are used in this cnf.
+See aspmc.semirings for how these modules should look.
+Currently at most two semirings are supported.</dd>
+<dt><strong><code>quantified</code></strong> :&ensp;<code>list</code></dt>
+<dd>A list of lists of variables (integers) specifying, which variables are "quantified" over which semirings.
+Must have the same length as <code>semirings</code>.
+The variables in quantified[i] are over semirings[i].
+The variables in quantified[i] are quantified before the ones in quantified[i+i].</dd>
+<dt><strong><code>transform</code></strong> :&ensp;<code>string</code></dt>
+<dd>A string representation of a python function that takes a values from semiring[i] and returns a value <code>x</code> that can be given to
+<code>semirings[i-1].from_value(x)</code> to obtain a value in semirings[i-1].</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CNF(object):
+    &#34;&#34;&#34;This class is an extended cnf class, which can be used to compile and 
+    evaluate algebraic model counting problems over cnfs using the knowledge compiler in aspmc.config.
+
+    The syntax of extended cnf files is as follows:
+
+        * format string: one line specifying the number of variables and clauses.
+
+            `p cnf &lt;nr_vars&gt; &lt;len(clauses)&gt;`
+        * clauses: one line for each clause `c = [lit_1, lit_2, ..., lit_n]`.
+
+            `&lt;lit_1&gt; &lt;lit_2&gt; ... &lt;lit_n&gt; 0`
+        * auxilliary: one line specifying a list `[v_1, ..., v_n]` of variables that may be projected away without changing the evaluation result.
+        
+            `c p auxilliary &lt;v_1&gt; &lt;v_2&gt; ... &lt;v_n&gt; 0`
+        * weights: one line for each weight &#34;w = np.array([w_1, w_2, ..., w_n])&#34; of a literal `lit`.
+
+            `c p weight &lt;lit&gt; &lt;w_1&gt;;&lt;w_2&gt;;...;&lt;w_n&gt; 0`
+        * semirings: one line containing all the names of the semiring modules `semirings = [s_1, s_2, ..., s_n]`.
+
+            `c p semirings &lt;s_1.__name__&gt; &lt;s_2.__name__&gt; ... &lt;s_n.__name__&gt; 0`
+        * quantified: one line for each list `q_i = [v_1, ..., v_n]` in quantified. Lowest index quantified variables first.
+
+            `c p quantify &lt;v_1&gt; &lt;v_2&gt; ... &lt;v_n&gt; 0`
+        * tranform: one line containing the transformation function from semiring[1] to semiring[0] in string representation.
+            Must be such that `eval(repr(transform))` works independently of the imported modules.
+            
+            `c p transform &lt;repr(transform)&gt; 0`
+
+    Args:
+        path (:obj:`string`, optional): Optional parameter specifying the location of an extended cnf file to load. Defaults to None.
+
+    Attributes:
+        clauses (list): A list of clauses with literals in minisat format.
+        nr_vars (int): The number of variables that the cnf is specified over.
+        auxilliary (set): A set of variables that may be projected away without changing the evaluation result.
+        weights (dict): A dictionary that can contain for each integer from {-nr_vars, ..., -1, 1, ..., nr_vars} a weight over a semiring.
+            Note that even if there is only one semiring value it must be encapsulated in a numpy array.
+        semirings (list): A list of semiring modules that are used in this cnf.
+            See aspmc.semirings for how these modules should look.
+            Currently at most two semirings are supported.
+        quantified (list): A list of lists of variables (integers) specifying, which variables are &#34;quantified&#34; over which semirings.
+            Must have the same length as `semirings`.
+            The variables in quantified[i] are over semirings[i].
+            The variables in quantified[i] are quantified before the ones in quantified[i+i].
+        transform (string): A string representation of a python function that takes a values from semiring[i] and returns a value `x` that can be given to 
+            `semirings[i-1].from_value(x)` to obtain a value in semirings[i-1].
+
+    &#34;&#34;&#34;
+    def __init__(self, path = None, string = None):
+        assert(path is None or string is None)
+        self.clauses = []
+        self.nr_vars = 0
+        self.auxilliary = set()
+        self.weights = {}
+        self.semirings = []
+        self.quantified = []
+        self.transforms = []
+        if path is not None:
+            with open(path) as in_file:
+                for line in in_file:
+                    line = line.split()
+                    if len(line) == 0:
+                        continue
+                    if line[0] == &#39;c&#39;:
+                        if len(line) &gt; 2 and line[1] == &#39;p&#39;:
+                            if line[2] == &#34;weight&#34;:
+                                if int(line[3]) != 0:
+                                    self.weights[int(line[3])] = &#39; &#39;.join(line[4:-1])
+                            elif line[2] == &#34;semirings&#34;:
+                                self.semirings = [ importlib.import_module(mod) for mod in line[3:-1] ]
+                            elif line[2] == &#34;transform&#34;:
+                                self.transforms.append(&#39; &#39;.join(line[3:-1]))
+                            elif line[2] == &#34;quantify&#34;:
+                                self.quantified.append([int(x) for x in line[3:-1]])
+                            elif line[2] == &#34;auxilliary&#34;:
+                                self.auxilliary.update([int(x) for x in line[3:-1]])
+                            else:
+                                logger.error(f&#34;Unknown property {line[2]}!&#34;)
+                            if line[-1] != &#39;0&#39;:
+                                logger.error(&#34;Property line not ended with 0!&#34;)
+                    elif line[0] == &#39;p&#39;:
+                        self.nr_vars = int(line[2])
+                    else:
+                        line = [int(l) for l in line]
+                        self.clauses.append(line[:-1])
+                        
+        if string is not None:
+            for line in string.split(&#34;\n&#34;):
+                line = line.split()
+                if len(line) == 0:
+                    continue
+                if line[0] == &#39;c&#39;:
+                    if len(line) &gt; 2 and line[1] == &#39;p&#39;:
+                        if line[2] == &#34;weight&#34;:
+                            self.weights[int(line[3])] = &#39; &#39;.join(line[4:-1])
+                        elif line[2] == &#34;semirings&#34;:
+                            self.semirings = [ importlib.import_module(mod) for mod in line[3:-1] ]
+                        elif line[2] == &#34;transform&#34;:
+                            self.transforms.append(&#39; &#39;.join(line[3:-1]))
+                        elif line[2] == &#34;quantify&#34;:
+                            self.quantified.append([int(x) for x in line[3:-1]])
+                        elif line[2] == &#34;auxilliary&#34;:
+                                self.auxilliary.update([int(x) for x in line[3:-1]])
+                        else:
+                            logger.error(f&#34;Unknown property {line[2]}!&#34;)
+                        if line[-1] != &#39;0&#39;:
+                            logger.error(&#34;Property line not ended with 0!&#34;)
+                elif line[0] == &#39;p&#39;:
+                    self.nr_vars = int(line[2])
+                else:
+                    line = [int(l) for l in line]
+                    self.clauses.append(line[:-1])
+
+        # check whether the input is reasonable
+        if len(self.quantified) != len(self.semirings):
+            logger.error(&#34;We must have the same number of semirings and quantifiers!&#34;)
+            exit(-1)
+        if len(self.semirings) != len(self.transforms) + 1 and (path is not None or string is not None):
+            logger.error(&#34;If there are multiple semirings, we need a transforms between them.&#34;)
+            exit(-1)
+        if len(self.weights) &gt; 0 and len(self.quantified) == 0:
+            self.quantified = [ set(range(1,self.nr_vars + 1)) ]
+            import aspmc.semirings.probabilistic
+            self.semirings = [ aspmc.semirings.probabilistic ]
+            
+        var_to_val_type = [ len(self.semirings) - 1 for _ in range(self.nr_vars + 1) ]
+        for val_type, vars in enumerate(self.quantified):
+            for var in vars:
+                var_to_val_type[var] = val_type
+                
+        for idx in self.weights:
+            val_type = var_to_val_type[idx]
+            self.weights[idx] = np.array([ self.semirings[val_type].parse(w) for w in self.weights[idx].split(&#34;;&#34;) ])
+
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        ret = f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;
+        for c in self.clauses:
+            ret += f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;
+        for idx in self.weights:
+            if abs(idx) in self.quantified[0]:
+                weight = &#39;;&#39;.join([ self.semirings[0].to_string(w) for w in self.weights[idx] ])
+            else:
+                weight = &#39;;&#39;.join([ self.semirings[1].to_string(w) for w in self.weights[idx] ])
+            ret += f&#34;c p weight {idx} {weight} 0\n&#34;
+        if len(self.semirings) &gt; 0:
+            ret += f&#34;c p semirings {&#39; &#39;.join([ x.__name__ for x in self.semirings])} 0\n&#34;
+        for transform in self.transforms:
+            ret += f&#34;c p transform {transform} 0\n&#34;
+        for l in self.quantified:
+            ret += f&#34;c p quantify {&#39; &#39;.join([str(x) for x in l])} 0\n&#34;
+        ret += f&#34;c p auxilliary {&#39; &#39;.join([str(x) for x in self.auxilliary])} 0\n&#34;
+        return ret
+
+    def write_kc_cnf(self, out_file):
+        out_file.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;.encode())
+        for c in self.clauses:
+            out_file.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+        for idx in range(1, self.nr_vars + 1):
+            if idx not in self.auxilliary:
+                out_file.write(f&#34;c p weight {idx} {idx} 0\n&#34;.encode())
+                out_file.write(f&#34;c p weight {-idx} {-idx} 0\n&#34;.encode())
+
+    def write_maxsat_cnf(self, out_file):
+        import math
+        real_weights = { l : w[0].value for l,w in self.weights.items() }
+        if self.semirings[0].__name__ == &#34;aspmc.semirings.maxtimes&#34;:
+            # we first need to convert into maxplus weights
+            real_weights = { l : math.log(w) if w &gt; 0 else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+        elif self.semirings[0].__name__ == &#34;aspmc.semirings.minplus&#34;:
+            # we first need to convert into maxplus weights
+            real_weights = { l : -w if w != float(&#34;inf&#34;) else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+        elif self.semirings[0].__name__ != &#34;aspmc.semirings.maxplus&#34;:
+            logger.error(f&#34;MaxSAT evaluation is currently not supported for semiring {self.semirings[0].__name__}&#34;)
+            exit(-1)
+        # sort out variables that are irrelevant
+        real_weights = { l : w for l,w in real_weights.items() if w != real_weights[-l]}
+        # handle hard constraints from literals with weight -inf and keep the rest
+        negated_units = [ l for l,w in real_weights.items() if w == float(&#39;-inf&#39;)]
+        real_weights = { l : w for l,w in real_weights.items() if w != float(&#39;-inf&#39;)}
+        # make sure every variable has exactly one weight and that weight is greater than 0
+        for i in range(1, self.nr_vars + 1):
+            if i in real_weights:
+                if -i in real_weights:
+                    if real_weights[i] &lt; real_weights[-i]:
+                        real_weights[-i] -= real_weights[i]
+                        del real_weights[i]
+                    else:
+                        real_weights[i] -= real_weights[-i]
+                        del real_weights[-i]
+                else:
+                    if real_weights[i] &lt; 0:
+                        real_weights[-i] = -real_weights[i]
+                        del real_weights[i]
+            else:
+                if -i in real_weights:
+                    if real_weights[-i] &lt; 0:
+                        real_weights[i] = -real_weights[-i]
+                        del real_weights[-i]
+        max_exp = max([ math.ceil(-math.log10(w)) for w in real_weights.values() if w &gt; 0 ] + [0])
+        real_weights = { l : math.floor(w*10**(8 + max_exp)) for l,w in real_weights.items() if abs(w) &gt;= 0.1**(8 + max_exp) }
+        gcd = 0
+        for w in real_weights.values():
+            gcd = math.gcd(w, gcd)
+        real_weights = { l : w//gcd for l,w in real_weights.items() }
+        top = sum(real_weights.values()) + 2
+        if top &gt;= 2**63:
+            logger.error(f&#34;Cannot reduce this instance to a maxsat instance.&#34;)
+            exit(-1)
+        out_file.write(f&#34;p wcnf {self.nr_vars} {len(self.clauses) + len(real_weights)} {top}\n&#34;.encode())
+        for c in self.clauses:
+            out_file.write(f&#34;{top} {&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+        for l in negated_units:
+            out_file.write(f&#34;{top} {-l} 0\n&#34;.encode())
+        for l, w in real_weights.items():
+            out_file.write(f&#34;{w} {l} 0\n&#34;.encode())
+
+        #c = CNF()
+        #c.clauses = self.clauses
+        #import aspmc.semirings.maxplus as maxplus
+        #c.weights = { i : np.array([maxplus.one()]) for i in range(-self.nr_vars, self.nr_vars + 1)}
+        #del c.weights[0]
+        #c.semirings = [maxplus]
+        #c.quantified = [list(range(1,self.nr_vars + 1))]
+        #for l, w in real_weights.items():
+        #    c.weights[l] = np.array([maxplus.MaxPlusFloat(-w)])
+        #c.nr_vars = self.nr_vars
+        #print(c)
+
+
+    def get_defined(self, P, timeout = &#34;150&#34;):
+        &#34;&#34;&#34;Figures out the subset of variables of the cnf that are defined by `P` w.r.t. the cnf.
+        Calls a C++ binary for performance reasons.
+
+        Args:
+            P (iterable): The set of input variables that can be used for definitions.
+
+        Returns:
+            list: The list of variables that are defined by the inputs `P` w.r.t. the cnf.
+        &#34;&#34;&#34;
+        (cnf_fd, cnf_tmp) = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        (input_fd, input_tmp) = tempfile.mkstemp()
+        my_signals.tempfiles.add(input_tmp)
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.to_stream(cnf_file)
+        with os.fdopen(input_fd, &#39;w&#39;) as input_file:
+            input_file.write(&#34; &#34;.join([str(p) for p in list(P) + [0]]))
+        p = subprocess.Popen([&#34;timeout&#34;,  timeout, os.path.join(src_path, &#34;minisat-definitions/bin/defined&#34;), cnf_tmp, input_tmp], stdout=subprocess.PIPE)
+        p.wait()
+        ret = p.stdout.read().decode().split(&#39; &#39;)[:-1]
+        ret = [ int(v) for v in ret ]
+        p.stdout.close()
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.remove(cnf_tmp)
+        os.remove(input_tmp)
+        my_signals.tempfiles.remove(input_tmp)
+        return ret
+        
+    def is_sat(self):
+        &#34;&#34;&#34;Calls `minisat` to check if the cnf is satisfiable.
+
+        Returns:
+            bool: `True` if the cnf is satisfiable, `False` otherwise.
+        &#34;&#34;&#34;
+        p = subprocess.Popen([os.path.join(src_path, &#34;minisat-definitions/bin/minisat&#34;)], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        p.stdin.write(str(self).encode())
+        p.stdin.close()
+        p.wait()
+        for line in p.stdout.read().decode().split(&#39;\n&#39;):
+            line = line.split()
+            if len(line) == 0:
+                continue
+            if line[0] == &#39;UNSATISFIABLE&#39;:
+                p.stdout.close()
+                return False
+            elif line[0] == &#39;SATISFIABLE&#39;:
+                p.stdout.close()
+                return True
+
+    def to_file(self, path, extras = False):
+        &#34;&#34;&#34;Write the cnf to the file with the name `path`.
+
+        Args:
+            path (string): The path of the file the cnf should be written to.
+            extras (bool, optional): Whether the extra information like weights should be written. Defaults to False.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        with open(path, mode = &#39;w&#39;) as file_out:
+            file_out.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;)
+            for c in self.clauses:
+                file_out.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;)
+            if extras:
+                for idx in self.weights:
+                    if abs(idx) in self.quantified[0]:
+                        weight = &#39;;&#39;.join([ self.semirings[0].to_string(w) for w in self.weights[idx] ])
+                    else:
+                        weight = &#39;;&#39;.join([ self.semirings[1].to_string(w) for w in self.weights[idx] ])
+                    file_out.write(f&#34;c p weight {idx} {weight} 0\n&#34;)
+                if len(self.semirings) &gt; 0:
+                    file_out.write(f&#34;c p semirings {&#39; &#39;.join([ x.__name__ for x in self.semirings])} 0\n&#34;)
+                for transform in self.transforms:
+                    file_out.write(f&#34;c p transform {transform} 0\n&#34;)
+                for l in self.quantified:
+                    file_out.write(f&#34;c p quantify {&#39; &#39;.join([str(x) for x in l])} 0\n&#34;)
+                file_out.write(f&#34;c p auxilliary {&#39; &#39;.join([str(x) for x in self.auxilliary])} 0\n&#34;)
+            
+
+    def to_stream(self, stream, extras = False):
+        &#34;&#34;&#34;Write the cnf to the stream `stream`.
+
+        Args:
+            stream (stream): The stream the cnf should be written to. Must accept binary encoding.
+            extras (bool, optional): Whether the extra information like weights should be written. Defaults to False.
+
+        Returns:
+            None
+        &#34;&#34;&#34;            
+        stream.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;.encode())
+        for c in self.clauses:
+            stream.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+        if extras:
+            for idx in self.weights:
+                if abs(idx) in self.quantified[0]:
+                    weight = &#39;;&#39;.join([ self.semirings[0].to_string(w) for w in self.weights[idx] ])
+                else:
+                    weight = &#39;;&#39;.join([ self.semirings[1].to_string(w) for w in self.weights[idx] ])
+                stream.write(f&#34;c p weight {idx} {weight} 0\n&#34;.encode())
+            if len(self.semirings) &gt; 0:
+                stream.write(f&#34;c p semirings {&#39; &#39;.join([ x.__name__ for x in self.semirings])} 0\n&#34;.encode())
+            for transform in self.transforms:
+                stream.write(f&#34;c p transform {transform} 0\n&#34;.encode())
+            for l in self.quantified:
+                stream.write(f&#34;c p quantify {&#39; &#39;.join([str(x) for x in l])} 0\n&#34;.encode())
+            stream.write(f&#34;c p auxilliary {&#39; &#39;.join([str(x) for x in self.auxilliary])} 0\n&#34;.encode())
+
+    def primal_graph(self):
+        &#34;&#34;&#34;Construct the an `nx.Graph` that corresponds to the primal graph of the cnf.
+
+        Returns:
+            nx.Graph: The primal graph of the cnf. 
+        &#34;&#34;&#34;
+        graph = nx.Graph()
+        graph.add_nodes_from(range(1, self.nr_vars+1))
+        for c in self.clauses:
+            graph.add_edges_from(sum([[(abs(l),abs(lp)) for l in c if abs(l) != abs(lp)] for lp in c], []))
+        return graph
+
+    def primal_hypergraph(self):        
+        &#34;&#34;&#34;Construct the an `aspmc.graph.Hypergraph` that corresponds to the primal hypergraph of the cnf.
+
+        Returns:
+            aspmc.graph.Hypergraph: The primal hypergraph of the cnf. 
+        &#34;&#34;&#34;
+        graph = Hypergraph()
+        graph.add_nodes_from(range(1, self.nr_vars+1))
+        for c in self.clauses:
+            graph.add_edge([ abs(l) for l in c ])
+        return graph
+
+    def get_weights(self):
+        &#34;&#34;&#34;Get some relevant information about the weights of the cnf in a convenient format.
+
+        Returns:
+            (list, object, object, type): 
+            
+            The weights of the literals. `weights[2*(i-1)]` is the weight of `i` and `weights[2*(i-1) + 1]` is the weight of `-i`.
+            
+            The zero of the (outermost) AMC instance.
+            
+            The one of the (outermost) AMC instance.
+            
+            The type of the weights that should be used for numpy arrays.
+        &#34;&#34;&#34;
+        if len(self.semirings) == 0:
+            weights = [ np.array([ 1 ], dtype = object) for _ in range(self.nr_vars*2) ]
+            zero = 0
+            one = 1
+            dtype = object
+        elif len(self.semirings) &gt;= 1:
+            weights = []
+            for i in range(len(self.weights)):
+                weights.append(self.weights[to_dimacs(i)])
+            zero = self.semirings[0].zero()
+            one = self.semirings[0].one()
+            dtype = self.semirings[0].dtype
+        return (weights, zero, one, dtype)
+
+    def remove_trivial_clauses(self):
+        &#34;&#34;&#34;Removes all the trivial clauses from the cnf. Trivial clauses are those clauses that contain both `v` and `-v` for some variables `v`.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        new_clauses = []
+        for c in self.clauses:
+            if not any([ any([ c[i] == -c[j] for j in range(i+1, len(c)) ]) for i in range(len(c)) ]):
+                new_clauses.append(c)
+        self.clauses = new_clauses
+
+
+    def evaluate_trivial(self):
+        &#34;&#34;&#34;Checks if this is a trivial instance and if so returns its value. Before the check all the trivial clauses are removed.
+
+        An instance is trivial if one of the following is true:
+            * It contains no clauses.
+            * It is unsatisfiable.
+
+        Returns:
+            object: The value of the AMC instance if it is trivial and `None` otherwise.
+        &#34;&#34;&#34;
+        self.remove_trivial_clauses()
+        if len(self.semirings) == 0:
+            if len(self.clauses) == 0:
+                if self.nr_vars == 0:
+                    return [ 1 ]
+                else:
+                    weights, zero, one, dtype = self.get_weights()
+                    first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+                    res = np.empty(first_shape, dtype=dtype)
+                    res[:] = one
+                    for i in range(self.nr_vars):
+                        res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                    return res
+            elif not self.is_sat():
+                return [ 0 ]
+        elif len(self.semirings) == 1:
+            if len(self.clauses) == 0:
+                if self.nr_vars == 0:
+                    return [ self.semirings[0].one() ]
+                else:
+                    weights, zero, one, dtype = self.get_weights()
+                    first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+                    res = np.empty(first_shape, dtype=dtype)
+                    res[:] = one
+                    for i in range(self.nr_vars):
+                        res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                    return res
+            elif not self.is_sat():        
+                weights, zero, one, dtype = self.get_weights()
+                first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+                res = np.empty(first_shape, dtype=dtype)
+                res[:] = zero
+                return res
+        elif len(self.semirings) == 2:
+            if len(self.clauses) == 0:
+                if self.nr_vars == 0:
+                    return [ self.semirings[0].one() ]
+                else:
+                    weights, _, _, _ = self.get_weights()
+                    second_shape = (np.shape(weights[0])[0], ) + np.shape(self.semirings[1].one())
+                    res = np.empty(second_shape, dtype=self.semirings[1].dtype)
+                    res[:] = self.semirings[1].one()
+                    first = set(self.quantified[0])
+                    second = set(range(1, self.nr_vars + 1))
+                    second.difference_update(first)
+                    for i in second:
+                        res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                    f_transform = eval(self.transforms[0])
+                    transform = lambda x : self.semirings[0].from_value(f_transform(x))
+                    res = np.array([ transform(w) for w in res ], dtype = self.semirings[0].dtype)
+                    for i in first:
+                        res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                    return res
+            elif not self.is_sat():
+                first_shape = (np.shape(self.weights[0])[0], ) + np.shape(self.semirings[0].one())
+                res = np.empty(first_shape, dtype=self.semirings[0].dtype)
+                res[:] = self.semirings[0].zero()
+                return res
+        # TODO: implement for more semirings
+                        
+    
+    @staticmethod
+    def compile_single(file_name, knowledge_compiler = &#34;c2d&#34;):
+        &#34;&#34;&#34;Compiles a CNF into a tractable circuit. The output circuit is in the file `file_name + &#34;.nnf&#34;`.
+
+        Currently supports c2d, miniC2D, d4 and sharpsat-td as knowledge compilers. 
+
+        For c2d assumes that there is:
+            * a cnf file `file_name`.
+            * a dtree file `file_name + &#34;.dtree&#34;`.
+            * (optionally) a variable file `file_name + &#34;.exist&#34;`,
+                specifying that the variables in the file should be projected away.
+                auxilliary variables are safe to project away.
+                the resulting circuit will not be smooth if the exist file is provided!
+
+        For miniC2D assumes that there is:
+            * a cnf file `file_name`.
+            * a vtree file `file_name + &#34;.vtree&#34;`.
+
+        For d4 assumes that there is:
+            * a cnf file `file_name`.
+
+        For sharpsat-td assumes that there is: 
+            * a cnf file `file_name`, which has knowledge compilation weights (see `CNF.write_kc_cnf()` for how that should look).
+
+        An D/Vtree can be generated by using the functionality of aspmc.compile.dtree / aspmc.compile.vtree.
+
+        Args:
+            file_name (:obj:`string`): Path to the CNF and files containing the parameters for the knowledge compiler.
+            knowledge_compiler (:obj:`string`, optional): The knowledge compiler to use. Defaults to `sharpsat-td`.
+        Returns:
+            None
+        &#34;&#34;&#34;        
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+
+        my_signals.tempfiles.add(file_name + &#39;.nnf&#39;)
+        logger.debug(&#34;Knowledge compiler output:&#34;)
+        if knowledge_compiler == &#34;c2d&#34;:
+            if os.path.isfile(f&#34;{file_name}.exist&#34;):
+                p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-reduce&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-cache_size&#34;, str(available_memory), &#34;-exist&#34;, file_name + &#34;.exist&#34;], stdout=subprocess.PIPE)
+            else:
+                p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-smooth_all&#34;, &#34;-reduce&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-cache_size&#34;, str(available_memory)], stdout=subprocess.PIPE)
+        elif knowledge_compiler == &#34;miniC2D&#34;:            
+            p = subprocess.Popen([os.path.join(src_path, &#34;miniC2D/bin/linux/miniC2D&#34;), &#34;-c&#34;, file_name, &#34;-v&#34;, file_name + &#34;.vtree&#34;, &#34;-s&#34; , str(available_memory)], stdout=subprocess.PIPE)
+        elif knowledge_compiler == &#34;sharpsat-td&#34;:
+            decot = float(config.config[&#34;decot&#34;])
+            decot = max(decot, 0.1)
+            p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-dDNNF&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), file_name, &#34;-dDNNF_out&#34;, file_name + &#34;.nnf&#34;], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+        elif knowledge_compiler == &#34;d4&#34;:
+            p = subprocess.Popen([os.path.join(src_path, &#34;d4/d4_static&#34;), file_name, &#34;-dDNNF&#34;, f&#34;-out={file_name}.nnf&#34;, &#34;-smooth&#34;], stdout=subprocess.PIPE)
+        
+        for line in iter(p.stdout.readline, b&#39;&#39;):
+            line = line.decode()
+            logger.debug(line[:-1])
+        p.wait()
+        p.stdout.close()
+
+        if p.returncode != 0:
+            logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+            exit(-1) 
+
+    def solve_compilation_single(self):
+        &#34;&#34;&#34;Compiles an AMC instance over a single semiring and performs the algebraic model counting over the compiled circuit.
+
+        Currently supports c2d, miniC2D, d4 , sharpsat-td-live and sharpsat-td as knowledge compilers. 
+        Generates a D/Vtree from a tree decomposition of the cnf for all knowledge compilers except d4.
+        How the tree decomposition is generated and which knowledge compiler is used is configured in aspmc.config.
+
+        Returns:
+            object: The value of the AMC instance.
+        &#34;&#34;&#34;
+        start = time.time()
+        cnf_fd, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        # sharpsat-td-live is a special case since it does not fall into the `first compile then evaluate category`
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td-live&#34;:
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.write_kc_cnf(cnf_file)
+            decot = float(config.config[&#34;decot&#34;])
+            decot = max(decot, 0.1)
+            # compute the available memory to set the cache size
+            available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+            p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-instant&#34;, &#34;-dDNNF&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+            weights, zero, one, dtype = self.get_weights()
+            results = Circuit.live_parse_wmc(p.stdout, weights, zero = zero, one = one, dtype = dtype)
+            p.wait()
+            p.stdout.close()        
+            if p.returncode != 0:
+                logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+                exit(-1) 
+            end = time.time()
+            logger.info(f&#34;Counting &amp; Compilation time:  {end - start}&#34;)
+            os.remove(cnf_tmp)
+            my_signals.tempfiles.remove(cnf_tmp)
+            return results
+        
+        # prepare everything for the compilation
+        v3 = None
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+            d3 = dtree.TD_dtree(self, solver = config.config[&#34;decos&#34;], timeout = config.config[&#34;decot&#34;])
+            d3.write(cnf_tmp + &#39;.dtree&#39;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.dtree&#39;)
+            end = time.time()
+            logger.info(f&#34;Dtree time:               {end - start}&#34;)
+            if len(self.semirings) == 1 and self.semirings[0].__name__ == &#34;aspmc.semirings.probabilistic&#34;:
+                # careful: with other semirings this does not generally work, since the &#34;-smooth_all&#34; option of c2d is necessary in general then
+                # this is a problem since -smooth_all also adds the variables that were existentially quantified away again
+                with open(cnf_tmp + &#39;.exist&#39;, &#39;w&#39;) as exist_file:
+                    exist_file.write(f&#34;{len(self.auxilliary)} {&#39; &#39;.join( str(v) for v in self.auxilliary )}&#34;)
+                my_signals.tempfiles.add(cnf_tmp + &#39;.exist&#39;)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:            
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+            v3 = vtree.TD_vtree(self, solver = config.config[&#34;decos&#34;], timeout = config.config[&#34;decot&#34;])
+            v3.write(cnf_tmp + &#34;.vtree&#34;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.vtree&#39;)
+            end = time.time()
+            logger.info(f&#34;Vtree time:               {end - start}&#34;)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;:
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.write_kc_cnf(cnf_file)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;d4&#34;:
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+                
+        # perform the actual compilation
+        start = time.time()
+        CNF.compile_single(cnf_tmp, knowledge_compiler = config.config[&#34;knowledge_compiler&#34;])
+        end = time.time()
+        logger.info(f&#34;Compilation time:         {end - start}&#34;)
+        # perform the counting on the circuit
+        weights, zero, one, dtype = self.get_weights()
+        start = time.time()
+        results = Circuit.parse_wmc(cnf_tmp + &#34;.nnf&#34;, weights, zero = zero, one = one, dtype = dtype, solver = config.config[&#34;knowledge_compiler&#34;], vtree = v3)
+        end = time.time()
+        logger.info(f&#34;Counting time:            {end - start}&#34;)
+        
+        # remove the temporary files
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.remove(cnf_tmp)
+        os.remove(cnf_tmp+&#34;.nnf&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.nnf&#39;)
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            os.remove(cnf_tmp + &#34;.dtree&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.dtree&#39;)
+            if (cnf_tmp + &#34;.exist&#34;) in my_signals.tempfiles:
+                os.remove(cnf_tmp + &#34;.exist&#34;)
+                my_signals.tempfiles.remove(cnf_tmp + &#39;.exist&#39;)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:
+            os.remove(cnf_tmp + &#34;.vtree&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.vtree&#39;)
+        return results
+
+
+    @staticmethod
+    def compile_nested(file_name, knowledge_compiler = &#34;c2d&#34;):        
+        &#34;&#34;&#34;Compiles a CNF into an X/D-constrained circuit. The output circuit is in the file `file_name + &#34;.nnf&#34;`.
+
+        Currently supports c2d (and miniC2D for only one level of nesting) as knowledge compilers. 
+
+        For c2d assumes that there is:
+            * a cnf file `file_name` 
+            * a dtree file `file_name + &#34;.dtree&#34;`
+            * a force file `file_name + &#34;.force&#34;`
+
+        For miniC2D assumes that there is:
+            * a cnf file `file_name` 
+            * a vtree file `file_name + &#34;.vtree&#34;`
+            
+        An X/D-constrained D/Vtree can be generated by using the functionality of aspmc.compile.constrained_compile.
+
+        Args:
+            file_name (:obj:`string`): Path to the CNF and files containing the parameters for the knowledge compiler.
+            knowledge_compiler (:obj:`string`, optional): The knowledge compiler to use. Defaults to `c2d`.
+        Returns:
+            None
+        &#34;&#34;&#34;
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+
+        my_signals.tempfiles.add(file_name + &#39;.nnf&#39;)
+        logger.debug(&#34;Knowledge compiler output:&#34;)
+
+        if knowledge_compiler == &#34;c2d&#34;:
+            p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-cache_size&#34;, str(available_memory), &#34;-keep_trivial_cls&#34;, &#34;-smooth_all&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-force&#34;, file_name + &#34;.force&#34;], stdout=subprocess.PIPE)
+        elif knowledge_compiler == &#34;miniC2D&#34;:
+            p = subprocess.Popen([os.path.join(src_path, &#34;miniC2D/bin/linux/miniC2D&#34;), &#34;-c&#34;, file_name, &#34;-v&#34;, file_name + &#34;.vtree&#34;, &#34;-s&#34; , str(available_memory)], stdout=subprocess.PIPE)
+        else:
+            logger.error(f&#34;Knowledge compiler {config.config[&#39;knowledge_compiler&#39;]} does not support X/D-constrained compilation&#34;)
+            exit(-1)
+
+        for line in iter(p.stdout.readline, b&#39;&#39;):
+            line = line.decode()
+            logger.debug(line[:-1])
+        p.wait()
+        p.stdout.close()
+
+        if p.returncode != 0:
+            logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+            exit(-1) 
+
+    def solve_compilation_nested(self):
+        &#34;&#34;&#34;Compiles a kAMC instance over a k semirings into an X/D-constrained circuit and performs the algebraic model counting over the compiled circuit.
+
+        Currently supports c2d (and miniC2D for 2AMC) as knowledge compilers. 
+        Generates an X/D-constrained D/Vtree by using the function in aspmc.compile.constrained_compile.
+        How the tree decompositions are generated and which knowledge compiler is used is configured in aspmc.config.
+
+        Returns:
+            object: The value of the kAMC instance.
+        &#34;&#34;&#34;
+        start = time.time()
+        cnf_fd, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            (force_vars, d3) = concom.tree_from_cnf(self, tree_type = dtree.Dtree)
+            d3.write(cnf_tmp + &#34;.dtree&#34;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.dtree&#39;)
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.force&#39;)
+            with open(cnf_tmp + &#34;.force&#34;, &#39;w&#39;) as force_out:
+                force_out.write(f&#34;{len(force_vars)} {&#39; &#39;.join([ str(v) for v in force_vars ])}&#34;)
+            end = time.time()
+            logger.info(f&#34;Dtree time:               {end - start}&#34;)
+        elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:
+            assert(len(self.semirings) == 2)
+            with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+                self.to_stream(cnf_file)
+            (_, v3) = concom.tree_from_cnf(self, tree_type=vtree.Vtree)
+            v3.write(cnf_tmp + &#34;.vtree&#34;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.vtree&#39;)
+            end = time.time()
+            logger.info(f&#34;Vtree time:               {end - start}&#34;)
+        else:
+            logger.error(f&#34;Knowledge compiler {config.config[&#39;knowledge_compiler&#39;]} does not support X/D-constrained compilation&#34;)
+            exit(-1)
+        # perform the compilation
+        start = time.time()
+        CNF.compile_nested(cnf_tmp, knowledge_compiler = config.config[&#34;knowledge_compiler&#34;])
+        end = time.time()
+        logger.info(f&#34;Compilation time:         {end - start}&#34;)
+        # prepare the inputs
+        start = time.time()
+        P = set(self.quantified[0])
+        weights = []
+        for i in range(len(self.weights)):
+            weights.append(self.weights[to_dimacs(i)])
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            circ = ConstrainedDDNNF
+        else:
+            circ = ConstrainedSDD(path = None, v3 = v3)
+        end = time.time()
+        logger.info(f&#34;Preparation time:         {end - start}&#34;)
+        start = time.time()
+        results = circ.parse_wmc(cnf_tmp + &#39;.nnf&#39;, weights, self)
+        end = time.time()
+        logger.info(f&#34;Counting time:            {end - start}&#34;)
+        # clean up the files
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.remove(cnf_tmp)
+        os.remove(cnf_tmp+&#34;.nnf&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.nnf&#39;)
+        if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+            os.remove(cnf_tmp + &#34;.dtree&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.dtree&#39;)
+            os.remove(cnf_tmp + &#34;.force&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.force&#39;)
+        else:
+            os.remove(cnf_tmp + &#34;.vtree&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.vtree&#39;)
+        return results
+
+    def preprocessing(self):
+        start = time.time()
+        if len(self.semirings) == 1 and self.semirings[0].is_idempotent(): # TODO make sure is_idempotent() is always implemented
+            mode = &#34;idemp&#34;
+        else:
+            mode = &#34;general&#34;
+        
+        (cnf_file_fd, cnf_file_tmp) = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_file_tmp)
+
+        with os.fdopen(cnf_file_fd, mode = &#39;w&#39;) as cnf_file:
+            cnf_file.write(str(self)) 
+        
+        q = subprocess.Popen([os.path.join(src_path, &#34;preprocessor/bin/sharpSAT&#34;), &#34;-m&#34;, mode, &#34;-t&#34;, &#34;FPVEG&#34;, cnf_file_tmp], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        output, err = q.communicate()
+        
+        self.clauses = [] 
+        cnf_reached = False
+        for line in output.decode().split(&#39;\n&#39;):
+            line = line.split()
+            if len(line) &gt; 0 and not line[0] == &#39;c&#39;:
+                if line[0] == &#39;p&#39; and line[1] == &#34;cnf&#34;:
+                    cnf_reached = True
+                    self.nr_vars = int(line[2]) # TODO: instead check if value has changed (which should not happen)
+                elif cnf_reached:
+                    line = [int(l) for l in line]
+                    self.clauses.append(line[:-1])
+        end = time.time()
+        os.remove(cnf_file_tmp)
+        my_signals.tempfiles.remove(cnf_file_tmp)
+        logger.info(f&#34;Preprocessing time:       {end - start}&#34;)
+
+    def evaluate(self, strategy = &#34;flexible&#34;, preprocessing = False):
+        &#34;&#34;&#34;Evaluates an AMC instance by using the given strategy `strategy`.
+        
+        The strategy can be one of 
+            * `&#34;flexible&#34;`: do what is assumed best. 
+                Currently, uses maxsat for idempotent semirings and knowledge compilation otherwise.
+            * `&#34;compilation&#34;`: compile regardless of the properties of the semiring.
+
+        Calls `solve_compilation` or `solve_maxsat` depending on the problem and strategy.
+        How the tree decompositions are generated and which knowledge compiler/maxsat solver is used is configured in aspmc.config.
+
+        Args:
+            strategy (:obj:`string`, optional): Which strategy to use for evaluation. Default is `&#34;flexible&#34;`.
+        Returns:
+            object: The value of the AMC instance.
+        &#34;&#34;&#34;
+        if strategy == &#34;flexible&#34;:
+            if len(self.semirings) == 1 and self.semirings[0].is_idempotent():
+                return self.solve_maxsat()
+            elif len(self.semirings) == 1 and config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;\
+                 and self.semirings[0].__name__ == &#34;aspmc.semirings.probabilistic&#34;:
+                return self.solve_wmc()
+            elif len(self.semirings) == 0 and config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;:
+                return self.solve_mc()
+            else:
+                return self.solve_compilation(preprocessing = preprocessing)
+        elif strategy == &#34;compilation&#34;:
+            return self.solve_compilation(preprocessing = preprocessing)
+        else: 
+            logger.error(f&#34;Unknown evaluation strategy {strategy}.&#34;)
+            exit(-1)
+
+    def solve_compilation(self, preprocessing = False):   
+        &#34;&#34;&#34;Compiles an AMC instance and performs the algebraic model counting over the compiled circuit.
+
+        Calls `compile_single` or `compile_nested`.
+        How the tree decompositions are generated and which knowledge compiler is used is configured in aspmc.config.
+
+        Returns:
+            object: The value of the AMC instance.
+        &#34;&#34;&#34;
+        if preprocessing:
+            logger.info(&#34;Preprocessing enabled&#34;)
+            self.preprocessing()
+            logger.info(&#34;------------------------------------------------------------&#34;)
+        else:
+            logger.info(&#34;Preprocessing disabled&#34;)
+        results = self.evaluate_trivial()
+        if results is not None:
+            return results
+        logger.info(&#34;   Stats Compilation&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        if len(self.semirings) &lt;= 1:
+            results = self.solve_compilation_single()
+        else:
+            results = self.solve_compilation_nested()
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        return results
+
+    def solve_maxsat(self):
+        cnf_fd, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        logger.debug(f&#34;    MaxSAT CNF file: {cnf_tmp}&#34;)
+        # first we check whether this is actually a MaxSAT instance or whether it is just a SAT instance in disguise
+        import math
+        real_weights = { l : w[0].value for l,w in self.weights.items() }
+        if self.semirings[0].__name__ == &#34;aspmc.semirings.maxtimes&#34;:
+            # we first need to convert into maxplus weights
+            real_weights = { l : math.log(w) if w &gt; 0 else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+        elif self.semirings[0].__name__ == &#34;aspmc.semirings.minplus&#34;:
+            # we first need to convert into maxplus weights
+            real_weights = { l : -w if w != float(&#34;inf&#34;) else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+        elif self.semirings[0].__name__ != &#34;aspmc.semirings.maxplus&#34;:
+            logger.error(f&#34;MaxSAT evaluation is currently not supported for semiring {self.semirings[0].__name__}&#34;)
+            exit(-1)
+        # sort out variables that are irrelevant
+        real_weights = { l : w for l,w in real_weights.items() if w != real_weights[-l]}
+        # handle hard constraints from literals with weight -inf and keep the rest
+        negated_units = [ l for l,w in real_weights.items() if w == float(&#39;-inf&#39;)]
+        real_weights = { l : w for l,w in real_weights.items() if w != float(&#39;-inf&#39;) and abs(w) &gt; 0}
+
+
+        (weights, zero, one, dtype) = self.get_weights()
+        first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+        if len(real_weights) == 0:
+            # this is a SAT instance!
+            with os.fdopen(cnf_fd, mode=&#39;wb&#39;) as cnf_out:
+                # create result file
+                res_fd, res_tmp = tempfile.mkstemp()
+                my_signals.tempfiles.add(res_tmp)
+                # write the cnf with the additional negated unit literals
+                cnf_out.write(f&#34;p cnf {self.nr_vars} {len(self.clauses) + len(negated_units)}\n&#34;.encode())
+                for c in self.clauses:
+                    cnf_out.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+                for lit in negated_units:
+                    cnf_out.write(f&#34;{-lit} 0\n&#34;.encode())
+                # solve
+                p = subprocess.Popen([os.path.join(src_path, &#34;minisat-definitions/bin/minisat&#34;), cnf_tmp, res_tmp], stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds = True)
+                p.wait()
+                output = p.stdout.read().decode().split(&#34;\n&#34;)
+                for line in output:
+                    line = line.split()
+                    if len(line) == 0:
+                        continue
+                    if line[0] == &#39;UNSATISFIABLE&#39;:
+                        weight = np.empty(first_shape, dtype=dtype)
+                        weight[:] = zero
+                        solution = list(range(1,self.nr_vars + 1))
+                        p.stdout.close()
+                    elif line[0] == &#39;SATISFIABLE&#39;:
+                        with os.fdopen(res_fd, mode=&#39;r&#39;) as result_file:
+                            solution = result_file.read().split(&#39;\n&#39;)[1]
+                        solution = [ int(v) for v in solution.split(&#39; &#39;) if v != &#39;&#39; ]
+                        weight = np.empty(first_shape, dtype=dtype)
+                        weight[:] = one
+                        for lit in solution:
+                            weight *= weights[to_pos(lit)]
+                        p.stdout.close()
+                os.remove(res_tmp)
+                my_signals.tempfiles.remove(res_tmp)
+        else:
+            logger.info(&#34;   Stats MaxSAT&#34;)
+            logger.info(&#34;------------------------------------------------------------&#34;)
+            start = time.time()
+            with os.fdopen(cnf_fd, mode=&#39;wb&#39;) as cnf_out:
+                self.write_maxsat_cnf(cnf_out)
+            p = subprocess.Popen([os.path.join(src_path, &#34;UWrMaxSAT/uwrmaxsat/build/release/bin/uwrmaxsat&#34;), &#34;-no-bin&#34;, &#34;-no-sat&#34;, &#34;-m&#34;, &#34;-bm&#34;, &#34;-maxpre-time=10&#34;, cnf_tmp], stdout=subprocess.PIPE, close_fds = True)#, stderr=subprocess.PIPE)
+            solution = None
+            while p.poll() is None or solution is None:
+                line = p.stdout.readline().decode()
+                if len(line) == 0:
+                    continue
+                if line.startswith(&#34;s&#34;):
+                    if line[2:] == &#34;OPTIMUM FOUND&#34;:
+                        continue
+                    elif line[2:] == &#34;UNKNOWN&#34;:
+                        raise SolvingError(&#34;MaxSAT solver returned UNKNOWN&#34;)
+                    elif line[2:] == &#34;SATISFIABLE&#34;:
+                        raise SolvingError(&#34;MaxSAT solver returned SATISFIABLE. Probably it was interrupted during execution&#34;)
+                    elif line[2:] == &#34;UNSATISFIABLE&#34;:
+                        weight = np.empty(first_shape, dtype=dtype)
+                        weight[:] = zero
+                        solution = list(range(1,self.nr_vars + 1))
+                elif line[0] == &#39;v&#39;:
+                    bitset = line[2:-1]
+                    solution = [ i if bitset[i-1] == &#39;1&#39; else -i for i in range(1,self.nr_vars + 1)]
+                    weight = np.empty(first_shape, dtype=dtype)
+                    weight[:] = one
+                    for lit in solution:
+                        weight *= weights[to_pos(lit)]
+            p.stdout.close()
+            if solution is None:
+                raise SolvingError(&#34;MaxSAT solver did not print an assignment!&#34;)
+            
+            logger.info(f&#34;Solving time:         {time.time() - start}&#34;)
+            logger.info(&#34;------------------------------------------------------------&#34;)
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.add(cnf_tmp)
+        return weight
+
+
+    def solve_wmc(self):
+        _, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        logger.debug(f&#34;    WCNF file: {cnf_tmp}&#34;)
+        self.to_file(cnf_tmp, extras=True)
+        logger.info(&#34;   Stats Model Counter&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        start = time.time()
+        decot = float(config.config[&#34;decot&#34;])
+        decot = max(decot, 0.1)
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+        first = None
+        for weight in self.weights.values():
+            first = weight
+            break
+        p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-MWD&#34;, str(len(first)), &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+        result = None
+        logger.debug(&#34;Solver output:&#34;)
+        for line in iter(p.stdout.readline, b&#39;&#39;):
+            line = line.decode()
+            if line.startswith(&#34;c s exact arb float &#34;):
+                result = np.array([ float(part) for part in line[len(&#34;c s exact arb float &#34;):-1].split(&#34;;&#34;) ])
+            logger.debug(line[:-1])
+        p.wait()
+        p.stdout.close()
+        if result is None:
+            raise SolvingError(&#34;Model Counter did not print a solution!&#34;)
+        
+        logger.info(f&#34;Counting time:         {time.time() - start}&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.add(cnf_tmp)
+        return result
+
+    def solve_mc(self):
+        _, cnf_tmp = tempfile.mkstemp()
+        my_signals.tempfiles.add(cnf_tmp)
+        logger.debug(f&#34;    CNF file: {cnf_tmp}&#34;)
+        self.to_file(cnf_tmp, extras=False)
+        logger.info(&#34;   Stats Model Counter&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        start = time.time()
+        decot = float(config.config[&#34;decot&#34;])
+        decot = max(decot, 0.1)
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+        p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+        result = None
+        logger.debug(&#34;Solver output:&#34;)
+        for line in iter(p.stdout.readline, b&#39;&#39;):
+            line = line.decode()
+            if line.startswith(&#34;c s exact arb int &#34;):
+                result = np.array([ int(line[len(&#34;c s exact arb int &#34;):-1]) ])
+            logger.debug(line[:-1])
+        p.wait()
+        p.stdout.close()
+        if result is None:
+            raise SolvingError(&#34;Model Counter did not print a solution!&#34;)
+        
+        logger.info(f&#34;Counting time:         {time.time() - start}&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.add(cnf_tmp)
+        return result</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="aspmc.compile.cnf.CNF.compile_nested"><code class="name flex">
+<span>def <span class="ident">compile_nested</span></span>(<span>file_name, knowledge_compiler='c2d')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compiles a CNF into an X/D-constrained circuit. The output circuit is in the file <code>file_name + ".nnf"</code>.</p>
+<p>Currently supports c2d (and miniC2D for only one level of nesting) as knowledge compilers. </p>
+<p>For c2d assumes that there is:
+* a cnf file <code>file_name</code>
+* a dtree file <code>file_name + ".dtree"</code>
+* a force file <code>file_name + ".force"</code></p>
+<p>For miniC2D assumes that there is:
+* a cnf file <code>file_name</code>
+* a vtree file <code>file_name + ".vtree"</code></p>
+<p>An X/D-constrained D/Vtree can be generated by using the functionality of aspmc.compile.constrained_compile.</p>
+<h2 id="args">Args</h2>
+<p>file_name (:obj:<code>string</code>): Path to the CNF and files containing the parameters for the knowledge compiler.
+knowledge_compiler (:obj:<code>string</code>, optional): The knowledge compiler to use. Defaults to <code>c2d</code>.</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def compile_nested(file_name, knowledge_compiler = &#34;c2d&#34;):        
+    &#34;&#34;&#34;Compiles a CNF into an X/D-constrained circuit. The output circuit is in the file `file_name + &#34;.nnf&#34;`.
+
+    Currently supports c2d (and miniC2D for only one level of nesting) as knowledge compilers. 
+
+    For c2d assumes that there is:
+        * a cnf file `file_name` 
+        * a dtree file `file_name + &#34;.dtree&#34;`
+        * a force file `file_name + &#34;.force&#34;`
+
+    For miniC2D assumes that there is:
+        * a cnf file `file_name` 
+        * a vtree file `file_name + &#34;.vtree&#34;`
+        
+    An X/D-constrained D/Vtree can be generated by using the functionality of aspmc.compile.constrained_compile.
+
+    Args:
+        file_name (:obj:`string`): Path to the CNF and files containing the parameters for the knowledge compiler.
+        knowledge_compiler (:obj:`string`, optional): The knowledge compiler to use. Defaults to `c2d`.
+    Returns:
+        None
+    &#34;&#34;&#34;
+    # compute the available memory to set the cache size
+    available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+
+    my_signals.tempfiles.add(file_name + &#39;.nnf&#39;)
+    logger.debug(&#34;Knowledge compiler output:&#34;)
+
+    if knowledge_compiler == &#34;c2d&#34;:
+        p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-cache_size&#34;, str(available_memory), &#34;-keep_trivial_cls&#34;, &#34;-smooth_all&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-force&#34;, file_name + &#34;.force&#34;], stdout=subprocess.PIPE)
+    elif knowledge_compiler == &#34;miniC2D&#34;:
+        p = subprocess.Popen([os.path.join(src_path, &#34;miniC2D/bin/linux/miniC2D&#34;), &#34;-c&#34;, file_name, &#34;-v&#34;, file_name + &#34;.vtree&#34;, &#34;-s&#34; , str(available_memory)], stdout=subprocess.PIPE)
+    else:
+        logger.error(f&#34;Knowledge compiler {config.config[&#39;knowledge_compiler&#39;]} does not support X/D-constrained compilation&#34;)
+        exit(-1)
+
+    for line in iter(p.stdout.readline, b&#39;&#39;):
+        line = line.decode()
+        logger.debug(line[:-1])
+    p.wait()
+    p.stdout.close()
+
+    if p.returncode != 0:
+        logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+        exit(-1) </code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.compile_single"><code class="name flex">
+<span>def <span class="ident">compile_single</span></span>(<span>file_name, knowledge_compiler='c2d')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compiles a CNF into a tractable circuit. The output circuit is in the file <code>file_name + ".nnf"</code>.</p>
+<p>Currently supports c2d, miniC2D, d4 and sharpsat-td as knowledge compilers. </p>
+<p>For c2d assumes that there is:
+* a cnf file <code>file_name</code>.
+* a dtree file <code>file_name + ".dtree"</code>.
+* (optionally) a variable file <code>file_name + ".exist"</code>,
+specifying that the variables in the file should be projected away.
+auxilliary variables are safe to project away.
+the resulting circuit will not be smooth if the exist file is provided!</p>
+<p>For miniC2D assumes that there is:
+* a cnf file <code>file_name</code>.
+* a vtree file <code>file_name + ".vtree"</code>.</p>
+<p>For d4 assumes that there is:
+* a cnf file <code>file_name</code>.</p>
+<p>For sharpsat-td assumes that there is:
+* a cnf file <code>file_name</code>, which has knowledge compilation weights (see <code><a title="aspmc.compile.cnf.CNF.write_kc_cnf" href="#aspmc.compile.cnf.CNF.write_kc_cnf">CNF.write_kc_cnf()</a></code> for how that should look).</p>
+<p>An D/Vtree can be generated by using the functionality of aspmc.compile.dtree / aspmc.compile.vtree.</p>
+<h2 id="args">Args</h2>
+<p>file_name (:obj:<code>string</code>): Path to the CNF and files containing the parameters for the knowledge compiler.
+knowledge_compiler (:obj:<code>string</code>, optional): The knowledge compiler to use. Defaults to <code>sharpsat-td</code>.</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def compile_single(file_name, knowledge_compiler = &#34;c2d&#34;):
+    &#34;&#34;&#34;Compiles a CNF into a tractable circuit. The output circuit is in the file `file_name + &#34;.nnf&#34;`.
+
+    Currently supports c2d, miniC2D, d4 and sharpsat-td as knowledge compilers. 
+
+    For c2d assumes that there is:
+        * a cnf file `file_name`.
+        * a dtree file `file_name + &#34;.dtree&#34;`.
+        * (optionally) a variable file `file_name + &#34;.exist&#34;`,
+            specifying that the variables in the file should be projected away.
+            auxilliary variables are safe to project away.
+            the resulting circuit will not be smooth if the exist file is provided!
+
+    For miniC2D assumes that there is:
+        * a cnf file `file_name`.
+        * a vtree file `file_name + &#34;.vtree&#34;`.
+
+    For d4 assumes that there is:
+        * a cnf file `file_name`.
+
+    For sharpsat-td assumes that there is: 
+        * a cnf file `file_name`, which has knowledge compilation weights (see `CNF.write_kc_cnf()` for how that should look).
+
+    An D/Vtree can be generated by using the functionality of aspmc.compile.dtree / aspmc.compile.vtree.
+
+    Args:
+        file_name (:obj:`string`): Path to the CNF and files containing the parameters for the knowledge compiler.
+        knowledge_compiler (:obj:`string`, optional): The knowledge compiler to use. Defaults to `sharpsat-td`.
+    Returns:
+        None
+    &#34;&#34;&#34;        
+    # compute the available memory to set the cache size
+    available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+
+    my_signals.tempfiles.add(file_name + &#39;.nnf&#39;)
+    logger.debug(&#34;Knowledge compiler output:&#34;)
+    if knowledge_compiler == &#34;c2d&#34;:
+        if os.path.isfile(f&#34;{file_name}.exist&#34;):
+            p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-reduce&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-cache_size&#34;, str(available_memory), &#34;-exist&#34;, file_name + &#34;.exist&#34;], stdout=subprocess.PIPE)
+        else:
+            p = subprocess.Popen([os.path.join(src_path, &#34;c2d/bin/c2d_linux&#34;), &#34;-smooth_all&#34;, &#34;-reduce&#34;, &#34;-in&#34;, file_name, &#34;-dt_in&#34;, file_name + &#34;.dtree&#34;, &#34;-cache_size&#34;, str(available_memory)], stdout=subprocess.PIPE)
+    elif knowledge_compiler == &#34;miniC2D&#34;:            
+        p = subprocess.Popen([os.path.join(src_path, &#34;miniC2D/bin/linux/miniC2D&#34;), &#34;-c&#34;, file_name, &#34;-v&#34;, file_name + &#34;.vtree&#34;, &#34;-s&#34; , str(available_memory)], stdout=subprocess.PIPE)
+    elif knowledge_compiler == &#34;sharpsat-td&#34;:
+        decot = float(config.config[&#34;decot&#34;])
+        decot = max(decot, 0.1)
+        p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-dDNNF&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), file_name, &#34;-dDNNF_out&#34;, file_name + &#34;.nnf&#34;], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+    elif knowledge_compiler == &#34;d4&#34;:
+        p = subprocess.Popen([os.path.join(src_path, &#34;d4/d4_static&#34;), file_name, &#34;-dDNNF&#34;, f&#34;-out={file_name}.nnf&#34;, &#34;-smooth&#34;], stdout=subprocess.PIPE)
+    
+    for line in iter(p.stdout.readline, b&#39;&#39;):
+        line = line.decode()
+        logger.debug(line[:-1])
+    p.wait()
+    p.stdout.close()
+
+    if p.returncode != 0:
+        logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+        exit(-1) </code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.compile.cnf.CNF.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, strategy='flexible', preprocessing=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluates an AMC instance by using the given strategy <code>strategy</code>.</p>
+<p>The strategy can be one of
+* <code>"flexible"</code>: do what is assumed best.
+Currently, uses maxsat for idempotent semirings and knowledge compilation otherwise.
+* <code>"compilation"</code>: compile regardless of the properties of the semiring.</p>
+<p>Calls <code>solve_compilation</code> or <code>solve_maxsat</code> depending on the problem and strategy.
+How the tree decompositions are generated and which knowledge compiler/maxsat solver is used is configured in aspmc.config.</p>
+<h2 id="args">Args</h2>
+<p>strategy (:obj:<code>string</code>, optional): Which strategy to use for evaluation. Default is <code>"flexible"</code>.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>object</code></dt>
+<dd>The value of the AMC instance.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, strategy = &#34;flexible&#34;, preprocessing = False):
+    &#34;&#34;&#34;Evaluates an AMC instance by using the given strategy `strategy`.
+    
+    The strategy can be one of 
+        * `&#34;flexible&#34;`: do what is assumed best. 
+            Currently, uses maxsat for idempotent semirings and knowledge compilation otherwise.
+        * `&#34;compilation&#34;`: compile regardless of the properties of the semiring.
+
+    Calls `solve_compilation` or `solve_maxsat` depending on the problem and strategy.
+    How the tree decompositions are generated and which knowledge compiler/maxsat solver is used is configured in aspmc.config.
+
+    Args:
+        strategy (:obj:`string`, optional): Which strategy to use for evaluation. Default is `&#34;flexible&#34;`.
+    Returns:
+        object: The value of the AMC instance.
+    &#34;&#34;&#34;
+    if strategy == &#34;flexible&#34;:
+        if len(self.semirings) == 1 and self.semirings[0].is_idempotent():
+            return self.solve_maxsat()
+        elif len(self.semirings) == 1 and config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;\
+             and self.semirings[0].__name__ == &#34;aspmc.semirings.probabilistic&#34;:
+            return self.solve_wmc()
+        elif len(self.semirings) == 0 and config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;:
+            return self.solve_mc()
+        else:
+            return self.solve_compilation(preprocessing = preprocessing)
+    elif strategy == &#34;compilation&#34;:
+        return self.solve_compilation(preprocessing = preprocessing)
+    else: 
+        logger.error(f&#34;Unknown evaluation strategy {strategy}.&#34;)
+        exit(-1)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.evaluate_trivial"><code class="name flex">
+<span>def <span class="ident">evaluate_trivial</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if this is a trivial instance and if so returns its value. Before the check all the trivial clauses are removed.</p>
+<p>An instance is trivial if one of the following is true:
+* It contains no clauses.
+* It is unsatisfiable.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>object</code></dt>
+<dd>The value of the AMC instance if it is trivial and <code>None</code> otherwise.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_trivial(self):
+    &#34;&#34;&#34;Checks if this is a trivial instance and if so returns its value. Before the check all the trivial clauses are removed.
+
+    An instance is trivial if one of the following is true:
+        * It contains no clauses.
+        * It is unsatisfiable.
+
+    Returns:
+        object: The value of the AMC instance if it is trivial and `None` otherwise.
+    &#34;&#34;&#34;
+    self.remove_trivial_clauses()
+    if len(self.semirings) == 0:
+        if len(self.clauses) == 0:
+            if self.nr_vars == 0:
+                return [ 1 ]
+            else:
+                weights, zero, one, dtype = self.get_weights()
+                first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+                res = np.empty(first_shape, dtype=dtype)
+                res[:] = one
+                for i in range(self.nr_vars):
+                    res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                return res
+        elif not self.is_sat():
+            return [ 0 ]
+    elif len(self.semirings) == 1:
+        if len(self.clauses) == 0:
+            if self.nr_vars == 0:
+                return [ self.semirings[0].one() ]
+            else:
+                weights, zero, one, dtype = self.get_weights()
+                first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+                res = np.empty(first_shape, dtype=dtype)
+                res[:] = one
+                for i in range(self.nr_vars):
+                    res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                return res
+        elif not self.is_sat():        
+            weights, zero, one, dtype = self.get_weights()
+            first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+            res = np.empty(first_shape, dtype=dtype)
+            res[:] = zero
+            return res
+    elif len(self.semirings) == 2:
+        if len(self.clauses) == 0:
+            if self.nr_vars == 0:
+                return [ self.semirings[0].one() ]
+            else:
+                weights, _, _, _ = self.get_weights()
+                second_shape = (np.shape(weights[0])[0], ) + np.shape(self.semirings[1].one())
+                res = np.empty(second_shape, dtype=self.semirings[1].dtype)
+                res[:] = self.semirings[1].one()
+                first = set(self.quantified[0])
+                second = set(range(1, self.nr_vars + 1))
+                second.difference_update(first)
+                for i in second:
+                    res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                f_transform = eval(self.transforms[0])
+                transform = lambda x : self.semirings[0].from_value(f_transform(x))
+                res = np.array([ transform(w) for w in res ], dtype = self.semirings[0].dtype)
+                for i in first:
+                    res *= weights[to_pos(i)] + weights[neg(to_pos(i))]
+                return res
+        elif not self.is_sat():
+            first_shape = (np.shape(self.weights[0])[0], ) + np.shape(self.semirings[0].one())
+            res = np.empty(first_shape, dtype=self.semirings[0].dtype)
+            res[:] = self.semirings[0].zero()
+            return res
+    # TODO: implement for more semirings</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.get_defined"><code class="name flex">
+<span>def <span class="ident">get_defined</span></span>(<span>self, P, timeout='150')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Figures out the subset of variables of the cnf that are defined by <code>P</code> w.r.t. the cnf.
+Calls a C++ binary for performance reasons.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>P</code></strong> :&ensp;<code>iterable</code></dt>
+<dd>The set of input variables that can be used for definitions.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>The list of variables that are defined by the inputs <code>P</code> w.r.t. the cnf.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_defined(self, P, timeout = &#34;150&#34;):
+    &#34;&#34;&#34;Figures out the subset of variables of the cnf that are defined by `P` w.r.t. the cnf.
+    Calls a C++ binary for performance reasons.
+
+    Args:
+        P (iterable): The set of input variables that can be used for definitions.
+
+    Returns:
+        list: The list of variables that are defined by the inputs `P` w.r.t. the cnf.
+    &#34;&#34;&#34;
+    (cnf_fd, cnf_tmp) = tempfile.mkstemp()
+    my_signals.tempfiles.add(cnf_tmp)
+    (input_fd, input_tmp) = tempfile.mkstemp()
+    my_signals.tempfiles.add(input_tmp)
+    with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+        self.to_stream(cnf_file)
+    with os.fdopen(input_fd, &#39;w&#39;) as input_file:
+        input_file.write(&#34; &#34;.join([str(p) for p in list(P) + [0]]))
+    p = subprocess.Popen([&#34;timeout&#34;,  timeout, os.path.join(src_path, &#34;minisat-definitions/bin/defined&#34;), cnf_tmp, input_tmp], stdout=subprocess.PIPE)
+    p.wait()
+    ret = p.stdout.read().decode().split(&#39; &#39;)[:-1]
+    ret = [ int(v) for v in ret ]
+    p.stdout.close()
+    os.remove(cnf_tmp)
+    my_signals.tempfiles.remove(cnf_tmp)
+    os.remove(input_tmp)
+    my_signals.tempfiles.remove(input_tmp)
+    return ret</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.get_weights"><code class="name flex">
+<span>def <span class="ident">get_weights</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get some relevant information about the weights of the cnf in a convenient format.</p>
+<h2 id="returns">Returns</h2>
+<p>(list, object, object, type): </p>
+<p>The weights of the literals. <code>weights[2*(i-1)]</code> is the weight of <code>i</code> and <code>weights[2*(i-1) + 1]</code> is the weight of <code>-i</code>.</p>
+<p>The zero of the (outermost) AMC instance.</p>
+<p>The one of the (outermost) AMC instance.</p>
+<p>The type of the weights that should be used for numpy arrays.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_weights(self):
+    &#34;&#34;&#34;Get some relevant information about the weights of the cnf in a convenient format.
+
+    Returns:
+        (list, object, object, type): 
+        
+        The weights of the literals. `weights[2*(i-1)]` is the weight of `i` and `weights[2*(i-1) + 1]` is the weight of `-i`.
+        
+        The zero of the (outermost) AMC instance.
+        
+        The one of the (outermost) AMC instance.
+        
+        The type of the weights that should be used for numpy arrays.
+    &#34;&#34;&#34;
+    if len(self.semirings) == 0:
+        weights = [ np.array([ 1 ], dtype = object) for _ in range(self.nr_vars*2) ]
+        zero = 0
+        one = 1
+        dtype = object
+    elif len(self.semirings) &gt;= 1:
+        weights = []
+        for i in range(len(self.weights)):
+            weights.append(self.weights[to_dimacs(i)])
+        zero = self.semirings[0].zero()
+        one = self.semirings[0].one()
+        dtype = self.semirings[0].dtype
+    return (weights, zero, one, dtype)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.is_sat"><code class="name flex">
+<span>def <span class="ident">is_sat</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calls <code>minisat</code> to check if the cnf is satisfiable.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd><code>True</code> if the cnf is satisfiable, <code>False</code> otherwise.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_sat(self):
+    &#34;&#34;&#34;Calls `minisat` to check if the cnf is satisfiable.
+
+    Returns:
+        bool: `True` if the cnf is satisfiable, `False` otherwise.
+    &#34;&#34;&#34;
+    p = subprocess.Popen([os.path.join(src_path, &#34;minisat-definitions/bin/minisat&#34;)], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    p.stdin.write(str(self).encode())
+    p.stdin.close()
+    p.wait()
+    for line in p.stdout.read().decode().split(&#39;\n&#39;):
+        line = line.split()
+        if len(line) == 0:
+            continue
+        if line[0] == &#39;UNSATISFIABLE&#39;:
+            p.stdout.close()
+            return False
+        elif line[0] == &#39;SATISFIABLE&#39;:
+            p.stdout.close()
+            return True</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.preprocessing"><code class="name flex">
+<span>def <span class="ident">preprocessing</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def preprocessing(self):
+    start = time.time()
+    if len(self.semirings) == 1 and self.semirings[0].is_idempotent(): # TODO make sure is_idempotent() is always implemented
+        mode = &#34;idemp&#34;
+    else:
+        mode = &#34;general&#34;
+    
+    (cnf_file_fd, cnf_file_tmp) = tempfile.mkstemp()
+    my_signals.tempfiles.add(cnf_file_tmp)
+
+    with os.fdopen(cnf_file_fd, mode = &#39;w&#39;) as cnf_file:
+        cnf_file.write(str(self)) 
+    
+    q = subprocess.Popen([os.path.join(src_path, &#34;preprocessor/bin/sharpSAT&#34;), &#34;-m&#34;, mode, &#34;-t&#34;, &#34;FPVEG&#34;, cnf_file_tmp], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    output, err = q.communicate()
+    
+    self.clauses = [] 
+    cnf_reached = False
+    for line in output.decode().split(&#39;\n&#39;):
+        line = line.split()
+        if len(line) &gt; 0 and not line[0] == &#39;c&#39;:
+            if line[0] == &#39;p&#39; and line[1] == &#34;cnf&#34;:
+                cnf_reached = True
+                self.nr_vars = int(line[2]) # TODO: instead check if value has changed (which should not happen)
+            elif cnf_reached:
+                line = [int(l) for l in line]
+                self.clauses.append(line[:-1])
+    end = time.time()
+    os.remove(cnf_file_tmp)
+    my_signals.tempfiles.remove(cnf_file_tmp)
+    logger.info(f&#34;Preprocessing time:       {end - start}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.primal_graph"><code class="name flex">
+<span>def <span class="ident">primal_graph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Construct the an <code>nx.Graph</code> that corresponds to the primal graph of the cnf.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>nx.Graph</code></dt>
+<dd>The primal graph of the cnf.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def primal_graph(self):
+    &#34;&#34;&#34;Construct the an `nx.Graph` that corresponds to the primal graph of the cnf.
+
+    Returns:
+        nx.Graph: The primal graph of the cnf. 
+    &#34;&#34;&#34;
+    graph = nx.Graph()
+    graph.add_nodes_from(range(1, self.nr_vars+1))
+    for c in self.clauses:
+        graph.add_edges_from(sum([[(abs(l),abs(lp)) for l in c if abs(l) != abs(lp)] for lp in c], []))
+    return graph</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.primal_hypergraph"><code class="name flex">
+<span>def <span class="ident">primal_hypergraph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Construct the an <code>aspmc.graph.Hypergraph</code> that corresponds to the primal hypergraph of the cnf.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>aspmc.graph.Hypergraph</code></dt>
+<dd>The primal hypergraph of the cnf.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def primal_hypergraph(self):        
+    &#34;&#34;&#34;Construct the an `aspmc.graph.Hypergraph` that corresponds to the primal hypergraph of the cnf.
+
+    Returns:
+        aspmc.graph.Hypergraph: The primal hypergraph of the cnf. 
+    &#34;&#34;&#34;
+    graph = Hypergraph()
+    graph.add_nodes_from(range(1, self.nr_vars+1))
+    for c in self.clauses:
+        graph.add_edge([ abs(l) for l in c ])
+    return graph</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.remove_trivial_clauses"><code class="name flex">
+<span>def <span class="ident">remove_trivial_clauses</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Removes all the trivial clauses from the cnf. Trivial clauses are those clauses that contain both <code>v</code> and <code>-v</code> for some variables <code>v</code>.</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_trivial_clauses(self):
+    &#34;&#34;&#34;Removes all the trivial clauses from the cnf. Trivial clauses are those clauses that contain both `v` and `-v` for some variables `v`.
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    new_clauses = []
+    for c in self.clauses:
+        if not any([ any([ c[i] == -c[j] for j in range(i+1, len(c)) ]) for i in range(len(c)) ]):
+            new_clauses.append(c)
+    self.clauses = new_clauses</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.solve_compilation"><code class="name flex">
+<span>def <span class="ident">solve_compilation</span></span>(<span>self, preprocessing=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compiles an AMC instance and performs the algebraic model counting over the compiled circuit.</p>
+<p>Calls <code>compile_single</code> or <code>compile_nested</code>.
+How the tree decompositions are generated and which knowledge compiler is used is configured in aspmc.config.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>object</code></dt>
+<dd>The value of the AMC instance.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_compilation(self, preprocessing = False):   
+    &#34;&#34;&#34;Compiles an AMC instance and performs the algebraic model counting over the compiled circuit.
+
+    Calls `compile_single` or `compile_nested`.
+    How the tree decompositions are generated and which knowledge compiler is used is configured in aspmc.config.
+
+    Returns:
+        object: The value of the AMC instance.
+    &#34;&#34;&#34;
+    if preprocessing:
+        logger.info(&#34;Preprocessing enabled&#34;)
+        self.preprocessing()
+        logger.info(&#34;------------------------------------------------------------&#34;)
+    else:
+        logger.info(&#34;Preprocessing disabled&#34;)
+    results = self.evaluate_trivial()
+    if results is not None:
+        return results
+    logger.info(&#34;   Stats Compilation&#34;)
+    logger.info(&#34;------------------------------------------------------------&#34;)
+    if len(self.semirings) &lt;= 1:
+        results = self.solve_compilation_single()
+    else:
+        results = self.solve_compilation_nested()
+    logger.info(&#34;------------------------------------------------------------&#34;)
+    return results</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.solve_compilation_nested"><code class="name flex">
+<span>def <span class="ident">solve_compilation_nested</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compiles a kAMC instance over a k semirings into an X/D-constrained circuit and performs the algebraic model counting over the compiled circuit.</p>
+<p>Currently supports c2d (and miniC2D for 2AMC) as knowledge compilers.
+Generates an X/D-constrained D/Vtree by using the function in aspmc.compile.constrained_compile.
+How the tree decompositions are generated and which knowledge compiler is used is configured in aspmc.config.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>object</code></dt>
+<dd>The value of the kAMC instance.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_compilation_nested(self):
+    &#34;&#34;&#34;Compiles a kAMC instance over a k semirings into an X/D-constrained circuit and performs the algebraic model counting over the compiled circuit.
+
+    Currently supports c2d (and miniC2D for 2AMC) as knowledge compilers. 
+    Generates an X/D-constrained D/Vtree by using the function in aspmc.compile.constrained_compile.
+    How the tree decompositions are generated and which knowledge compiler is used is configured in aspmc.config.
+
+    Returns:
+        object: The value of the kAMC instance.
+    &#34;&#34;&#34;
+    start = time.time()
+    cnf_fd, cnf_tmp = tempfile.mkstemp()
+    my_signals.tempfiles.add(cnf_tmp)
+    if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+        (force_vars, d3) = concom.tree_from_cnf(self, tree_type = dtree.Dtree)
+        d3.write(cnf_tmp + &#34;.dtree&#34;)
+        my_signals.tempfiles.add(cnf_tmp + &#39;.dtree&#39;)
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.to_stream(cnf_file)
+        my_signals.tempfiles.add(cnf_tmp + &#39;.force&#39;)
+        with open(cnf_tmp + &#34;.force&#34;, &#39;w&#39;) as force_out:
+            force_out.write(f&#34;{len(force_vars)} {&#39; &#39;.join([ str(v) for v in force_vars ])}&#34;)
+        end = time.time()
+        logger.info(f&#34;Dtree time:               {end - start}&#34;)
+    elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:
+        assert(len(self.semirings) == 2)
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.to_stream(cnf_file)
+        (_, v3) = concom.tree_from_cnf(self, tree_type=vtree.Vtree)
+        v3.write(cnf_tmp + &#34;.vtree&#34;)
+        my_signals.tempfiles.add(cnf_tmp + &#39;.vtree&#39;)
+        end = time.time()
+        logger.info(f&#34;Vtree time:               {end - start}&#34;)
+    else:
+        logger.error(f&#34;Knowledge compiler {config.config[&#39;knowledge_compiler&#39;]} does not support X/D-constrained compilation&#34;)
+        exit(-1)
+    # perform the compilation
+    start = time.time()
+    CNF.compile_nested(cnf_tmp, knowledge_compiler = config.config[&#34;knowledge_compiler&#34;])
+    end = time.time()
+    logger.info(f&#34;Compilation time:         {end - start}&#34;)
+    # prepare the inputs
+    start = time.time()
+    P = set(self.quantified[0])
+    weights = []
+    for i in range(len(self.weights)):
+        weights.append(self.weights[to_dimacs(i)])
+    if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+        circ = ConstrainedDDNNF
+    else:
+        circ = ConstrainedSDD(path = None, v3 = v3)
+    end = time.time()
+    logger.info(f&#34;Preparation time:         {end - start}&#34;)
+    start = time.time()
+    results = circ.parse_wmc(cnf_tmp + &#39;.nnf&#39;, weights, self)
+    end = time.time()
+    logger.info(f&#34;Counting time:            {end - start}&#34;)
+    # clean up the files
+    os.remove(cnf_tmp)
+    my_signals.tempfiles.remove(cnf_tmp)
+    os.remove(cnf_tmp+&#34;.nnf&#34;)
+    my_signals.tempfiles.remove(cnf_tmp + &#39;.nnf&#39;)
+    if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+        os.remove(cnf_tmp + &#34;.dtree&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.dtree&#39;)
+        os.remove(cnf_tmp + &#34;.force&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.force&#39;)
+    else:
+        os.remove(cnf_tmp + &#34;.vtree&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.vtree&#39;)
+    return results</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.solve_compilation_single"><code class="name flex">
+<span>def <span class="ident">solve_compilation_single</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compiles an AMC instance over a single semiring and performs the algebraic model counting over the compiled circuit.</p>
+<p>Currently supports c2d, miniC2D, d4 , sharpsat-td-live and sharpsat-td as knowledge compilers.
+Generates a D/Vtree from a tree decomposition of the cnf for all knowledge compilers except d4.
+How the tree decomposition is generated and which knowledge compiler is used is configured in aspmc.config.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>object</code></dt>
+<dd>The value of the AMC instance.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_compilation_single(self):
+    &#34;&#34;&#34;Compiles an AMC instance over a single semiring and performs the algebraic model counting over the compiled circuit.
+
+    Currently supports c2d, miniC2D, d4 , sharpsat-td-live and sharpsat-td as knowledge compilers. 
+    Generates a D/Vtree from a tree decomposition of the cnf for all knowledge compilers except d4.
+    How the tree decomposition is generated and which knowledge compiler is used is configured in aspmc.config.
+
+    Returns:
+        object: The value of the AMC instance.
+    &#34;&#34;&#34;
+    start = time.time()
+    cnf_fd, cnf_tmp = tempfile.mkstemp()
+    my_signals.tempfiles.add(cnf_tmp)
+    # sharpsat-td-live is a special case since it does not fall into the `first compile then evaluate category`
+    if config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td-live&#34;:
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.write_kc_cnf(cnf_file)
+        decot = float(config.config[&#34;decot&#34;])
+        decot = max(decot, 0.1)
+        # compute the available memory to set the cache size
+        available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+        p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-instant&#34;, &#34;-dDNNF&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+        weights, zero, one, dtype = self.get_weights()
+        results = Circuit.live_parse_wmc(p.stdout, weights, zero = zero, one = one, dtype = dtype)
+        p.wait()
+        p.stdout.close()        
+        if p.returncode != 0:
+            logger.error(f&#34;Knowledge compilation failed with exit code {p.returncode}.&#34;)
+            exit(-1) 
+        end = time.time()
+        logger.info(f&#34;Counting &amp; Compilation time:  {end - start}&#34;)
+        os.remove(cnf_tmp)
+        my_signals.tempfiles.remove(cnf_tmp)
+        return results
+    
+    # prepare everything for the compilation
+    v3 = None
+    if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.to_stream(cnf_file)
+        d3 = dtree.TD_dtree(self, solver = config.config[&#34;decos&#34;], timeout = config.config[&#34;decot&#34;])
+        d3.write(cnf_tmp + &#39;.dtree&#39;)
+        my_signals.tempfiles.add(cnf_tmp + &#39;.dtree&#39;)
+        end = time.time()
+        logger.info(f&#34;Dtree time:               {end - start}&#34;)
+        if len(self.semirings) == 1 and self.semirings[0].__name__ == &#34;aspmc.semirings.probabilistic&#34;:
+            # careful: with other semirings this does not generally work, since the &#34;-smooth_all&#34; option of c2d is necessary in general then
+            # this is a problem since -smooth_all also adds the variables that were existentially quantified away again
+            with open(cnf_tmp + &#39;.exist&#39;, &#39;w&#39;) as exist_file:
+                exist_file.write(f&#34;{len(self.auxilliary)} {&#39; &#39;.join( str(v) for v in self.auxilliary )}&#34;)
+            my_signals.tempfiles.add(cnf_tmp + &#39;.exist&#39;)
+    elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:            
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.to_stream(cnf_file)
+        v3 = vtree.TD_vtree(self, solver = config.config[&#34;decos&#34;], timeout = config.config[&#34;decot&#34;])
+        v3.write(cnf_tmp + &#34;.vtree&#34;)
+        my_signals.tempfiles.add(cnf_tmp + &#39;.vtree&#39;)
+        end = time.time()
+        logger.info(f&#34;Vtree time:               {end - start}&#34;)
+    elif config.config[&#34;knowledge_compiler&#34;] == &#34;sharpsat-td&#34;:
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.write_kc_cnf(cnf_file)
+    elif config.config[&#34;knowledge_compiler&#34;] == &#34;d4&#34;:
+        with os.fdopen(cnf_fd, &#39;wb&#39;) as cnf_file:
+            self.to_stream(cnf_file)
+            
+    # perform the actual compilation
+    start = time.time()
+    CNF.compile_single(cnf_tmp, knowledge_compiler = config.config[&#34;knowledge_compiler&#34;])
+    end = time.time()
+    logger.info(f&#34;Compilation time:         {end - start}&#34;)
+    # perform the counting on the circuit
+    weights, zero, one, dtype = self.get_weights()
+    start = time.time()
+    results = Circuit.parse_wmc(cnf_tmp + &#34;.nnf&#34;, weights, zero = zero, one = one, dtype = dtype, solver = config.config[&#34;knowledge_compiler&#34;], vtree = v3)
+    end = time.time()
+    logger.info(f&#34;Counting time:            {end - start}&#34;)
+    
+    # remove the temporary files
+    os.remove(cnf_tmp)
+    my_signals.tempfiles.remove(cnf_tmp)
+    os.remove(cnf_tmp+&#34;.nnf&#34;)
+    my_signals.tempfiles.remove(cnf_tmp + &#39;.nnf&#39;)
+    if config.config[&#34;knowledge_compiler&#34;] == &#34;c2d&#34;:
+        os.remove(cnf_tmp + &#34;.dtree&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.dtree&#39;)
+        if (cnf_tmp + &#34;.exist&#34;) in my_signals.tempfiles:
+            os.remove(cnf_tmp + &#34;.exist&#34;)
+            my_signals.tempfiles.remove(cnf_tmp + &#39;.exist&#39;)
+    elif config.config[&#34;knowledge_compiler&#34;] == &#34;miniC2D&#34;:
+        os.remove(cnf_tmp + &#34;.vtree&#34;)
+        my_signals.tempfiles.remove(cnf_tmp + &#39;.vtree&#39;)
+    return results</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.solve_maxsat"><code class="name flex">
+<span>def <span class="ident">solve_maxsat</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_maxsat(self):
+    cnf_fd, cnf_tmp = tempfile.mkstemp()
+    my_signals.tempfiles.add(cnf_tmp)
+    logger.debug(f&#34;    MaxSAT CNF file: {cnf_tmp}&#34;)
+    # first we check whether this is actually a MaxSAT instance or whether it is just a SAT instance in disguise
+    import math
+    real_weights = { l : w[0].value for l,w in self.weights.items() }
+    if self.semirings[0].__name__ == &#34;aspmc.semirings.maxtimes&#34;:
+        # we first need to convert into maxplus weights
+        real_weights = { l : math.log(w) if w &gt; 0 else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+    elif self.semirings[0].__name__ == &#34;aspmc.semirings.minplus&#34;:
+        # we first need to convert into maxplus weights
+        real_weights = { l : -w if w != float(&#34;inf&#34;) else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+    elif self.semirings[0].__name__ != &#34;aspmc.semirings.maxplus&#34;:
+        logger.error(f&#34;MaxSAT evaluation is currently not supported for semiring {self.semirings[0].__name__}&#34;)
+        exit(-1)
+    # sort out variables that are irrelevant
+    real_weights = { l : w for l,w in real_weights.items() if w != real_weights[-l]}
+    # handle hard constraints from literals with weight -inf and keep the rest
+    negated_units = [ l for l,w in real_weights.items() if w == float(&#39;-inf&#39;)]
+    real_weights = { l : w for l,w in real_weights.items() if w != float(&#39;-inf&#39;) and abs(w) &gt; 0}
+
+
+    (weights, zero, one, dtype) = self.get_weights()
+    first_shape = (np.shape(weights[0])[0], ) + np.shape(one)
+    if len(real_weights) == 0:
+        # this is a SAT instance!
+        with os.fdopen(cnf_fd, mode=&#39;wb&#39;) as cnf_out:
+            # create result file
+            res_fd, res_tmp = tempfile.mkstemp()
+            my_signals.tempfiles.add(res_tmp)
+            # write the cnf with the additional negated unit literals
+            cnf_out.write(f&#34;p cnf {self.nr_vars} {len(self.clauses) + len(negated_units)}\n&#34;.encode())
+            for c in self.clauses:
+                cnf_out.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+            for lit in negated_units:
+                cnf_out.write(f&#34;{-lit} 0\n&#34;.encode())
+            # solve
+            p = subprocess.Popen([os.path.join(src_path, &#34;minisat-definitions/bin/minisat&#34;), cnf_tmp, res_tmp], stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds = True)
+            p.wait()
+            output = p.stdout.read().decode().split(&#34;\n&#34;)
+            for line in output:
+                line = line.split()
+                if len(line) == 0:
+                    continue
+                if line[0] == &#39;UNSATISFIABLE&#39;:
+                    weight = np.empty(first_shape, dtype=dtype)
+                    weight[:] = zero
+                    solution = list(range(1,self.nr_vars + 1))
+                    p.stdout.close()
+                elif line[0] == &#39;SATISFIABLE&#39;:
+                    with os.fdopen(res_fd, mode=&#39;r&#39;) as result_file:
+                        solution = result_file.read().split(&#39;\n&#39;)[1]
+                    solution = [ int(v) for v in solution.split(&#39; &#39;) if v != &#39;&#39; ]
+                    weight = np.empty(first_shape, dtype=dtype)
+                    weight[:] = one
+                    for lit in solution:
+                        weight *= weights[to_pos(lit)]
+                    p.stdout.close()
+            os.remove(res_tmp)
+            my_signals.tempfiles.remove(res_tmp)
+    else:
+        logger.info(&#34;   Stats MaxSAT&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+        start = time.time()
+        with os.fdopen(cnf_fd, mode=&#39;wb&#39;) as cnf_out:
+            self.write_maxsat_cnf(cnf_out)
+        p = subprocess.Popen([os.path.join(src_path, &#34;UWrMaxSAT/uwrmaxsat/build/release/bin/uwrmaxsat&#34;), &#34;-no-bin&#34;, &#34;-no-sat&#34;, &#34;-m&#34;, &#34;-bm&#34;, &#34;-maxpre-time=10&#34;, cnf_tmp], stdout=subprocess.PIPE, close_fds = True)#, stderr=subprocess.PIPE)
+        solution = None
+        while p.poll() is None or solution is None:
+            line = p.stdout.readline().decode()
+            if len(line) == 0:
+                continue
+            if line.startswith(&#34;s&#34;):
+                if line[2:] == &#34;OPTIMUM FOUND&#34;:
+                    continue
+                elif line[2:] == &#34;UNKNOWN&#34;:
+                    raise SolvingError(&#34;MaxSAT solver returned UNKNOWN&#34;)
+                elif line[2:] == &#34;SATISFIABLE&#34;:
+                    raise SolvingError(&#34;MaxSAT solver returned SATISFIABLE. Probably it was interrupted during execution&#34;)
+                elif line[2:] == &#34;UNSATISFIABLE&#34;:
+                    weight = np.empty(first_shape, dtype=dtype)
+                    weight[:] = zero
+                    solution = list(range(1,self.nr_vars + 1))
+            elif line[0] == &#39;v&#39;:
+                bitset = line[2:-1]
+                solution = [ i if bitset[i-1] == &#39;1&#39; else -i for i in range(1,self.nr_vars + 1)]
+                weight = np.empty(first_shape, dtype=dtype)
+                weight[:] = one
+                for lit in solution:
+                    weight *= weights[to_pos(lit)]
+        p.stdout.close()
+        if solution is None:
+            raise SolvingError(&#34;MaxSAT solver did not print an assignment!&#34;)
+        
+        logger.info(f&#34;Solving time:         {time.time() - start}&#34;)
+        logger.info(&#34;------------------------------------------------------------&#34;)
+    os.remove(cnf_tmp)
+    my_signals.tempfiles.add(cnf_tmp)
+    return weight</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.solve_mc"><code class="name flex">
+<span>def <span class="ident">solve_mc</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_mc(self):
+    _, cnf_tmp = tempfile.mkstemp()
+    my_signals.tempfiles.add(cnf_tmp)
+    logger.debug(f&#34;    CNF file: {cnf_tmp}&#34;)
+    self.to_file(cnf_tmp, extras=False)
+    logger.info(&#34;   Stats Model Counter&#34;)
+    logger.info(&#34;------------------------------------------------------------&#34;)
+    start = time.time()
+    decot = float(config.config[&#34;decot&#34;])
+    decot = max(decot, 0.1)
+    # compute the available memory to set the cache size
+    available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+    p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+    result = None
+    logger.debug(&#34;Solver output:&#34;)
+    for line in iter(p.stdout.readline, b&#39;&#39;):
+        line = line.decode()
+        if line.startswith(&#34;c s exact arb int &#34;):
+            result = np.array([ int(line[len(&#34;c s exact arb int &#34;):-1]) ])
+        logger.debug(line[:-1])
+    p.wait()
+    p.stdout.close()
+    if result is None:
+        raise SolvingError(&#34;Model Counter did not print a solution!&#34;)
+    
+    logger.info(f&#34;Counting time:         {time.time() - start}&#34;)
+    logger.info(&#34;------------------------------------------------------------&#34;)
+    os.remove(cnf_tmp)
+    my_signals.tempfiles.add(cnf_tmp)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.solve_wmc"><code class="name flex">
+<span>def <span class="ident">solve_wmc</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_wmc(self):
+    _, cnf_tmp = tempfile.mkstemp()
+    my_signals.tempfiles.add(cnf_tmp)
+    logger.debug(f&#34;    WCNF file: {cnf_tmp}&#34;)
+    self.to_file(cnf_tmp, extras=True)
+    logger.info(&#34;   Stats Model Counter&#34;)
+    logger.info(&#34;------------------------------------------------------------&#34;)
+    start = time.time()
+    decot = float(config.config[&#34;decot&#34;])
+    decot = max(decot, 0.1)
+    # compute the available memory to set the cache size
+    available_memory = max(psutil.virtual_memory().available//1024**2 - 125, 1000)
+    first = None
+    for weight in self.weights.values():
+        first = weight
+        break
+    p = subprocess.Popen([&#34;./sharpSAT&#34;, &#34;-MWD&#34;, str(len(first)), &#34;-decot&#34;, str(decot), &#34;-decow&#34;, &#34;100&#34;, &#34;-tmpdir&#34;, &#34;/tmp/&#34;, &#34;-cs&#34;, str(available_memory//2), cnf_tmp], cwd=os.path.join(src_path, &#34;sharpsat-td/bin/&#34;), stdout=subprocess.PIPE)
+    result = None
+    logger.debug(&#34;Solver output:&#34;)
+    for line in iter(p.stdout.readline, b&#39;&#39;):
+        line = line.decode()
+        if line.startswith(&#34;c s exact arb float &#34;):
+            result = np.array([ float(part) for part in line[len(&#34;c s exact arb float &#34;):-1].split(&#34;;&#34;) ])
+        logger.debug(line[:-1])
+    p.wait()
+    p.stdout.close()
+    if result is None:
+        raise SolvingError(&#34;Model Counter did not print a solution!&#34;)
+    
+    logger.info(f&#34;Counting time:         {time.time() - start}&#34;)
+    logger.info(&#34;------------------------------------------------------------&#34;)
+    os.remove(cnf_tmp)
+    my_signals.tempfiles.add(cnf_tmp)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.to_file"><code class="name flex">
+<span>def <span class="ident">to_file</span></span>(<span>self, path, extras=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write the cnf to the file with the name <code>path</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>string</code></dt>
+<dd>The path of the file the cnf should be written to.</dd>
+<dt><strong><code>extras</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether the extra information like weights should be written. Defaults to False.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_file(self, path, extras = False):
+    &#34;&#34;&#34;Write the cnf to the file with the name `path`.
+
+    Args:
+        path (string): The path of the file the cnf should be written to.
+        extras (bool, optional): Whether the extra information like weights should be written. Defaults to False.
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    with open(path, mode = &#39;w&#39;) as file_out:
+        file_out.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;)
+        for c in self.clauses:
+            file_out.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;)
+        if extras:
+            for idx in self.weights:
+                if abs(idx) in self.quantified[0]:
+                    weight = &#39;;&#39;.join([ self.semirings[0].to_string(w) for w in self.weights[idx] ])
+                else:
+                    weight = &#39;;&#39;.join([ self.semirings[1].to_string(w) for w in self.weights[idx] ])
+                file_out.write(f&#34;c p weight {idx} {weight} 0\n&#34;)
+            if len(self.semirings) &gt; 0:
+                file_out.write(f&#34;c p semirings {&#39; &#39;.join([ x.__name__ for x in self.semirings])} 0\n&#34;)
+            for transform in self.transforms:
+                file_out.write(f&#34;c p transform {transform} 0\n&#34;)
+            for l in self.quantified:
+                file_out.write(f&#34;c p quantify {&#39; &#39;.join([str(x) for x in l])} 0\n&#34;)
+            file_out.write(f&#34;c p auxilliary {&#39; &#39;.join([str(x) for x in self.auxilliary])} 0\n&#34;)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.to_stream"><code class="name flex">
+<span>def <span class="ident">to_stream</span></span>(<span>self, stream, extras=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write the cnf to the stream <code>stream</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stream</code></strong> :&ensp;<code>stream</code></dt>
+<dd>The stream the cnf should be written to. Must accept binary encoding.</dd>
+<dt><strong><code>extras</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether the extra information like weights should be written. Defaults to False.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_stream(self, stream, extras = False):
+    &#34;&#34;&#34;Write the cnf to the stream `stream`.
+
+    Args:
+        stream (stream): The stream the cnf should be written to. Must accept binary encoding.
+        extras (bool, optional): Whether the extra information like weights should be written. Defaults to False.
+
+    Returns:
+        None
+    &#34;&#34;&#34;            
+    stream.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;.encode())
+    for c in self.clauses:
+        stream.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+    if extras:
+        for idx in self.weights:
+            if abs(idx) in self.quantified[0]:
+                weight = &#39;;&#39;.join([ self.semirings[0].to_string(w) for w in self.weights[idx] ])
+            else:
+                weight = &#39;;&#39;.join([ self.semirings[1].to_string(w) for w in self.weights[idx] ])
+            stream.write(f&#34;c p weight {idx} {weight} 0\n&#34;.encode())
+        if len(self.semirings) &gt; 0:
+            stream.write(f&#34;c p semirings {&#39; &#39;.join([ x.__name__ for x in self.semirings])} 0\n&#34;.encode())
+        for transform in self.transforms:
+            stream.write(f&#34;c p transform {transform} 0\n&#34;.encode())
+        for l in self.quantified:
+            stream.write(f&#34;c p quantify {&#39; &#39;.join([str(x) for x in l])} 0\n&#34;.encode())
+        stream.write(f&#34;c p auxilliary {&#39; &#39;.join([str(x) for x in self.auxilliary])} 0\n&#34;.encode())</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.write_kc_cnf"><code class="name flex">
+<span>def <span class="ident">write_kc_cnf</span></span>(<span>self, out_file)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_kc_cnf(self, out_file):
+    out_file.write(f&#34;p cnf {self.nr_vars} {len(self.clauses)}\n&#34;.encode())
+    for c in self.clauses:
+        out_file.write(f&#34;{&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+    for idx in range(1, self.nr_vars + 1):
+        if idx not in self.auxilliary:
+            out_file.write(f&#34;c p weight {idx} {idx} 0\n&#34;.encode())
+            out_file.write(f&#34;c p weight {-idx} {-idx} 0\n&#34;.encode())</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.cnf.CNF.write_maxsat_cnf"><code class="name flex">
+<span>def <span class="ident">write_maxsat_cnf</span></span>(<span>self, out_file)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_maxsat_cnf(self, out_file):
+    import math
+    real_weights = { l : w[0].value for l,w in self.weights.items() }
+    if self.semirings[0].__name__ == &#34;aspmc.semirings.maxtimes&#34;:
+        # we first need to convert into maxplus weights
+        real_weights = { l : math.log(w) if w &gt; 0 else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+    elif self.semirings[0].__name__ == &#34;aspmc.semirings.minplus&#34;:
+        # we first need to convert into maxplus weights
+        real_weights = { l : -w if w != float(&#34;inf&#34;) else float(&#34;-inf&#34;) for l,w in real_weights.items() }
+    elif self.semirings[0].__name__ != &#34;aspmc.semirings.maxplus&#34;:
+        logger.error(f&#34;MaxSAT evaluation is currently not supported for semiring {self.semirings[0].__name__}&#34;)
+        exit(-1)
+    # sort out variables that are irrelevant
+    real_weights = { l : w for l,w in real_weights.items() if w != real_weights[-l]}
+    # handle hard constraints from literals with weight -inf and keep the rest
+    negated_units = [ l for l,w in real_weights.items() if w == float(&#39;-inf&#39;)]
+    real_weights = { l : w for l,w in real_weights.items() if w != float(&#39;-inf&#39;)}
+    # make sure every variable has exactly one weight and that weight is greater than 0
+    for i in range(1, self.nr_vars + 1):
+        if i in real_weights:
+            if -i in real_weights:
+                if real_weights[i] &lt; real_weights[-i]:
+                    real_weights[-i] -= real_weights[i]
+                    del real_weights[i]
+                else:
+                    real_weights[i] -= real_weights[-i]
+                    del real_weights[-i]
+            else:
+                if real_weights[i] &lt; 0:
+                    real_weights[-i] = -real_weights[i]
+                    del real_weights[i]
+        else:
+            if -i in real_weights:
+                if real_weights[-i] &lt; 0:
+                    real_weights[i] = -real_weights[-i]
+                    del real_weights[-i]
+    max_exp = max([ math.ceil(-math.log10(w)) for w in real_weights.values() if w &gt; 0 ] + [0])
+    real_weights = { l : math.floor(w*10**(8 + max_exp)) for l,w in real_weights.items() if abs(w) &gt;= 0.1**(8 + max_exp) }
+    gcd = 0
+    for w in real_weights.values():
+        gcd = math.gcd(w, gcd)
+    real_weights = { l : w//gcd for l,w in real_weights.items() }
+    top = sum(real_weights.values()) + 2
+    if top &gt;= 2**63:
+        logger.error(f&#34;Cannot reduce this instance to a maxsat instance.&#34;)
+        exit(-1)
+    out_file.write(f&#34;p wcnf {self.nr_vars} {len(self.clauses) + len(real_weights)} {top}\n&#34;.encode())
+    for c in self.clauses:
+        out_file.write(f&#34;{top} {&#39; &#39;.join([str(l) for l in c])} 0\n&#34;.encode())
+    for l in negated_units:
+        out_file.write(f&#34;{top} {-l} 0\n&#34;.encode())
+    for l, w in real_weights.items():
+        out_file.write(f&#34;{w} {l} 0\n&#34;.encode())
+
+    #c = CNF()
+    #c.clauses = self.clauses
+    #import aspmc.semirings.maxplus as maxplus
+    #c.weights = { i : np.array([maxplus.one()]) for i in range(-self.nr_vars, self.nr_vars + 1)}
+    #del c.weights[0]
+    #c.semirings = [maxplus]
+    #c.quantified = [list(range(1,self.nr_vars + 1))]
+    #for l, w in real_weights.items():
+    #    c.weights[l] = np.array([maxplus.MaxPlusFloat(-w)])
+    #c.nr_vars = self.nr_vars
+    #print(c)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.compile.cnf.SolvingError"><code class="flex name class">
+<span>class <span class="ident">SolvingError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>raise this when a solver errors</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SolvingError(Exception):
+    &#39;&#39;&#39;raise this when a solver errors&#39;&#39;&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aspmc.compile" href="index.html">aspmc.compile</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="aspmc.compile.cnf.CNF" href="#aspmc.compile.cnf.CNF">CNF</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.compile.cnf.CNF.compile_nested" href="#aspmc.compile.cnf.CNF.compile_nested">compile_nested</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.compile_single" href="#aspmc.compile.cnf.CNF.compile_single">compile_single</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.evaluate" href="#aspmc.compile.cnf.CNF.evaluate">evaluate</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.evaluate_trivial" href="#aspmc.compile.cnf.CNF.evaluate_trivial">evaluate_trivial</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.get_defined" href="#aspmc.compile.cnf.CNF.get_defined">get_defined</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.get_weights" href="#aspmc.compile.cnf.CNF.get_weights">get_weights</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.is_sat" href="#aspmc.compile.cnf.CNF.is_sat">is_sat</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.preprocessing" href="#aspmc.compile.cnf.CNF.preprocessing">preprocessing</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.primal_graph" href="#aspmc.compile.cnf.CNF.primal_graph">primal_graph</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.primal_hypergraph" href="#aspmc.compile.cnf.CNF.primal_hypergraph">primal_hypergraph</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.remove_trivial_clauses" href="#aspmc.compile.cnf.CNF.remove_trivial_clauses">remove_trivial_clauses</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.solve_compilation" href="#aspmc.compile.cnf.CNF.solve_compilation">solve_compilation</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.solve_compilation_nested" href="#aspmc.compile.cnf.CNF.solve_compilation_nested">solve_compilation_nested</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.solve_compilation_single" href="#aspmc.compile.cnf.CNF.solve_compilation_single">solve_compilation_single</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.solve_maxsat" href="#aspmc.compile.cnf.CNF.solve_maxsat">solve_maxsat</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.solve_mc" href="#aspmc.compile.cnf.CNF.solve_mc">solve_mc</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.solve_wmc" href="#aspmc.compile.cnf.CNF.solve_wmc">solve_wmc</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.to_file" href="#aspmc.compile.cnf.CNF.to_file">to_file</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.to_stream" href="#aspmc.compile.cnf.CNF.to_stream">to_stream</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.write_kc_cnf" href="#aspmc.compile.cnf.CNF.write_kc_cnf">write_kc_cnf</a></code></li>
+<li><code><a title="aspmc.compile.cnf.CNF.write_maxsat_cnf" href="#aspmc.compile.cnf.CNF.write_maxsat_cnf">write_maxsat_cnf</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.compile.cnf.SolvingError" href="#aspmc.compile.cnf.SolvingError">SolvingError</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

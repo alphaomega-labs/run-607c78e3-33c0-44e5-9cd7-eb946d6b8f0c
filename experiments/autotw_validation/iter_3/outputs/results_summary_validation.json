@@ -1,0 +1,192 @@
+{
+  "stage": "full",
+  "datasets": [
+    {
+      "alias": "mnist_sum_k_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/examples/mnistAdd/data",
+      "sample_count": 2,
+      "checksum": "a22f934fbbf6bd51a0b95f552d69fa9e5f02bfa584966694296cdbd61b7582a8",
+      "provenance": {
+        "repo_url": "https://github.com/azreasoners/NeurASP",
+        "commit": "06943a3e1142fe5c7d50090f6fccdd5ff63f7039",
+        "license_note": "MIT (declared in upstream repository metadata)",
+        "license_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/README.md"
+      }
+    },
+    {
+      "alias": "sudoku_4x4_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/examples/sudoku/data",
+      "sample_count": 3,
+      "checksum": "e566d65c2de7caa2a418c1f9552e6702e905f1729c52d0e61527b73844caeed4",
+      "provenance": {
+        "repo_url": "https://github.com/azreasoners/NeurASP",
+        "commit": "06943a3e1142fe5c7d50090f6fccdd5ff63f7039",
+        "license_note": "MIT (declared in upstream repository metadata)",
+        "license_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/README.md"
+      }
+    },
+    {
+      "alias": "formula_eval_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/datasets/formula_eval_v1",
+      "sample_count": 120,
+      "checksum": "eb76cc06b578c2215528f05a4f4b26063e31208e88c0192b3f433818738a764e",
+      "provenance": {
+        "source_type": "workspace_generator",
+        "generator": "autotw_validation/acquisition.py",
+        "seed": "1000"
+      }
+    },
+    {
+      "alias": "ordering_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/datasets/ordering_v1",
+      "sample_count": 120,
+      "checksum": "d84f0c2c3a76a95f31399eb6386e5739b8eb0b73cbb0dc7e812075fe29b1dc46",
+      "provenance": {
+        "source_type": "workspace_generator",
+        "generator": "autotw_validation/acquisition.py",
+        "seed": "1001"
+      }
+    },
+    {
+      "alias": "counting_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/datasets/counting_v1",
+      "sample_count": 120,
+      "checksum": "10702e679358eae0d631b158b32e33cf7f5806b84639ef249b3a29774e93c5e4",
+      "provenance": {
+        "source_type": "workspace_generator",
+        "generator": "autotw_validation/acquisition.py",
+        "seed": "1002"
+      }
+    },
+    {
+      "alias": "shortest_path_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/datasets/shortest_path_v1",
+      "sample_count": 120,
+      "checksum": "608affa2fcfa7b9180875cd0de5d2611574dfe65001408b45b61e92e4631e041",
+      "provenance": {
+        "source_type": "workspace_generator",
+        "generator": "autotw_validation/acquisition.py",
+        "seed": "1003"
+      }
+    }
+  ],
+  "figures": {
+    "guard_runtime": "paper/figures/iter_3/guard_coverage_runtime_semantics.pdf",
+    "regret_calibration": "paper/figures/iter_3/regret_and_calibration_panels.pdf",
+    "tradeoff_cache": "paper/figures/iter_3/tradeoff_and_cache_panels.pdf"
+  },
+  "tables": {
+    "semantic_audit_table": "paper/tables/iter_3/semantic_audit_table.csv",
+    "router_calibration_table": "paper/tables/iter_3/router_calibration_table.csv",
+    "tradeoff_table": "paper/tables/iter_3/exact_vs_approx_tradeoff_table.csv",
+    "cache_table": "paper/tables/iter_3/cache_counterexample_table.csv",
+    "uncertainty_table": "paper/tables/iter_3/uncertainty_intervals_table.csv"
+  },
+  "datasets_artifacts": {
+    "exp01": "paper/data/iter_3/exp01_runs.csv",
+    "exp02": "paper/data/iter_3/exp02_runs.csv",
+    "exp03": "paper/data/iter_3/exp03_runs.csv",
+    "exp04": "paper/data/iter_3/exp04_runs.csv",
+    "real_solver_runs": "paper/data/iter_3/real_solver_checks/real_solver_runs.csv",
+    "real_solver_regret": "paper/data/iter_3/real_solver_checks/real_solver_regret.csv"
+  },
+  "sympy_report": "experiments/autotw_validation/iter_3/outputs/reports/sympy_validation_report.md",
+  "theorem_audit_table": "experiments/autotw_validation/iter_3/outputs/reports/theorem_assumption_audit_table.csv",
+  "dataset_resolution_log": "experiments/autotw_validation/iter_3/outputs/logs/dataset_resolution_log.json",
+  "real_solver_confirmatory": {
+    "semantic_table": "paper/data/iter_3/real_solver_checks/real_solver_semantic_table.csv",
+    "router_table": "paper/data/iter_3/real_solver_checks/real_solver_router_table.csv",
+    "report": "paper/data/iter_3/real_solver_checks/real_solver_confirmatory_report.md"
+  },
+  "presentation": {
+    "figure_captions": {
+      "paper/figures/iter_3/guard_coverage_runtime_semantics.pdf": {
+        "panels": [
+          "Left: median runtime by baseline across all datasets and seeds.",
+          "Right: semantic-equivalence pass rate by baseline."
+        ],
+        "variables": "runtime_s in seconds; semantic_pass in [0,1]",
+        "takeaway": "Guarded rewrite has best median runtime among exact-preserving variants and preserves semantic pass rate in this validation model.",
+        "uncertainty": "Runtime dispersion is summarized in uncertainty_intervals_table.csv (bootstrap 95% CI)."
+      },
+      "paper/figures/iter_3/regret_and_calibration_panels.pdf": {
+        "panels": [
+          "Left: mean regret by feature-set and fallback policy.",
+          "Right: envelope-violation and tail-runtime trends over uncertainty tau."
+        ],
+        "variables": "regret_s in seconds, violation_rate in [0,1], tail_runtime_s in seconds",
+        "takeaway": "Uncertainty-gated fallback reduces regret and controls tail runtime in most feature settings.",
+        "uncertainty": "Folded bootstrap intervals are reported in router_calibration_table.csv and uncertainty_intervals_table.csv."
+      },
+      "paper/figures/iter_3/tradeoff_and_cache_panels.pdf": {
+        "panels": [
+          "Left: latency distribution summary across exact/approx policies.",
+          "Right: cache-hit versus false-hit outcomes by key strategy."
+        ],
+        "variables": "latency_ms in milliseconds, cache_hit_rate in [0,1], false_hit as count",
+        "takeaway": "Calibrated routing improves latency while preserving feasibility constraints; guard-signature cache key avoids false hits.",
+        "uncertainty": "Policy latency uncertainty is quantified in uncertainty_intervals_table.csv."
+      }
+    }
+  },
+  "confirmatory_analyses": [
+    {
+      "id": "confirmatory_real_solver_semantics",
+      "category": "real_solver_check",
+      "outcome": "strengthened",
+      "artifact": "paper/data/iter_3/real_solver_checks/real_solver_semantic_table.csv",
+      "note": "Real clingo runs preserved semantic equivalence rate at 1.0 for naive vs rewritten encodings."
+    },
+    {
+      "id": "confirmatory_router_tail_risk",
+      "category": "tail_risk",
+      "outcome": "mixed",
+      "artifact": "paper/tables/iter_3/router_calibration_table.csv",
+      "note": "Tail risk improved in selected settings but envelope violations remain high in several simulated ablations."
+    },
+    {
+      "id": "confirmatory_cache_falsification",
+      "category": "negative_control",
+      "outcome": "weakened",
+      "artifact": "paper/tables/iter_3/cache_counterexample_table.csv",
+      "note": "Raw hash baseline produced false hits; improved keys removed false hits but detection-rate target was not reached."
+    }
+  ],
+  "claim_support": {
+    "claim_guarded_rewrite_preserves_semantics": {
+      "status": "mixed",
+      "evidence": [
+        "paper/tables/iter_3/semantic_audit_table.csv",
+        "paper/data/iter_3/real_solver_checks/real_solver_semantic_table.csv",
+        "experiments/autotw_validation/iter_3/outputs/reports/guard_audit_report.md"
+      ],
+      "appendix_artifact": "experiments/autotw_validation/iter_3/outputs/reports/guard_audit_report.md"
+    },
+    "claim_uncertainty_gated_router_reduces_regret": {
+      "status": "mixed",
+      "evidence": [
+        "paper/tables/iter_3/router_calibration_table.csv",
+        "paper/data/iter_3/real_solver_checks/real_solver_router_table.csv"
+      ],
+      "appendix_artifact": "paper/data/iter_3/real_solver_checks/real_solver_confirmatory_report.md"
+    }
+  },
+  "negative_results": [
+    "Auto-guarded runtime speedup over manual-carry baseline reached 8.92%, below the 10% acceptance target.",
+    "Cache counterexample detection-rate target (>=95%) was not met; best strategy reported 0.0 under this workload.",
+    "Router envelope violation target <=5% was not met in broad simulation ablations."
+  ],
+  "limitations_appendix": "experiments/autotw_validation/iter_3/outputs/reports/limitations_appendix.md",
+  "protocol_table": "paper/tables/iter_3/protocol_table.csv",
+  "guard_audit_report": "experiments/autotw_validation/iter_3/outputs/reports/guard_audit_report.md",
+  "support_closure": {
+    "major_claims_have_artifacts": true,
+    "notes": "Each core claim links to at least one figure/table plus appendix report or explicit caveat."
+  }
+}

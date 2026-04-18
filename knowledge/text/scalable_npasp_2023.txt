@@ -1,0 +1,2611 @@
+Scalable Neural-Probabilistic ASP
+
+Scalable Neural-Probabilistic Answer Set Programming
+Arseny Skryagin1
+
+arseny.skryagin@cs.tu-darmstadt.de
+
+Daniel Ochs1
+
+daniel.ochs@cs.tu-darmstadt.de
+
+Devendra Singh Dhami1,3
+
+devendra.dhami@cs.tu-darmstadt.de
+
+Kristian Kersting1,2,3,4
+
+kersting@cs.tu-darmstadt.de
+
+arXiv:2306.08397v1 [cs.AI] 14 Jun 2023
+
+1
+
+Computer Science Department, TU Darmstadt, Germany
+Centre for Cognitive Science, TU Darmstadt, Germany
+3
+Hessian Center for AI (hessian.AI), Darmstadt, Germany
+4
+German Center for Artificial Intelligence (DFKI), Darmstadt, Germany
+2
+
+Abstract
+The goal of combining the robustness of neural networks and the expressiveness of symbolic
+methods has rekindled the interest in Neuro-Symbolic AI. Deep Probabilistic Programming
+Languages (DPPLs) have been developed for probabilistic logic programming to be carried
+out via the probability estimations of deep neural networks. However, recent SOTA DPPL
+approaches allow only for limited conditional probabilistic queries and do not offer the power
+of true joint probability estimation. In our work, we propose an easy integration of tractable
+probabilistic inference within a DPPL. To this end, we introduce SLASH, a novel DPPL
+that consists of Neural-Probabilistic Predicates (NPPs) and a logic program, united via
+answer set programming (ASP). NPPs are a novel design principle allowing for combining
+all deep model types and combinations thereof to be represented as a single probabilistic
+predicate. In this context, we introduce a novel +/− notation for answering various types
+of probabilistic queries by adjusting the atom notations of a predicate. To scale well, we
+show how to prune the stochastically insignificant parts of the (ground) program, speeding
+up reasoning without sacrificing the predictive performance. We evaluate SLASH on a
+variety of different tasks, including the benchmark task of MNIST addition and Visual
+Question Answering (VQA).
+
+1. Introduction
+Neuro-symbolic AI approaches to learning (Hudson & Manning, 2019; d’Avila Garcez, Gori,
+Lamb, Serafini, Spranger, & Tran, 2019; Jiang & Ahn, 2020; d’Avila Garcez & Lamb, 2023)
+are on the rise. They integrate low-level perception with high-level reasoning by combining
+data-driven neural modules with logic-based symbolic modules. This combination of subsymbolic and symbolic systems has shown many advantages for various tasks such as VQA
+and reasoning (Yi, Wu, Gan, Torralba, Kohli, & Tenenbaum, 2018), concept learning (Mao,
+Gan, Kohli, Tenenbaum, & Wu, 2019) and improved properties for explainable and revisable
+models (Ciravegna, Giannini, Gori, Maggini, & Melacci, 2020; Stammer, Schramowski, &
+Kersting, 2021).
+Rather than designing specifically tailored neuro-symbolic architectures, where often the
+neural and symbolic modules are disjoint and trained independently (Yi et al., 2018; Mao
+et al., 2019; Stammer et al., 2021), deep probabilistic programming languages (DPPLs) provide an exciting alternative (Bingham, Chen, Jankowiak, Obermeyer, Pradhan, Karaletsos,
+1
+
+Skryagin, Ochs, Dhami and Kersting
+
+Scene Graph
+
+Knowledge Graph
+
+o1 name clouds
+
+herbivore
+alpaca
+
+attr
+
+o2
+
+attr
+name
+
+on
+o3
+
+Natural language question
+difficulty
+
+"Identify the goat"
+
+white
+goat
+
+name
+
+is a
+
+mammal
+
+is a
+
+is a
+
+is a
+
+animal
+
+appears in
+
+rocks
+
+is a
+
+appears in
+
+barn
+
+hay
+
+Programmatic queries
+
+SLASH Program
+% knowledge graph
+oa_rel("usually appears in", goat, barn).
+oa_rel("usually appears in", hay, barn).
+is_a(goat, mammal).
+is_a(goat, animal).
+is_a(goat, herbivore).
+is_a(alpaca, herbivore).
+is_a(mammal, animal).
+name(N1, Oid) :name(N2, Oid), is_a(N2, N1).
+% facts obtained from NPP's
+name(o1, goat).
+name(o2, rocks).
+attr(o1, white).
+attr(o2, gray).
+relation(o1, o2, on).
+Answer
+
+target(O):-name(O, goat).
+
+"Identify the white mammal"
+
+target(O):-name(O, mammal), attr(O, white).
+
+"Identify the mammal on the rocks, that
+usually appears where hay appears"
+
+target(O):- name(O, mammal), name(O2, rocks),
+relation(on, O, O2), oa_rel("usually appears in", O, P),
+oa_rel("usually appears in", hay, P).
+
+target(o2)
+
+Figure 1: The VQA task: Proposed by Huang et al. (2021), given the features and
+bounding boxes of objects in an image, the goal is to answer a question requiring multi-hop
+reasoning. A model is learned that predicts a scene graph consisting of names, attributes,
+and relations. Additionally, a fixed knowledge graph is given, extending the scene graph
+with commonsense knowledge. Questions are provided as queries in programmatic form
+and can vary in complexity, respectively, in the clause length of the query. Together, the
+knowledge- and scene graph are used to infer the correct answer for the query.
+
+Singh, Szerlip, Horsfall, & Goodman, 2019; Tran, Hoffman, Saurous, Brevdo, Murphy, &
+Blei, 2017; Manhaeve, Dumancic, Kimmig, Demeester, & Raedt, 2018; Yang, Ishay, & Lee,
+2020; Huang et al., 2021). Specifically, DPPLs integrate neural and symbolic modules via a
+unifying programming framework with probability estimates acting as the “glue” between
+separate modules, thus allowing for reasoning over noisy, uncertain data and, importantly,
+joint training of the modules. Additionally, prior knowledge and biases in the form of logic
+rules can easily and explicitly be added to the learning process with DPPLs. This stands,
+in contrast, to specifically tailored, implicit architectural biases of, e.g., purely subsymbolic
+deep learning approaches. Ultimately, DPPLs thereby allow to integrate neural networks
+easily into downstream logical reasoning tasks.
+Recent state-of-the-art DPPLs, such as DeepProbLog (Manhaeve et al., 2018), NeurASP
+(Yang et al., 2020) and Scallop (Huang et al., 2021) allow for conditional class probability
+estimates as all three works base their probability estimates on neural predicates. We argue
+that it is necessary to integrate and process joint probability estimates into DPPLs, to allow
+for solving a broader range of tasks. The world is uncertain and it is necessary to reason in
+settings, e.g., in which variables of an observation might be missing or even manipulated.
+Hence, we make the following contributions in this work. First, we propose a novel
+form of predicates for DPPLs, termed Neural Probabilistic Predicates (NPPs, cf. Fig. 2),
+that allow for task-specific probability queries. NPPs consist of neural and/or probabilistic
+circuit (PC) modules and act as a unifying term, encompassing the neural predicates of
+2
+
+Scalable Neural-Probabilistic ASP
+
+MLP
+
+object
+features
+
+...
+
+pretrained
+
+Names
+
+...
+
+...
+
+YOLO
+
+SLASH Program
+
+...
+
+MLP
+
+% knowledge graph
+oa_rel("usually appears in", goat, barn).
+oa_rel("usually appears in", hay, barn).
+is_a(goat, mammal). is_a(goat, animal).
+is_a(goat, herbivore). is_a(alpaca, herbivore).
+is_a(mammal, animal).
+name(N1, Oid) :- name(N2, Oid), is_a(N2, N1).
+...
+% NPPs with objects
+obj(o1). obj(o2). obj(o3).
+npp(name(O,[goat, rock, ..., clouds])):-obj(O).
+npp(attr(O,[white,black, shiny])):-obj(O).
+...
+
+Attributes
+
+Neural-Probabilistic Predicates (NPPs)
+
+target(O):-name(+O, -goat), attr(+O, -white).
+
+Query Q
+name(O, goat) attr(O, white) P(Q)
+
+ASP
+
+SLASH
+
+Obj. 1
+
+0.04
+
+0.95
+
+0.03
+
+Obj. 2
+
+0.97
+
+0.93
+
+0.90
+
+Obj. 3
+
+0.01
+
+0.02
+
+0
+
+Figure 2: VQA task with SLASH: NPPs consist of neural and/or probabilistic circuit
+modules and can produce task-specific probability estimates. A YOLO Network and MLPs
+make up the Neural-Probabilistic Predicates for the VQA task. In our novel DPPL, SLASH,
+NPPs are integrated with a logic program via an ASP module to answer logical queries
+about data samples. Each MLP computes the conditional distribution for classes ci given
+the YOLO feature encodings zi shared across all NPPs, such as names or attributes. The
+relation’s NPP is omitted for simplicity. One gets task-related probabilities by sending
+queries to the NPPs, e.g., conditional probabilities for visual reasoning tasks.
+DeepProbLog, NeurASP and Scallop, as well as purely probabilistic predicates. Further,
+we introduce a much more powerful “flavor” of NPPs that consist jointly of neural and PC
+modules, taking advantage of the power of neural computations together with true density
+estimation of PCs via tractable probabilistic inference.
+Second, having introduced NPPs, we construct SLASH1 , a novel DPPL, which efficiently
+combines NPPs with logic programming. Similar to the punctuation symbol, this can be
+used to efficiently combine several paradigms into one. Specifically, SLASH represents
+for the first time an efficient programming language that seamlessly integrates probabilistic
+logic programming with neural representations and tractable probabilistic estimations. This
+allows for the integration of all forms of probability estimations, not just class conditionals,
+thus extending the important works of Manhaeve et al. (2018), Yang et al. (2020) and
+Huang et al. (2021).
+Third, as NPPs become more complex, navigating the solution space becomes more timeconsuming. To speed up, Scallop (Huang et al., 2021) used top-k to prune unlikely paths
+in their proof tree using output probabilities of DNNs. With PCs (as NPPs) it is, however,
+difficult to select the correct k. Instead, we go for top-k%. It is based on the observation
+that for each query there are multiple possible but only one Solution thAt MatchEs the
+data (SAME). That is, SAME keeps k% of SLASH’s solutions to compute (probabilistic)
+answers. This greatly speeds up inference, as illustrated in Fig. 3.
+1. Code is available at: https://github.com/ml-research/SLASH
+
+3
+
+Skryagin, Ochs, Dhami and Kersting
+
+Moreover, SAME allows SLASH to scale
+to VQA, as implemented in SLASH in
+Fig. 2. Here, every NPP gets objectdetection outputs, in this case from YOLO
+network (Redmon, Divvala, Girshick, &
+Farhadi, 2016), as inputs and produces class
+conditionals for names, attributes, and relations. A user defines a set of statements
+and rules in the form of a logic program. Finally, given the query as in Fig. 2, SLASH Figure 3: SAME helps SLASH to reduce
+gives the expected answer.
+training time: E.g., on the MNIST T3 task
+The present paper is a significant exten- per batch, SAME prunes unlikely outcomes,
+sion of a previously published conference which reduces the training time of SLASH.
+paper (Skryagin, Stammer, Ochs, Dhami,
+& Kersting, 2022) and presents SAME and
+how to use it to scale SLASH to VQA. Further, we extend this previous work with a detailed ablation study: Empirical results show on the set prediction task carried out on the
+CLEVR (Johnson, Hariharan, van der Maaten, Fei-Fei, Zitnick, & Girshick, 2017) dataset
+as well as on the benchmark task of MNIST-Addition (Manhaeve et al., 2018), further
+presenting the advantages coming with SAME.
+In summary, we make the following contributions:
+• introduce neural-probabilistic predicates,
+• efficiently integrate answer set programming (ASP) with probabilistic inference via
+NPPs within our novel DPPL, SLASH,
+• introduce SAME to dynamically prune unlikely NPP outcomes, thus allowing a reduction in the complexity of computing potential solutions,
+• effectively train neural, probabilistic and logic modules within SLASH for complex
+data structures end-to-end via a simple, single loss term,
+• show that the integration of NPPs in SLASH provides various advantages across a
+variety of tasks and data sets compared to state-of-the-art DPPLs and neural models.
+These contributions demonstrate the advantage of probabilistic density estimation via NPPs
+and the benefits of a “one system – two approaches” (Bengio, 2019) framework that can
+successfully be used for performing various tasks and on many data types.
+We proceed as follows. First, we introduce NPPs and how they can be queried via the
++/− notation. Next, SLASH programs are presented with the corresponding semantics and
+parameter learning. Afterwards, we discover SAME using top-k%. Before concluding, we
+support our findings with experimental evaluation.
+
+2. SLASH through NPPs and vice versa
+We begin this section by first introducing the novel neural probabilistic predicates (NPPs)
+framework. After this, we introduce our DPPL, SLASH, which easily integrates NPPs via
+4
+
+Scalable Neural-Probabilistic ASP
+
+Age Cap.gain Occupation
+200000
+40000
+
+Exec-manag.
+Prof-specialty
+
+47
+
+10000
+
+Prof-specialty
+
+...
+
+Gender
+F
+F
+
+NN
+
+...
+
+53
+26
+
+PC
+
+M
+
+PC
+Prob. Pred.
+
+Heterogeneous Data
+
+NN
+
+σ(.)
+
+Neural Pred.
+
+Neural-Probabilistic Predicates (NPPs)
+
+Figure 4: NPPs come in various flavors: Depending on the data set and underlying
+task, SLASH requires a suitable Neural-Probabilistic Predicate (NPP) to compute querydependent probability estimates. NPPs can be composed of neural and probabilistic modules, or (depicted via the slash symbol) only one of these two.
+ASP with logic programming and end this section with the learning procedure in SLASH,
+allowing us to train all modules via a joint loss term.
+2.1 Neural-Probabilistic Predicates and Rules
+Previous DPPLs, DeepProbLog (Manhaeve et al., 2018) and NeurASP (Yang et al., 2020),
+introduced the Neural Predicate as an annotated-disjunction or as a propositional atom,
+respectively, to acquire conditional class probabilities, P (C|X), via the softmax function
+at the output of an arbitrary DNN. As mentioned in the introduction, this approach has
+certain limitations concerning inference capabilities. To resolve this issue, we introduce
+Neural-Probabilisitic Predicates (NPPs).
+Formally, we denote with
+npp (h(x), [v1 , . . . , vn ])
+(1)
+a Neural-Probabilistic Predicate h. Thereby, (i) npp is a reserved word to label a NPP, (ii)
+h a symbolic name of either a PC, NN or a joint of a PC and NN (cf. Fig. 4)(right), e.g.,
+name is the name of a NPP of Fig. 2 (right, ‘SLASH Program’-block). Additionally, (iii)
+x denotes a “term” and (iv) v1 , . . . , vn are the n possible outcomes of h. For example, the
+placeholders for name are the names of an object (goat, rocks, . . . , clouds).
+A NPP abbreviates a rule of the form c = v with c ∈ {h(x)} and v ∈ {v1 , . . . , vn }.
+Furthermore, we denote with Πnpp a set of NPPs of the form stated in (Eq. (1)) and rnpp
+the set of all rules c = v of one NPP, which denotes the possible outcomes, obtained from
+a NPP in Πnpp, e.g., rname = {c = Goat, c = Rocks, . . . , c = Clouds} for the example
+depicted in Fig. 2. Rules in the following form
+npp (h(x), [v1 , . . . , vn ]) ← Body
+
+(2)
+
+are used as an abbreviation for application to multiple entities, e.g., multiple object features
+plus bounding boxes for the VQA task (cf. Fig. 2). Hereby, Body of the rule is identified
+by ⊤ (tautology, true) or ⊥ (contradiction, false) during grounding. Rules of the form Head
+← Body with rnpp appearing in Head are prohibited for Πnpp.
+In this work, we use NPPs that contain probabilistic circuits, which allow for tractable
+density estimation and modelling of joint probabilities. The term probabilistic circuit (PC)
+(Choi, Vergari, & Van den Broeck, 2020) represents a unifying framework encompassing all
+5
+
+Skryagin, Ochs, Dhami and Kersting
+
+computational graphs that encode probability distributions and guarantee tractable probabilistic modelling. These include Sum-Product Networks (SPNs) (Poon & Domingos, 2011),
+which are deep mixture models represented via a rooted directed acyclic graph with a recursively defined structure. In this way, with PCs it is possible to answer a much richer set
+of probabilistic queries, i.e. P (X, C), P (X|C), P (C|X) and P (C).
+In addition to NPPs based purely on PCs, we introduce the arguably more interesting
+type of NPP that combines a neural module with a PC. Hereby, the neural module learns
+to map the raw input data into an optimal latent representation. The PC, in turn, learns
+to model the joint distribution of these latent variables and produces the final probability
+estimates. This type of NPP nicely combines the representational power of neural networks with the advantages of PCs in probability estimation and query flexibility. These
+combined NPPs can be partially pretrained or trained end-to-end. In the VQA example,
+we utilize a pretrained YOLO network with an MLP predicting class conditional probabilities. In object-centric learning, we train a slot-attention module and PCs over the latent
+representations end-to-end (see Sec. 4.3).
+To make the different probabilistic queries distinguishable in a SLASH program, we
+follow mode declarations used in inductive logic programming (ILP), and denote the input
+variable with + and the output variable with −. E.g., within the example of VQA (cf. Fig. 2,
+‘Query Q’ (right)), with the query name(+X, −C) one is asking for P (C|X) with C being
+the class and X the object features. If we chose a PC as the underlying network (c.f. Sec. 4.3
+and 4.2) we can model the joint distribution P (X, C). Similarly, with name(−X, +C) one
+is asking for P (X|C) and, finally, with name(+X, +C) for P (X, C). In the case when no
+data is available, i.e, name(−X, −C), we are querying for the prior P (C).
+To summarize, a NPP can consist of neural and/or probabilistic modules and produces
+query-dependent probability estimates. Due to the flexibility of its definition, the term NPP
+contains the predicates of previous works (Manhaeve et al., 2018; Yang et al., 2020), but
+also more interesting predicates discussed above. The specific “flavor” of a NPP should be
+chosen depending on what type of probability estimation is required (cf. Fig 4).
+2.2 SLASH: a novel DPPL for integrating NPPs
+Now we have everything together to introduce SLASH, a novel DPPL that efficiently integrates NPPs with logic programming.
+2.2.1 SLASH Language and Semantics
+We continue in the pipeline, Fig. 2, on how to use the probability estimates of NPPs for
+answering logical queries, and begin by formally defining a SLASH program. A SLASH
+program Π is the union of Πasp , Πnpp . Therewith, Πasp is the set of propositional rules
+(standard rules from ASP-Core-2 (Calimeri, Faber, Gebser, Ianni, Kaminski, Krennwallner, Leone, Maratea, Ricca, & Schaub, 2020)), and Πnpp is a set of Neural-Probabilistic
+Predicates of the form stated in Eq. (1).
+Similar to NeurASP, SLASH requires ASP and, as such, adopts its syntax for the most
+part, which includes neural probabilistic rules as defined in Eq. (2). Compared to ProbLog,
+ASP rarely goes into an infinite loop (cf. Chapter 2.9 of Lifschitz (2019) for a simple code
+example leading to infinite loops with ProbLog) and is therefore preferable as a backbone.
+6
+
+Scalable Neural-Probabilistic ASP
+
+To illustrate, let us revisit the example of VQA as in Fig. 1. A YOLO network detected
+three objects o1, o2 and o3 in the image. The task is to name each of the objects as either
+goat, rock, . . . or clouds. The overall target here is to find an object goat:
+obj(o1).
+
+obj(o2).
+
+obj(o3).
+
+npp(name(O, [goat, rock, . . . , clouds])) ← obj(O).
+target(O) ← name(+O, -goat).
+Fig. 1 presents one further SLASH program for the task of VQA, exemplifying a set of
+propositional rules and neural predicates.
+Now, let us define the semantics of SLASH. To this end, we show how to integrate
+NPPs into an ASP-compatible form to obtain the success probability for a query given
+all potential solutions, i.e., stable models. A query is an ASP constraint of the form
+← Body, i.e., it is a headless rule. To translate the program Π, the rules (Eq. (2)) will be
+rewritten as follows:
+1{h(x) = v1 ; . . . ; h(x) = vn }1
+(3)
+The ASP-solver should understand this as “Pick exactly one rule from the set”. After the
+translation is done, we can ask an ASP-solver for the solutions for Π.
+Next, let us assume that we have a query Q at hand for which we want to compute
+the probability; keep in mind that NPPs introduce random choices. Since all the potential
+solutions I |= Q for the query Q are mutually exclusive, there are possible worlds, the
+probability PΠ (Q) of Q is the sum of probabilities PΠ (I) of each single solution, i.e., stable
+model of Q:
+X
+PΠ (Q) :=
+PΠ (I) .
+(4)
+I|=Q
+
+So, we are left with computing the probability PΠ (I) of a single solution I. Here, only
+the NPPs are contributing to the probability; all other atoms are simply true and have the
+probability 1. The (ground) NPPs, however, are also independent of each other. Consequently, for each object c and random choice v, we can multiply together the probabilities
+of c = v and normalize by the number of objects c:
+(Q
+PΠ (I) =
+
+c=v∈I|r npp PΠ (c=v)
+|I|rnpp |
+
+,
+
+0,
+
+if I is pot. sol. of Π,
+
+(5)
+
+otherwise.
+
+where I|rnpp is the subset of ground NPP, rnpp in the solution I, rnpp ⊆ I.
+With the success probability PΠ (Q) of a single query at hand, the success probability
+of a set of queries Q can naturally be written as
+PΠ (Q) :=
+
+l
+Y
+
+PΠ (Qi ) =
+
+i=1
+
+l X
+Y
+
+PΠ (I)
+
+(6)
+
+i=1 I|=Qi
+
+since they are independent of each other. With the semantics at hand, we are ready to
+learn the parameters of SLASH programs.
+7
+
+Skryagin, Ochs, Dhami and Kersting
+
+2.2.2 Parameter Learning in SLASH
+To estimate the parameters θ of a SLASH program Π(θ), we are following the learning
+from entailment setting, as also used for DeepProblog (Manhaeve et al., 2018). That is,
+we estimate θ from a set Q of positive examples only, i.e., each training example is a
+logical query that is known to be true in the SLASH program Π(θ). Thereby, Π(θ) =
+Πasp (θ) ∪ Πnpp (θ) holds. Since Πasp (θ) has no weighted rules, i.e., PΠasp (θ) = 1, we want
+to find optimal parameters θ for rnpp , i.e., the optimal NPP parameters.
+To achieve parameter learning in SLASH, we employ the loss function, which is additive.
+The first part is the entailment loss, i.e., the NPPs are fixed, and we maximize the success
+probability of the query set Q. The second part concerns the NPPs (neural networks/
+probabilistic circuits) only. So, we want to maximize the probability given the data while
+the “logical” part is fixed. Thus, the loss function takes the following form
+LSLASH = LEN T + LN P P ,
+
+(7)
+
+and we seek to minimize the loss, e.g., by running coordinate descent. Let us begin with
+the NPP loss.
+NPP loss – The aim of this loss function is to maximize the joint probability of
+(XQ ,C)
+(xQ ). To omit possibly vanishing values, we apply log(·) instead and define
+Pθ
+LN P P := log
+
+
+
+(X ,C)
+Pθ Q (xQ )
+
+
+
+=
+
+l
+X
+
+(XQ ,C)
+
+log(Pθ
+
+(xQi )) ,
+
+(8)
+
+i=1
+
+whereby
+• XQ are the random variables modeling the training set X associated with the set of
+the queries Q,
+• xQ are realizations of XQ associated with Q as well,
+• P (XQ ,C) (xQ ) is the probability of the realizations xQ estimated by the NPP modelling
+the joint over the set XQ and C – the set of classes (the domain of the NPP cf. Eq. (1)),
+• and θ is the parameter set associated with the NPP.
+Additionally, we derive the derivative of the NPP loss function, which will be called upon
+during the training with coordinate descent. Formally, we write
+l
+
+
+X
+∂
+1
+∂  (XQ ,C)
+LN P P =
+·
+P
+(x
+)
+.
+Q
+i
+θ
+(X ,C)
+∂θ
+P Q (xQ ) ∂θ
+i=1
+
+θ
+
+(9)
+
+i
+
+Now, we fix the NPPs and proceed with the entailment loss.
+Entailment loss – We begin with LEN T and more concrete with Eq. (6). Dealing
+with probabilities, we might end up with vanishing small values due to the product. To
+resolve it, we apply log(·) on both sides of the equation and obtain
+
+
+l
+X
+X
+log(PΠ(θ) (Q) =
+log 
+PΠ(θ) (I) .
+(10)
+i=1
+
+I|=Qi
+
+8
+
+Scalable Neural-Probabilistic ASP
+
+Since our goal is to give the “feedback” of the success probability Eq. (10) to NPPs, we
+multiply it with the log-probabilities of NPPs, so that the result lands in the same space
+
+
+log(PΠ(θ) (Q)) · log P (XQ ,C) (xQ ) .
+(11)
+More precisely, we want Eq. (11) to resonate with every class encoded as a possible outcome
+vj as defined in Eq. (1) and with every query Qi from Q
+l X
+n
+X
+
+
+
+log(PΠ(θ) (Qi )) · log P (Q,Cj ) (xQi ) =
+
+i=1 j=1
+
+
+
+log LH log(PΠ(θ) (Q)), P (XQ ,C) (xQ ) =: LEN T .
+
+(12)
+
+In the above, we used the definition of the log-likelihood loss to compound every single query
+i and outcome j to the single term of the entailment loss. We remark that the defined loss
+function is true regardless of the NPP’s form (NN with Softmax, PC or PC jointly with NN).
+The only difference will be the second term, e.g., P (C|XQ ) (xQ ) or P (XQ |C) (xQ )) depending on
+the NPP and task. This loss function aims at maximizing the estimated success probability
+for a set of Queries. However, for NPPs to notice the “feedback” Eq. (11) we must make
+Eq. (10) relatable towards the log-probabilities of NPPs.
+
+Gradients of the entailment loss – Particularly, we denote the vector log P (XQ ,C) (xQ )
+∂ log(PΠ(θ) (Q))
+the communication bridge between log(PΠ(θ) (Q)) and
+as p and denote with
+∂p
+p. So, we write
+l
+X
+∂ log PΠ(θ) (Qi )
+
+∂p
+
+i=1
+
+
+
+
+l
+∂p X ∂ log PΠ(θ) (Qi )
+×
+=
+,
+∂θ
+∂θ
+
+(13)
+
+i=1
+
+reminding ourselves that ∂p
+∂θ can be computed as usual via backward propagation through
+the NPPs. If within the SLASH program, Π(θ), the NPP forwards the data tensor through
+a NN first, i.e., the NPP models a joint over the NN’s output variables by a PC, then we
+rewrite Eq. (13) to
+
+l
+X
+∂ log PΠ(θ) (Qi )
+i=1
+
+∂p
+
+
+l
+X
+∂ log PΠ(θ) (Qi )
+∂p ∂θ
+×
+×
+=
+.
+∂θ ∂γ
+∂θ
+
+(14)
+
+i=1
+
+∂θ
+Thereby, γ is the set of the NN’s parameters and again, we compute ∂γ
+via backward
+propagation.
+∂ log(PΠ(θ) (Q))
+Now,
+is left to be determined. Thus, following the definition from NeurASP
+∂p
+(Yang et al., 2020), we write
+
+
+
+ X
+X
+∂ log PΠ(θ) (Q)
+PΠ(θ) (I)
+PΠ(θ) (I) 
+1
+
+
+:= 
+−
+·
+.
+(15)
+′) 
+∂p
+PΠ(θ) (c = v)
+P
+(c
+=
+v
+P
+
+
+Π (Q)
+Π(θ)
+′
+I:I|=Q,
+I|=c=v
+
+I,v :I|=Q,
+I|=c=v ′ ,v̸=v ′
+
+9
+
+Skryagin, Ochs, Dhami and Kersting
+
+Algorithm 1 Gradient computation
+Input: PΠ (c = vj ), j = 1, . . . , n, set of I |= Q
+1: PΠ (I) ← compute pot sol prob(I) # cf. Eq. (5)
+2: PΠ (Q) ← compute query prob(PΠ (I)) # (:= γ) Normalization, cf. Eq (4)
+3: grads ← ∅
+4: for every c = vj do # cf. Eq. (3)
+5:
+grad ← 0
+6:
+for every pot. sol. I do
+7:
+if I |= c = v then
+8:
+grad ← grad + (PΠ (I)/PΠ (c = v)) # (:= α) Reward
+9:
+else
+10:
+grad ← grad − (PΠ (I)/PΠ (c = v ′ )) # (:= β) Penalty
+11:
+end if
+12:
+end for
+13:
+grads ← append(grads, grad/PΠ (Q))
+14: end for
+15: return grads
+Reading the right-hand side of this definition we recognize the three terms: inside the
+parentheses, from the reward (=: α) is the penalty (=: β) subtracted, and the result is
+normalized with the probability of the query (:= γ), cf. Eq. (4). As the definition stipulates
+running inference is enough and so having defined the gradients in Eq. (15), it is of prime
+interest to have insights into their values. The following theorem shows the limit of the
+gradient vector.
+Theorem 1 (Gradients’ Limit). Let Π(θ) be a fixed program with a given query Q.
+∂ log(PΠ(θ) (Q))
+Further, m denotes a training iteration, then the following holds for
+as defined
+∂p
+in (15):
+
+
+!
+∂ log PΠ(θ) (Q)
+m→∞
+−−−−→ −1, . . . , −1, |{z}
+1 , −1, . . . , −1 .
+∂p
+j
+
+m
+
+Thereby, the index j corresponds to c = v and any other to c = v ′ , v ̸= v ′ .
+Proof. W.l.o.g, we assume the program Π(θ) to entail a single NPP, and it can be called
+upon more than once in a single rule rnpp . Besides, a NPP can converge “perfectly”, i.e.,
+PΠ(θ) (c = v) = 1 and PΠ(θ) (c = v ′ ) = 0 for v ̸= v ′ . To answer the question of how such
+limit values are possible in the first place, we make the observation on the right-hand side
+of (15),
+X
+X P (I)
+PΠ(θ) (I)
+Π(θ)
+′
+P
+(c=v) · PΠ(θ) (c = v) +
+P
+(c=v ′ ) · PΠ(θ) (c = v ) =
+Π(θ)
+
+I,v ′ :I|=Q
+I|=c=v ′ ,v̸=v ′
+
+I:I|=Q
+I|=c=v
+
+X
+I:I|=Q
+I|=c=v
+
+PΠ(θ) (I) +
+
+X
+
+PΠ(θ) (I) =
+
+I,v ′ :I|=Q
+I|=c=v ′ ,v̸=v ′
+
+Π(θ)
+
+X
+I:I|=Q
+
+10
+
+PΠ(θ) (I) = PΠ (Q).
+
+Scalable Neural-Probabilistic ASP
+
+As reward, penalty, and normalization constant are defined before the theorem:
+α :=
+
+X
+I:I|=Q
+I|=c=v
+
+PΠ(θ) (I)
+PΠ(θ) (c=v) ,
+
+X
+
+β :=
+
+I,v ′ :I|=Q
+I|=c=v ′ ,v̸=v ′
+
+PΠ(θ) (I)
+PΠ(θ) (c=v ′ ) ,
+
+γ :=
+
+X
+
+PΠ(θ) (I),
+
+I:I|=Q
+
+we conclude that
+γ ≥α−β
+
+and
+
+α + β ≥ γ.
+
+(*)
+
+Now, we consider the following case discrimination based on the training iteration k:
+(i) For m = 0: At the start of the training, the probabilities of n outcomes are either
+uniformly distributed (the probability of each outcome PΠ(θ) (c = vj ), j ∈ 1, . . . , n
+is the same) or there are small numerical differences. Here, we consider the first
+possibility and the latter is identical to (ii). Since the probability for each outcome is
+the same value, we conclude due to (*) that α = β and α−β
+γ = 0 for the index j. In
+case that the same NPP being called upon multiple times, an ASP solver will derive
+potential solutions without consideration of symmetries. Consequentially, we have to
+swap the numerical values obtained in the previous case for α and β. Nonetheless,
+we obtain the same gradient value for such a case, i.e., 0. For the rest of the indices,
+α = 0 and all values being pulled to β. Hence, we obtain − 2β
+γ . I.e., for the rest of the
+indices, the gradient value is negative.
+(ii) For any 1 ≤ m < ∞: At the index j - since 0 < γ ≤ 1 holds, and due to (*) we get
+α−β ≤γ |:γ
+
+⇐⇒
+
+α−β
+≤ 1.
+γ
+
+(**)
+
+In case that the same NPP being called upon multiple times, we multiply (**) with
+−1 and obtain
+β−α
+.
+−1 ≤
+γ
+For all other indices, we have − βγ . If |β| > γ, then − βγ < −1 occurs as well.
+(iii) For m = ∞, if the NPP fully converged, then we have two cases to distinguish: the
+index j and all other entries of the gradient’s vector. Particularly, we know from
+Eq. (4) and (5) that γ is equal to 1. Thus, we can focus entirely on α − β. I.e., we
+conclude the entries of gradient’s vector to be calculated as 1 − 0 = 1 for the index j
+and 0 − 1 = −1 otherwise.
+
+Following the theorem, the training is done by the principle “winner takes all” if there
+are more than two NPP’s outcomes, and “zero-sum game” otherwise. Hence, we are left
+with the sign function of the gradient vector, and the convergence in itself, can be thought
+of as a gradient clipping. The results presented by Yang et al. (2020) show that this works
+on some problems with little or no loss of accuracy, cf. (Seide, Fu, Droppo, Li, & Yu, 2014).
+Extrapolating from the gradient’s vector limit, we see only one outcome to be rewarded,
+11
+
+Skryagin, Ochs, Dhami and Kersting
+
+and so only one of the set of all potential solutions matching the data per NPP’s call. This
+observation is the heart of the next section and will be discussed in detail.
+Now, it is of great interest to derive the gradients of the entailment loss LEN T (12)
+∂ log(PΠ(θ) (Qi ))
+so that the expression
+× ∂p
+∂p
+∂θ from the left-hand side of Eq. (13) becomes
+attainable for back-propagation. For the very sole purpose, we formulate the
+Theorem 2 (Gradient with respect to entailment loss). The average derivative of
+the logical entailment loss function LEN T defined in Eq. (12) can be estimated as follows
+l
+
+1 X ∂ log(PΠ(θ) (Qi ))
+1 ∂
+LEN T ≥
+· log(P (XQ ,C) (xQi )).
+l ∂p
+l
+∂p
+i=1
+
+Proof. We begin with the definition of the cross-entropy for two vectors yi and ŷi :
+
+
+ 
+n
+n
+n
+X
+X
+X
+1
+
+
+−H(yi , ŷi ) := −
+yij · log
+=−
+yij · log(1) −yij · log(ŷij ) =
+yij · log(ŷij ).
+| {z }
+ŷij
+j=1
+
+j=1
+
+j=1
+
+=0
+
+Hereafter, we substitute
+yi = log(PΠ(θ) (Qi ))
+
+and
+
+ŷi = P (XQ ,C) (xQi ),
+
+and thus obtain −H(yi , ŷi ) =
+n
+
+ X
+
+
+−H log(PΠ(θ) (Qi )), P (XQ ,C) (xQi ) =
+log(PΠ(θ) (Qi )) · log P (XQ ,Cj ) (xQi ) .
+
+(16)
+
+j=1
+
+We remark that n represent the number of classes defined in the domain of an NPP. Now, we
+differentiate the equation (16) with the respect to p depicted as in Eq. (15) to be the label
+of the probability of an atom c = vj in rnpp , denoting PΠ(θ) (c = vj ). Since differentiation
+is a linear operation, the product rule is applicable directly:
+"
+n
+
+
+X
+∂ log(PΠ(θ) (Qi ))
+∂
+− H (yi , ŷi ) =
+· log P (XQ ,Cj ) (xQi ) +
+∂p
+∂p
+j=1
+#
+∂ log P (XQ ,Cj ) (xQi )
+log(PΠ(θ) (Qi )) ·
+.
+(17)
+∂p
+We want to avoid considering the latter term of log(PΠ(θ) (Qi )) ·
+
+
+
+(X ,C )
+∂ log P Q j (xQi )
+
+because
+∂p
+∂ log(PΠ(θ) (Qi ))
+it represents the rescaling and to keep the first since SLASH procure
+following
+∂p
+Eq. (15). To achieve this, we estimate equation from above downwards as
+n
+
+−
+
+
+
+X ∂ log(PΠ(θ) (Qi ))
+∂
+H (yi , ŷi ) ≥
+· log P (XQ ,Cj ) (xQi ) .
+∂p
+∂p
+j=1
+
+12
+
+(18)
+
+Scalable Neural-Probabilistic ASP
+
+Furthermore, under i.i.d assumption we obtain from the definition of likelihood
+LH(y, ŷ) =
+
+l
+Y
+
+LH(yi , ŷi ),
+
+i=1
+
+and following the negative likelihood coupled with the knowledge that the log-likelihood of
+yi is the log of a particular entry of ŷi
+LEN T = log LH(y, ŷ) =
+
+l
+X
+
+log LH(yi , ŷi ) =
+
+i=1
+
+l X
+n
+X
+
+yij · log(ŷij )
+
+i=1 j=1
+
+
+
+l
+n
+l
+X
+X
+X
+
+
+=
+yij · log(ŷij ) = −
+H(yi , ŷi ).
+i=1
+
+j=1
+
+i=1
+
+Finally, we obtain the following estimate applying inequality (18)
+l
+l
+
+
+1X ∂
+1 X ∂ log(PΠ(θ) (Qi ))
+1 ∂
+LEN T = −
+H(yi , ŷi ) ≥
+· log P (XQ ,C) (xQi ) .
+l ∂p
+l
+∂p
+l
+∂p
+i=1
+
+i=1
+
+Also, we note that the mathematical transformations listed above hold for any type of NPP
+and the task dependent queries (NN with Softmax, PC or PC jointly with NN). The only
+difference will be the second term, i.e., log(P (C|XQ ) (xQi )) or log(P (XQ |C) (xQi )) depending
+on the NPP and task. The NPP in a form of a single PC modeling the joint over XQ and
+C was depicted to be the example.
+In summary, we have covered the parameter learning within SLASH since the gradients
+for both LN P P and LEN T are derived, and thus, know the gradients of LSLASH . Importantly, with the learning schema described above, rather than requiring a novel loss function
+for each individual task and data set, with SLASH, it is now possible to simply incorporate
+specific task and data requirements into the logic program. The training loss, however,
+remains the same.
+
+3. Scaling SLASH with SAME
+In the following, we focus on the potential solutions I |= Q. Namely, according to Eq. (4)
+we know that the probability of a query is the sum of the probabilities of all potential
+solutions. However, the question remains, how many of them match the data x belonging
+to the query Q? Discussing Thm. 1 (Gradients’ Limit), we saw that gradients converge to
+reward only one outcome vj .
+We examine this observation on the digit addition task as it was originally proposed by
+Manhaeve et al. (2018). The goal is to train an NPP to recognize digits given the sum of
+the two. For example, consider the query sum2( , ,10). The potential solutions for this
+query are:
+sum2(1, 9, 10), sum2(2, 8, 10), sum2(3, 7, 10), sum2(4, 6, 10), sum2(5, 5, 10),
+sum2(6, 4, 10), sum2(7, 3, 10), sum2(8, 2, 10), sum2(9, 1, 10).
+13
+
+Skryagin, Ochs, Dhami and Kersting
+
+Algorithm 2 Potential Solutions with SAME
+Input: PΠ (c = vj ), j = 1, . . . , n, t, Πasp
+1: Πnpp ← ∅ initialize the set of NPP, cf. Eq. (3)
+2: for every c = vj do
+
+probsort ← sort(PΠ (c = vj ))
+P
+4:
+# add indices of outcomes vj until j PΠ (c = vj ) ≤ t with SAME
+5:
+idx ← get idx(probsort , t)
+6:
+# Then truncate disjunction 1{h(x) = v1 ; . . . ; h(x) = vn }1 accordingly
+7:
+Πnpp ← extend(Πnpp , get disj(idx))
+8: end for
+9: Π = Πnpp ∪ Πasp
+10: I ← asp solver(Π)
+11: return I
+3:
+
+From the above, only sum2(3,7,10) corresponds to the given data. This means we always
+generate all potential solutions for the given query, although only one corresponds to the
+data assigned to the query. In the following, we formulate SAME (Solution thAt MatchEs
+the data), a technique to focus only on such potential solutions over time and dynamically
+reduces the computation time spent deriving all potential solutions. In the following, we
+abbreviate with SAME the usage of SAME within SLASH.
+For every query Q SLASH answers, it produces a set of all potential solutions I. With
+the growing size of NPP’s domain n, grows I substantially. Having multiple NPPs with
+considerable domain size, we might end-up with a computationally infeasible set I to obtain.
+During the training, we observe that the probability distribution PΠ (c = vi ) as defined
+below Eq. (1) becomes skewed independent of the chosen inference type through +/−
+notation for every data entry x assigned to the query Q. I.e., with the progressing training’s
+iteration, fewer and fewer NPP’s outcomes vi concentrate the vast majority of the critical
+mass, or more formally
+X
+PΠ (c = vj ) ≤ t.
+(19)
+j
+
+Thereby, t represents some preset threshold of, e.g., 99%. Furthermore, we know that at
+the beginning of the training PΠ (c = vj ) = n1 applies for all vi , 1 ≤ j ≤ n. Thus, the
+disjunction in Eq. (3) consists of n elements and I0 = I. Repeatedly applying Eq. (19), we
+expect the aforementioned disjunction to entail fewer elements with every further training
+iteration. I.e., there exists an order such that
+X
+e
+
+PΠ (c = ve ) <
+
+X
+
+PΠ (c = vj )
+
+with
+
+j ̸= e, 1 ≤ j, e ≤ n
+
+(20)
+
+j
+
+We refer to the Algorithm 2 of SAME in pseudocode form as a summary of the considerations made. It depicts how SAME is used when computing all potential solutions.
+Consequentially,
+I0 ⊇ I1 ⊇ I2 ⊇ . . . ⊇ Im
+14
+
+(21)
+
+Scalable Neural-Probabilistic ASP
+
+is a formal description of our expectations, and |Im | = 1 for m → ∞. I.e., among all
+potential solutions, there exists only one potential solution aligning the data with the query.
+Together with Eq. (7) and (19) we formulate the following theorem.
+Theorem 3 (Convergence of SAME). Eq. (21) holds.
+Proof. We follow the principal of contraposition. W.l.o.g., there exists m ∈ N such that
+Im ⊆ Im+1 holds and not in contrary Im ⊇ Im+1 . I.e., the set of the potential solutions in an
+m+1 iteration entails more elements than the set in the previous iteration, or more formally
+|Im+1 | ≥ |Im |. Furthermore, if this tendency remains to be true for every subsequent
+iteration, we obtain
+Im ⊆ Im+1 ⊆ Im+2 ⊆ . . . ⊆ Im+s
+
+with
+
+s ∈ N.
+
+Since any Im+s cannot entail more entries than the set of all potential solutions, we conclude
+Im+s → I = I0
+
+for
+
+s → ∞.
+
+(22)
+
+We have shown that SAME would add more and more potentials solutions until it reaches
+the upper bound of all potential solutions which coincide with the query Q. All of the above
+is true for any arbitrary m ∈ N, thereby completing the proof.
+In the next section, we will provide empirical evidence for the advantages SAME’s
+utilization brings.
+
+4. Experimental Evaluations
+Previously, we showed that the main advantage of SLASH lies in the efficient integration
+of any combination of neural, probabilistic and symbolic computations. This work extends
+these findings with new experimental evaluations for SLASH with SAME. In particular, we
+show how SAME is essential for using SLASH for VQA. Afterward, we conduct an ablation
+study to evaluate the advantages coming from this combination. For this, we revisit the
+MNIST addition as conducted by Huang et al. (2021) and the set prediction task as proposed
+by Locatello, Weissenborn, Unterthiner, Mahendran, Heigold, Uszkoreit, Dosovitskiy, and
+Kipf (2020). For all experiments, we use top-99% to cover most critical mass of NPPs.
+In the ablation study experiments, we present the average over five runs with different
+random seeds for parameter initialization. For VQA experiments, we used the same single
+seed to initialize the NPP’s parameters following the setting of Huang et al. (2021). We
+refer to App. A for each experiment’s SLASH program, including queries, and App. C for
+a detailed description of hyperparameters and further experimental details.
+4.1 Visual Question Answering
+In VQA, a model should produce answers to questions about visual scenes. These questions
+require a range of capabilities to infer the correct answer. For example, to answer the
+question “How many red objects are in the scene?” a model has to be able to detect and
+count red objects. In this experiment, we show how SLASH can be applied to VQA to
+answer questions that require reasoning.
+15
+
+Skryagin, Ochs, Dhami and Kersting
+
+target(O0) :- name(+O0, -N0),
+oa rel(is used for, N0,
+controlling flows of traffic).
+
+target(O2) :- relation(+O2, +O1, -of),
+name(+O1, -animal), name(O1, object),
+relation(+O0, +O1, -of).
+
+(a) Traffic lights example from VQAR C2
+
+(b) Flock of sheep example from VQAR C5
+
+Figure 5: VQAR example images and programmatic queries: Bounding boxes are
+produced by a YOLO network and answer objects are marked with green. On the right, the
+name(O1, object) predicate is not annotated with the +/− notation and has to be derived
+via the knowledge graph.
+As of now, few works approach VQA using logic-based DPPLs (Eiter, Higuera, Oetsch,
+& Pritz, 2022; Huang et al., 2021). Both of these works open up the question of how ASP
+can be used in an end-to-end trainable setting; for example, questions about scenes from
+real-world images, such as in the VQAR dataset proposed by Huang et al. (2021). We will
+now investigate how to apply SLASH to the VQAR dataset.
+Task Description – The VQAR dataset consists of 80.178 real-world images. Fig. 1
+gives an overview of the task. Each image was fed through a pretrained YOLO Network to
+obtain bounding boxes and feature maps for recognized objects. Each image has a scene
+graph (SG), which can have 500 object names, 609 attributes and 229 object relations
+among the objects. All images share a knowledge graph (KG) encoding 3.387 entries as
+tuples and triplets, and six rules to traverse. Both graphs are represented in the form of
+a logic program. There are 4M programmatic queries and answer pairs encoding object
+identification questions. The queries’ difficulty varies, ranging from two to six occurring
+clauses (C2 to C6 ), and for each image, ten query answer pairs exist for each clause length.
+Fig. 5 depicts two examples of VQAR from C2 and C5 . In Fig. 1, next to the programmatic
+queries are their corresponding natural language questions to be found. Similarly, as Huang
+et al. (2021), we argue that this work focuses on enabling reasoning for VQA, and as such,
+we use the programmatic form as input. Some works, such as (Yi et al., 2018), translate
+from natural language to programmatic queries. We leave this for future work.
+Approach by SAME – The task is formulated as a multi-label classification task.
+The feature maps, bounding boxes, the entire knowledge graph and the programmatic query
+serve as input to predict the objects that answer the programmatic query. Fig. 2 shows
+the SLASH pipeline for VQA. In our setup, three MLP classifiers are used as NPPs to
+predict names, attributes, and relations and are trained end-to-end. All three are of the
+same architecture (cf. App. C.4) as defined by Huang et al. (2021). The NPPs outcomes
+16
+
+Scalable Neural-Probabilistic ASP
+
+Train →
+10k C2
+Test ↓ Scallop SAME
+1k C2
+1k C3
+1k C4
+1k C5
+1k C6
+5k Call
+
+76.50
+76.48
+77.00
+79.30
+76.98
+77.25
+
+77.76
+73.75
+67.41
+68.87
+64.86
+70.52
+
+50k Call
+Scallop SAME
+84.34
+81.97
+80.90
+83.76
+82.61
+82.72
+
+79.26
+72.95
+69.50
+69.33
+63.18
+70.90
+
+(a) Data efficiency of SLASH with SAME (b) Performance of SLASH with SAME and Scallop
+and Scallop on different dataset sizes.
+on different clauses lengths.
+
+Figure 6: Performance of SLASH on VQAR: results on the data efficiency test (a) and
+generalization test for different clause lengths (b) trained on C2 (left) and Call (right).
+form the scene graph and build the SLASH program with the KG and the query. The VQA
+task, in itself, exposes the limits of DPPLs without approximate reasoning. The complexity
+of the real world is so high that the complete enumeration of all proofs/models is beyond
+reach. We use a combination of SAME, CLINGO’s show statements and iterative solving
+to deal with the complexity of the task. We refer the interested reader to App. B, where
+we look in-depth into our program encoding. In the following, we compare SLASH using
+SAME with Scallop.
+Results – Fig. 6a presents insights on data efficiency: the recall@5 of test queries after
+training with 10, 100, 1k and 10k training samples on C2 . We see that SAME achieves
+greater data efficiency than Scallop due to the flexible number of potential solutions.
+In Tab. 6b, the recall values are displayed for varying clause lengths to demonstrate our
+approach’s generalizability and overall performance. The left side shows results for training
+on 10k samples on C2 and the right side on Call . SAME performs similarly to Scallop
+(Huang et al., 2021) on C2 for both settings. As the solution space grows exponentially
+with the complexity of the questions, we observe that the performance of SAME decreases
+compared with C2 on more complex tasks. Comparing Scallop’s results with SAME, i.e.
+top-99%, Huang et al. (2021) use top-10 for each programmatic query. Scallop features
+directly weighted rules, while SLASH would have to emulate such rules.
+In summary, the experimental results show that SLASH scales with SAME to VQA.
+Next, we study the scalability achieved by SAME as an ablation study.
+4.2 Scalability of SLASH
+Inspired by Huang et al. (2021), we explore how using different subsets of all potential
+solutions affects the performance and scalability of SLASH on the MNIST addition task.
+In the task of MNIST-addition (Manhaeve et al., 2018), the goal is to predict the sum
+of two images from the MNIST dataset (LeCun, Cortes, & J.C. Burges, 1998b), presented
+only as raw images. During test time, however, a model should classify the images directly.
+Thus, the model does not receive explicit information about the depicted digits and must
+learn to identify digits via indirect feedback on the sum prediction. Using more than two
+17
+
+Skryagin, Ochs, Dhami and Kersting
+
+Neural
+Model
+
+Task
+
+SLASH
+
+top-k
+k=3
+k=5
+
+DNN
+
+T1
+T2
+T3
+
+98.80
+98.85
+98.75
+
+98.68
+98.81
+98.77
+
+98.81
+98.76
+98.77
+
+98.60
+98.68
+98.74
+
+98.69
+98.68
+98.77
+
+98.56
+98.82
+98.71
+
+PC
+
+T1
+T2
+T3
+
+95.29
+95.26
+95.11
+
+74.89
+70.12
+30.55
+
+70.25
+64.23
+41.03
+
+79.89
+64.42
+31.79
+
+87.59
+71.11
+32.96
+
+95.19
+94.99
+94.94
+
+k=1
+
+SAME
+k=10
+
+Table 1: Regardless of how complex the task is, it is harder to choose the correct
+k in top-k than for top-k% for PCs: Accuracy Comparison between top-k and SLASH
+with and without SAME. We compare the method on three different Tasks, T1-T3: sum2( ,
+, 10) sum3( , , ,15) sum4( , , , ,17).
+
+images makes the task significantly harder, as an exponentially growing number of digit
+combinations has to be considered. Similar to the setup of Scallop (Huang et al., 2021),
+we test on three different difficulty levels to evaluate the model’s scaling capabilities. The
+difficulty ranges from task T1 with two images sum2( , ,10), to task T3 with four images
+sum4( , , , ,17). We use a probabilistic circuit (PC) and a deep neural network (DNN)
+as NPP for the same settings.
+The DNN used is the LeNet5 model (LeCun, Bottou, Bengio, & Haffner, 1998a). When
+using the PC as NPP, we have extracted conditional class probabilities P (C|X) by marginalizing the class variables C to acquire the normalization constant P (X) from the joint
+P (X, C), and calculating P (X|C). The models using the NN architecture converge after one or two epochs and only get minor improvements in accuracy thereafter. For the PC
+architecture, the convergence takes more epochs and increases with the task difficulty. We
+report test accuracies after 10 and 20 epochs for the DNN and PC architecture, respectively.
+Tab. 3 in App. C.1 shows the convergence of SLASH with PC as NPP on different tasks.
+Performance using subsets of all potential solutions – First, let us look at
+what happens if we prune away some potential solutions given our NPP probabilities. We
+compute the potential solutions in three ways: SLASH with all potential solutions, SLASH
+with a top-k variant (SLASH-top-k) and SLASH with SAME. For top-k, we use CLINGO’s
+minimization constraints to put the NPP output probabilities in the logic program, cf.
+App. A. The solver then gives us the potential solutions sorted by their probability PΠ(θ) (I),
+from which we keep the k most probable solutions. For an example program for SLASH
+top-k, see App. A.
+Tab. 1 lists the results for the test on partial solutions. SLASH and SAME achieve
+almost identical or slightly worse performance on all tasks and different NPPs. With neural
+networks as our NPP, SLASH-top-k achieves similar performance for all k’s compared to
+SLASH. Using PCs as NPP, we get a worse performance. With increasing task difficulty, we
+lose most of the predictive performance of our model. With a high k on T1, most potential
+solutions are still covered, resulting in only a small drop in accuracy. For example, on T1
+there are nine ways to add two digits to ten, which is the query with the most potential
+18
+
+Scalable Neural-Probabilistic ASP
+
+Method
+
+Accuracy after last Epoch
+T1
+T2
+T3∗
+
+Scallop top-10
+DeepProbLog
+DeepStochLog
+NeurASP
+
+98.95
+98.50
+96.96
+98.05
+
+99.12
+98.75
+97.49
+98.42
+
+97.47
+98.23
+97.54
+98.03
+
+54m:10s
+8m:3s
+1m:23s
+3m:13s
+
+5h:39m:53s
+15m:36s
+5m:49s
+32m:26s
+
+21h:10m:0s
+34m:54s
+44m:27s
+15h:28m:51s
+
+SLASH-DNN
+SLASH-PC
+SLASH-DNN top-10
+SLASH-PC top-10
+
+98.80
+95.29
+98.69
+87.59
+
+98.85
+95.26
+98.68
+71.11
+
+98.75
+95.11
+98.77
+32.96
+
+24s
+1m:9s
+25s
+1m:8s
+
+1m:42s
+2m:27s
+1m:3s
+1m:47s
+
+51m:49s
+52m:22s
+25m:2s
+26m:52s
+
+SAME-DNN
+SAME-PC
+
+98.56
+95.19
+
+98.82
+94.99
+
+98.71
+94.94
+
+17s
+1m:3s
+
+17s
+1m:23s
+
+1m:35s
+16m:40s
+
+T1
+
+Average Time per Epoch
+T2
+T3∗
+
+Table 2: SAME scales well with growing task complexity: Test accuracy in % and
+runtime comparison. The runtime is averaged over ten epochs for all methods. Light green
+indicates high accuracy or low time, while blue stands for the opposite. (∗ ) Please note,
+that since training Scallop and NeurASP would have taken too long, they were stopped
+after one epoch and therefore did not converge as the other DPPLs.
+
+solutions. With increasing task difficulty, though, many more potential solutions are not
+covered when selecting k=10 as in Scallop (Huang et al., 2021) since there are 73 for T2 and
+633 for T3. At the beginning of training, our model gives us uniform predictions over all
+digits, as it has not learned anything yet. Therefore, the randomness of model initialization
+influences which solution falls into the top-k range. If we prune the true solution, our
+model cannot learn to detect the correct class with that query, and it has to rely on other
+queries that might have the true solution in the top-k range. Empirically, we see that with
+DNNs, we can still learn to detect digits, while with PCs, we cannot. We argue that the
+DNN architecture is more robust to these incorrect inputs and, over time, accumulates an
+increasing proportion of the correct digits in the top-k selection because it is better suited
+for object detection equipped with the visual inductive biases of convolutional layers. PCs,
+on the other hand, learn false classes at the beginning and reinforce the false prediction by
+repeatedly predicting them as most likely.
+On the contrary, SAME works on both PCs and DNNs as it only prunes certainly
+unlikely options. At first, we do not prune anything, and over time, after learning, we can
+safely regard the unlikely solutions, which explains why SAME is the better choice for both
+NNs and PCs.
+SAME reduces training time by pruning unlikely outcomes – After seeing
+that SLASH with SAME achieves on-par performance, we now want to look at the time
+savings we get by using it. Tab. 2 shows the average training time per epoch and the
+test accuracy. We provide results for other state-of-the-art DPPLs: Scallop (Huang et al.,
+2021), DeepProbLog (Manhaeve et al., 2018), its cousin DeepStochLog (Winters, Marra,
+Manhaeve, & De Raedt, 2022), and NeurASP (Yang et al., 2020). These DPPLs again use
+the LeNet5 architecture (LeCun et al., 1998a). For Scallop and NeurASP, we report the
+19
+
+Skryagin, Ochs, Dhami and Kersting
+
+Model
+
+Epochs
+
+T1
+
+T2
+
+T3
+
+SAME-DNN
+
+1
+1-10
+2-10
+
+21s
+17s
+17s
+
+39s
+17s
+15s
+
+13m:37s
+1m:35s
+14s
+
+SAME-PC
+
+1
+1-20
+2-20
+
+1m:14s
+1m:3s
+1m:2s
+
+2m:32s
+1m:23s
+1m:15s
+
+53m:26s
+16m:40s
+12m:35s
+
+Table 3: Due to pruning, SAME gets faster in later iterations: The average time
+per epoch is shown for different epochs.
+
+accuracy after one epoch on T3, as the training time for ten epochs would take almost a
+week.
+SLASH with and without SAME achieves state-of-the-art accuracy similar to the other
+models on all task difficulties using the same DNN architecture. We further observe that
+the test accuracy of SLASH with a PC NPP is slightly below the other DPPLs. However,
+this may be since a PC, compared to a DNN, is learning a true mixture density rather
+than just conditional probabilities. Note that optimal architecture search for PCs, e.g., for
+computer vision, is an open research question.
+Regarding training time, we see that top-k yields small improvements. With SAME we
+improve the training time by a huge fraction when considering a large number of potential
+solutions. For example, on T3 with NNs, we only need 3% of SLASH’s original training
+time over 10 epochs (see Fig. 3). Tab. 3 gives a more detailed overview of SLASH training
+times with SAME. Interestingly, after one epoch of training, the average runtime per epoch
+for epochs 2-10 is the same for all three difficulties for the DNN, as the model converges
+for the most part after the first epoch. It is even a bit faster on T3 because the number of
+queries is less on the T3 dataset (60k samples/number of images per query).
+These evaluations, in summary, show that SAME is an efficient extension of SLASH
+which saves a lot of computing resources while yielding tiny to no differences in performance.
+4.3 Object-centric learning
+Now, we turn to a very different task of object-centric set prediction. We presume that
+recent advancements in object-centric learning can be further improved by integrating such
+neural components into DPPLs and adding logical constraints about objects and their properties (Greff, Kaufman, Kabra, Watters, Burgess, Zoran, Matthey, Botvinick, & Lerchner,
+2019; Lin, Wu, Peri, Sun, Singh, Deng, Jiang, & Ahn, 2020; Locatello et al., 2020). In
+similar manner, we want to find out how much SAME speeds up SLASH possibly without
+loss of performance.
+For set prediction, a model is trained to predict the discrete attributes of a set of objects
+in an image (cf. Fig. 2 in the top-left corner for an example CLEVR image). The difficulty
+lies therein that the model must match an unordered set of corresponding attributes of
+various objects with its internal representations of the image.
+20
+
+Scalable Neural-Probabilistic ASP
+
+Figure 7: SLASH can converge faster: Average Precision on ShapeWorld4 (left) and
+CLEVR (right). SLASH converges faster on ShapeWorld4 compared to the Baseline. During
+training, we observe temporary crashes in AP, which get smaller over time (see zoomed
+windows). Furthermore, the standard deviation is much smaller for SLASH than for the
+baseline. On CLEVR, all three models converge similarly after roughly 200 epochs. SLASH
+performs slightly better than SAME, which, in turn, performs a little better than the
+Baseline.
+
+The slot attention module introduced by Locatello et al. (2020) allows for an attractive
+object-centric approach to this task. Specifically, this module represents a pluggable, differentiable module that can be easily added to any architecture. Through a competitive
+softmax-based attention mechanism, the model can enforce the binding of specific parts of
+a latent representation into permutation-invariant, task-specific vectors called slots.
+We train SLASH with and without SAME based on NPPs consisting of a shared slot
+encoder and separate PCs, each modelling the mixture of latent slot variables and the
+attributes of one category, e.g., color. For each dataset, ShapeWorld4 and CLEVR, we have
+four NPPs in total. Finally, the model is trained via queries exemplified in Fig. 12 in App.
+We refer to this configuration as SLASH Attention.
+We compare SLASH Attention to a baseline of slot attention encoder using single multicategorical MLP and Hungarian loss to predict object properties from the slot encodings
+as in (Locatello et al., 2020). The key difference between these two models lies in the
+employed logical constraints in SLASH Attention. In their work, Locatello et al. (2020)
+utilize a single MLP trained via Hungarian loss, i.e., they assume shared parameters for
+all attributes. In comparison, in SLASH attention, we make an independence assumption
+about the parameters for the object attributes and encode this via logical constraints. We
+refer to App. A for the program.
+One limitation is that matching objects to slots has n! possible assignments. To overcome this problem, we adopt a similar strategy to external functions in CLINGO. We use
+Hungarian matching (Kuhn, 1955) and make the resulting assignments a part of the logic
+program. This allows us to scale polynomial with the number of objects and enables SLASH
+for training on CLEVR, which can contain up to ten objects per image. The results of these
+experiments can be found in Tab. 4.
+21
+
+Skryagin, Ochs, Dhami and Kersting
+
+Method
+Slot Att.
+SLASH
+SAME
+
+Accuracy
+ShapeWorld4 CLEVR
+85.25
+94.98
+95.21
+
+90.21
+93.47
+92.50
+
+Time
+ShapeWorld4
+CLEVR
+2h:36m
+1d:3h:53m
+15h:29m
+
+1d:2h:26m
+6d:16h:49m
+5d:6h:24m
+
+Table 4: SLASH can improve Slot Attention: Test average precision and training
+times for the Slot Attention baseline and SLASH with and without SAME.
+On ShapeWorld4, we observe that the average precision after convergence on the heldout test set with SLASH Attention is greatly improved to that of the baseline model.
+More interesting, SAME provides the best results in this setting while having the smallest
+deviation, cf. Fig. 7 (left). ShapeWorld4 has significantly fewer data entries than CLEVR,
+which may account for the huge improvement in performance with SLASH Attention. This
+is evidence that we are moving closer to knowledge-rich AI. Additionally, we observe that
+SLASH Attention reaches the average precision value of the baseline model in much fewer
+epochs. On CLEVR, this tendency also holds, but the difference in performance is smaller,
+but we still get around 2-3% more average precision with SLASH and SAME.
+Regarding the training times, we observed that in the case of ShapeWorld4, using SAME
+allows truncating the training window by 44.47%, compared to the results of SLASH
+without SAME. For CLEVR, we not only obtained a solution, but also are getting it 21.4%
+faster thanks to SAME.
+These observations suggest that SAME applies to any form of NPPs and is a good
+step towards unraveling the solving bottleneck to lift the symbolic overhead. Nonetheless,
+there is a difference in the number of learnable parameters between the neural baseline and
+SLASH attention. Namely, SLASH attention consists of four PCs, for which the time spent
+on forward- and backward-pass is higher compared to the single multicategorical DNN used
+in the slot attention module. We refer to App. C.5 for the in-detail discussion. Finally, we
+draw attention to the fact that the symbolic overhead is a direct result of all DPPLs under
+consideration using the CPU for high-level reasoning, while low-level perception is based on
+the GPU. To further reduce the symbolic overhead, tight integration of solving with neural
+processing may be a promising research direction.
+Summary of Empirical Results. All empirical results together demonstrate that the
+expressiveness and flexibility of SLASH are highly beneficial and improve upon the stateof-the-art: one can freely combine what is required to solve the underlying task — (deep)
+neural networks, PCs, and logic. The experiments demonstrate – SAME to be the inherent
+extension of SLASH. Further, the results indicate that utilization of SAME comes with a
+tiny, if any, performance loss comparatively with the analytical weighted model counting.
+
+5. Related Work
+Neuro-Symbolic AI can be divided into two lines of research, depending on the starting
+point, though both have the same final goal: to combine low-level perception with logical
+constraints and reasoning. A key motivation of Neuro-Symbolic AI (d’Avila Garcez, Lamb,
+22
+
+Scalable Neural-Probabilistic ASP
+
+& Gabbay, 2009; Mao et al., 2019; Hudson & Manning, 2019; d’Avila Garcez et al., 2019;
+Jiang & Ahn, 2020; d’Avila Garcez & Lamb, 2023) is to combine the advantages of symbolic
+and neural representations into a joint system. This is often done in a hybrid approach where
+a neural network acts as a perception module that interfaces with a symbolic reasoning
+system, e.g., (Mao et al., 2019; Yi et al., 2018). The goal of such an approach is to mitigate
+the issues of one by the other, e.g., using the power of symbolic reasoning systems to
+handle the generalizability issues of neural networks and handle the difficulty of noisy data
+for symbolic systems via neural networks. Recent work has also shown the advantage of
+approaches for explaining and revising incorrect decisions (Ciravegna et al., 2020; Stammer
+et al., 2021). However, many of these previous works train the sub-symbolic and symbolic
+modules separately.
+Deep Probabilistic Programming Languages (DPPLs) are programming languages that combine deep neural networks with probabilistic models and allow a user to
+express a probabilistic model via a logic program. Similar to neuro-symbolic architectures,
+DPPLs thereby unite the advantages of different paradigms. DPPLs are related to earlier
+works such as Markov Logic Networks (MLNs) (Richardson & Domingos, 2006). Thereby,
+the binding link is the Weighted Model Counting (WMC) introduced in LPMLN (Lee &
+Wang, 2016). Several DPPLs have been proposed by now, among which are Pyro (Bingham et al., 2019), Edward (Tran et al., 2017), DeepProbLog (Manhaeve et al., 2018),
+DeepStochLog (Winters et al., 2022), NeurASP (Yang et al., 2020), and Scallop (Huang
+et al., 2021).
+To resolve the scalability issues of DeepProbLog, which uses Sentential Decision Diagrams (SDDs) (Darwiche, 2011) as the underlying data structure to evaluate queries,
+NeurASP (Yang et al., 2020), offers a solution by utilizing ASP (Dimopoulos, Nebel, &
+Koehler, 1997; Soininen & Niemelä, 1999; Marek & Truszczynski, 1999; Calimeri et al.,
+2020). In contrast to query evaluation in Prolog (Colmerauer & Roussel, 1993; Clocksin
+& Mellish, 1981), which may lead to an infinite loop, many modern answer set solvers
+use Conflict-Driven-Clause-Learning (CDPL), which, in principle, always terminates. In
+this way, NeurASP changes the paradigm from query evaluation to model generation, i.e.,
+instead of constructing an SDD or a similar knowledge representation system, NeurASP
+generates a set of all potential solutions (one model per solution) and estimates the probability for the truth value of each of these solutions. Of those DPPLs that handle learning
+in a relational, probabilistic setting and in an end-to-end fashion, all of these are limited to
+estimating only conditional class probabilities.
+Another research branch focuses on approximate inference for DPPLs to allow scaling
+to harder problems. The goal is to incorporate probabilities into the solving process to
+obtain only a subset of all proofs. Manhaeve, Marra, and Raedt (2021) propose an A*-like
+search for proofs, and Huang et al. (2021) introduce a top-k mechanism based on Datalog
+to only keep likely proofs. In ASP, a program is first grounded and then solved, sometimes
+making the grounding itself a bottleneck. Existing work, therefore, aims at grounding on
+demand. The two main candidates are Lazy Grounding (Palù, Dovier, Pontelli, & Rossi,
+2009) or Magic Sets for ASP (Alviano & Faber, 2011). To the best of our knowledge, both
+techniques have not been applied in a probabilistic setting with ASP yet.
+Visual Question Answering has seen a lot of attention from the computer vision and
+natural language processing community. We refer to (Manmadhan & Kovoor, 2020) and
+23
+
+Skryagin, Ochs, Dhami and Kersting
+
+(Kodali & Berleant, 2022) for a detailed review. Recently, more neuro-symbolic approaches
+to VQA have been proposed. Yi et al. (2018) proposed a model which creates a structural
+scene representation of the image, parses a natural language question into a program, and
+then executes the program to obtain an answer. A few works utilize logic programming:
+Scallop’s (Huang et al., 2021) top-k approach allows for answering complex reasoning questions on real-world images. Eiter et al. (2022) showed how ASP could be used on top of the
+outputs of a pretrained YOLO network to answer CLEVR questions (Johnson et al., 2017).
+
+6. Conclusions
+We introduce SLASH, a novel DPPL that integrates neural computations with tractable
+probability estimates and logical statements. The key ingredient of SLASH to achieve this
+are Neural-Probabilistic Predicates (NPPs) that can be flexibly constructed out of neural
+and/or probabilistic circuit modules based on the data and underlying task. With these
+NPPs, one can produce task-specific probability estimates. The details and additional prior
+knowledge of a task are neatly encompassed within a SLASH program with only a few lines
+of code. Finally, via ASP and Weighted Model Counting, the logic program and probability
+estimates from the NPPs are combined within SLASH to estimate the truth value of a
+task-specific query. Additionally, the SAME technique addresses the question of scalability.
+Proven to converge to only one solution, SAME is the inherent extension of SLASH generally
+applicable to any problem.
+Our experiments on the VQAR dataset show the power, efficiency, and scalability of
+SLASH, paving the way to handle extremely difficult real-world applications. As one of
+many consequences, we found the following shortcomings to be resolved in future work.
+First, VQAR admits bigger parts of a program are optional to answer the programmatic
+query and, thus, should be ignored during grounding. Consequentially, we need “grounding
+on demand”. SAME is a form of stochastic lazy grounding, and thus is evident to help
+reduce the computation costs for NPP. Thus, it remains to be seen if and how similar
+technique(s) can be used for grounding complete programs. Second, should there be an
+exponential number of potential solutions, as in some VQAR queries, we cannot answer the
+query anymore. Weighted rules and facts might be insightful in finding ways to navigate
+solution spaces more efficiently. Finally, for WMC to be computed most efficiently regardless
+of the number of potential solutions and the queries, it must take place simultaneously with
+solving, i.e., becoming an inseparable part of it.
+Apart from that, our ablation study provided detailed insights on the computation speed
+of SAME, improving upon previous DPPLs in the benchmark MNIST-Addition tasks yet
+retaining the performance. Additionally, invoking Python routines allowed for the seamless
+invocation of the Hungarian matching algorithm into SLASH Attention. Together with
+SAME, we solved the task of object-centric set prediction for the CLEVR dataset, which
+none of the previous DPPLs has tried to solve yet, and reduced the training time of SLASH.
+With SLASH on the set prediction task, we effectively use elements of functional programming within SLASH. Similar, the used ASP-solver CLINGO can invoke Python routines at the grounding time via external functions. These pave the way for merging functional programming with SLASH. Neural Logic Machines (Dong, Mao, Lin, Wang, Li, &
+Zhou, 2019) serve as an example of a similar combination. Going in this direction will al24
+
+Scalable Neural-Probabilistic ASP
+
+low us to treat logically constrained regression problems, which would benefit fundamental
+sciences such as particle physics. Yu, Zhu, Trapp, Skryagin, and Kersting (2021) show how
+PCs can be used for multi-output regression tasks, and it appears to be the natural next
+step to integrate them in SLASH.
+
+Acknowledgments
+This work was partly supported by the Federal Minister of Education and Research (BMBF)
+and the Hessian Ministry of Science and the Arts (HMWK) within the National Research
+Center for Applied Cybersecurity ATHENE, the ICT-48 Network of AI Research Excellence
+Center “TAILOR” (EU Horizon 2020, GA No 952215, and the Collaboration Lab with
+Nexplore “AI in Construction” (AICO). It also benefited from the BMBF AI lighthouse
+project, the Hessian research priority programme LOEWE within the project WhiteBox, the
+HMWK cluster projects “The Third Wave of AI” and “The Adaptive Mind”, the German
+Center for Artificial Intelligence (DFKI) project “SAINT”.
+
+25
+
+Skryagin, Ochs, Dhami and Kersting
+
+Appendix A. SLASH Programs
+Here, the interested reader will find the SLASH programs which we compiled for our ablation
+studies on MNIST addition and Object-centric learning. Fig. 11 and Fig. 12 – for the set
+prediction task with slot attention encoder.
+# Define images
+img ( i1 ) . img ( i2 ) .
+3 # Define Neural - Probabilistic Predicate
+4 npp ( digit ( X ) , [0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9]) : - img ( X ) .
+5 # Define the addition of digits given two images and the resulting sum
+6 addition (A , B , N ) : - digit (+ A , - N1 ) , digit (+ B , - N2 ) , N = N1 + N2 .
+1
+2
+
+Figure 8: SLASH Program for MNIST addition with two images.
+
+1
+2
+
+# Is 7 the sum of the digits in img1 and img2 ?
+: - addition ( i1 , i2 , 7)
+
+Figure 9: Example SLASH Query for MNIST addition.
+The following code snippet shows the weak constraints for SLASH top-k.
+# weak constraints for image 1
+:~ digit (1 , i1 ,0) . [1866 , 0 , 0]
+3 :~ digit (1 , i1 ,1) . [2901 , 0 , 1]
+4 ...
+5 :~ digit (1 , i1 ,9) . [2468 , 0 , 9]
+6 # weak constraints for image 2
+7 :~ digit (1 , i2 ,0) . [1761 , 1 , 0]
+8 :~ digit (1 , i2 ,1) . [2922 , 1 , 1]
+9 ...
+10 :~ digit (1 , i2 ,9) . [2517 , 1 , 9]
+1
+2
+
+Figure 10: Weak constraints for SLASH top-k
+In the brackets, the first value is the probability of the corresponding ground atom in log
+space. The second and third values together make up a unique identifier for the belonging
+atom, which is used by CLINGO.
+
+26
+
+Scalable Neural-Probabilistic ASP
+
+# Define slots
+slot ( s1 ) . slot ( s2 ) . slot ( s3 ) . slot ( s4 ) .
+3 # Define identifiers for the objects in the image
+4 # ( there are up to four objects in one image ) .
+5 obj ( o1 ) . obj ( o2 ) . obj ( o3 ) . obj ( o4 ) .
+6 # Assign each slot to an object identifier
+7 { a s s i g n _ o n e _ s l o t _ t o _ o n e _ o b j e c t (X , O ) : slot ( X ) }=1 : - obj ( O ) .
+8 # Make sure the matching is one - to - one between slots
+9 # and objects identifiers .
+10 : - a s s i g n _ o n e _ s l o t _ t o _ o n e _ o b j e c t ( X1 , O1 ) ,
+11
+a s s i g n _ o n e _ s l o t _ t o _ o n e _ o b j e c t ( X2 , O2 ) ,
+12
+X1 == X2 , O1 != O2 .
+13 # Define all Neural - Probabilistic Predicates
+14 npp ( color_attr ( X ) , [ red , blue , green , grey , brown ,
+15
+magenta , cyan , yellow , bg ]) : - slot ( X ) .
+16 npp ( shape_attr ( X ) , [ circle , triangle , square , bg ]) : - slot ( X ) .
+17 npp ( shade_attr ( X ) , [ bright , dark , bg ]) : - slot ( X ) .
+18 npp ( size_attr ( X ) , [ big , small , bg ]) : - slot ( X ) .
+19 # Object O has the attributes C and S and H and Z if ...
+20 has_attributes (O , C , S , H , Z ) : - slot ( X ) , obj ( O ) ,
+21
+a s s i g n _ o n e _ s l o t _ t o _ o n e _ o b j e c t (X , O ) ,
+22
+color (+ X , -C ) , shape (+ X , -S ) ,
+23
+shade (+ X , -H ) , size (+ X , -Z ) .
+1
+2
+
+Figure 11: SLASH Program for ShapeWorld4.
+1
+2
+
+# Does object o1 have the attributes red , circle , bright , small ?
+: - has_attributes ( o1 , red , circle , bright , small )
+
+Figure 12: Example SLASH Query for ShapeWorld4 experiments. In other words, this
+query corresponds to asking SLASH: “Is object 1 a small, bright red circle?”.
+
+Appendix B. VQA Program Encoding and dealing with complexity
+In this section, we will explain how the SLASH program for the VQA task is constructed
+and how we deal with the complexity of the task and thus avoid producing an infeasible
+number of potential solutions for difficult questions. As depicted in Fig. 1, the VQA task
+comprises multiple parts in the SLASH program. One thing to highlight here is the length
+of the program, which usually has more than 3k lines.
+The KG makes 1424 “is-a” tuples and 1963 “object-attribute-relation” triplets, as well
+as six rules for the fixed part of every program. For n objects, the SG includes n attributes,
+n names, and n ∗ (n − 1) obj-to-obj relations, excluding relations of objects to themselves.
+Each object can have multiple attributes at once, so each attribute is modelled as a NPP
+with two outcomes: having or not having the attribute.
+Fig. 5 shows two images, object bounding boxes, and a target rule specifying what
+targets should entail. E.g., the provided target query from C2 in Fig. 5a is depicted.
+1
+2
+
+: - not target (0) ; not target (1) .
+: - target (2) .: - target (3) .: - target (4) .: - target (5) .: - target (6) .
+
+27
+
+Skryagin, Ochs, Dhami and Kersting
+
+It restricts objects 0 and 1 to be targets, while others are not. Combined with the stated
+target rule, the name NPP outcomes of objects 0 and 1 are restricted to inferring a name that
+can be substituted for variable N0 in the oa rel(is used for, N0, controlling flows of traffic)
+predicate. From the knowledge graph, we can infer for N0 to be replaced by “traffic lights”.
+In this case, all other names for the non-target objects are restricted to not being traffic
+lights. They can take on all other 499 outcomes of the name NPP. Attributes and relations
+are not restricted as well by the query. CLINGO’s show statements are used to show
+exclusively the predicates of the programmatic query in any potential solution. For the
+example under consideration, the show rule is depicted below.
+1
+2
+
+# show .
+# show name ( O0 , X ) : target ( O0 ) , name ( O0 , X ) , name ( O0 , N0 ) , oa_rel ( is_used_for ,
+N0 , c o n t r o l l i n g _ f l o w s _ o f _ t r a f f i c ) .
+
+These lines tell CLINGO to itemize name predicates of objects which satisfy all target
+predicates. Upon solving, we obtain the following potential solutions.
+{target(0), name(0,traffic lights)}
+{target(1), name(1,traffic lights)}
+Moving on to the more complex example of C5 in Fig. 5b. Here, our target rule consists of
+five predicates. Two name predicates restrict the target to be animals and objects. Additionally, two relation predicates specify the relation of the target object O2 to other objects.
+For such a query, computing all potential solutions can be infeasible. Particularly, we have
+16 objects which form 16*(16-1)=240 relation NPPs. Substituting them into the target
+relations at once can quickly lead to millions of potential solutions, should a programmatic
+query contains multiple relation predicates. Instead, we employ iterative solving. At each
+iteration, the next five relations with the highest probability are added until we have 100
+potential solutions or a specified timeout of 30 seconds is reached.
+In the last step, SAME helps out by pruning unlikely NPP outcomes. The target rule
+of this example stipulates only one name predicate should be an object. From the KG, we
+see the ontological concept telling us about what falls under the category of objects, such
+as furniture, vehicles, or animals. Asking for these broader categories restricts the NPP
+outcomes only partially. In the case of objects, most Name NPP’s outcomes are part of
+this category. Here again, for some queries, this can make computing all potential solutions
+infeasible. Our solution – combining top-k pruning with SAME: to keep the k most probable
+outcomes for each Name NPP and to prune more with SAME. Precisely, SAME will point
+to the Name outcome, that is, the actual one belonging to the object category and will
+prune any remaining ones.
+
+28
+
+Scalable Neural-Probabilistic ASP
+
+Appendix C. Experimental Details
+C.1 PC Convergence
+Fig. 13 shows the convergence of SAME with PCs on the T1, T2 and T3. The accuracy
+converges to the almost same value, and it can be seen that the harder the task, the more
+epochs it takes to converge.
+
+Figure 13: Convergence with SAME-PC on MNIST Addition
+
+C.2 ShapeWorld4 Generation
+The ShapeWorld4 dataset was generated using the original scripts of (Kuhnle & Copestake,
+2017)2 ). The exact scripts will be added together with the SLASH source code.
+C.3 Average Precision computation
+For the baseline slot encoder experiments on the Object-centric learning tasks, we measured
+the average precision score as in (Locatello et al., 2020). In comparison to the baseline slot
+encoder, when applying SLASH Attention, however, we handled the case of a slot not
+containing an object, e.g., only background variables, differently. Whereas Locatello et al.
+(2020) add another binary identifier to the multi-label ground truth vectors, we have added
+a background (bg) attribute to each category (cf. Fig. 11). A slot is thus considered to be
+empty (i.e., not containing an object) if each NPP returns a high conditional probability
+for the bg attribute.
+C.4 Model Details
+For those experiments using NPPs with PC, we have used Einsum Networks (EiNets) for
+implementing the probabilistic circuits. EiNets are a novel implementation design for SPNs
+introduced by Peharz, Lang, Vergari, Stelzner, Molina, Trapp, den Broeck, Kersting, and
+Ghahramani (2020) that minimizes the issue of computational costs that initial SPNs had
+suffered. This is accomplished by combining several arithmetic operations via a single
+monolithic einsum-operation.
+For all experiments, the ADAM optimizer (Kingma & Ba, 2015) with β1 = 0.9 and
+β2 = 0.999, ϵ = 1e − 8 and no weight decay was used.
+2. https://github.com/AlexKuhnle/ShapeWorld
+
+29
+
+Skryagin, Ochs, Dhami and Kersting
+
+VQA Experiments The architecture for the VQA experiments is the same as in
+(Huang et al., 2021) and is shown in Tab. 5. The name, relation, and attribute classifier share the same architecture. A YOLO network produces object features of size 2048
+which are fed into the classifiers. The relation classifier takes as input the features and
+bounding boxes of two objects, resulting in an input dimension of 4104 = (2048 + 4) ∗ 2. For
+the name and relation classifier, a Softmax is used. The attribute classifier has a Sigmoid
+activation, encoding multiple attributes over each output neuron.
+Type
+
+Size/Channels
+
+Activation
+
+Comment
+
+MLP
+BatchNorm + Dropout
+MLP*
+BatchNorm + Dropout*
+MLP
+
+input dim, 1024
+1024
+1024, 1024
+1024
+1014, num classes
+
+ReLU
+ReLU
+Softmax/Sigmoid
+
+dropout-rate 0.3/0.5
+dropout-rate 0.3
+-
+
+Table 5: VQA Neural Model. Layers marked with * are only used in the attribute and
+name classifier.
+MNIST-Addition Experiments For the MNIST-Addition experiments, we ran all
+baseline programs with their original configurations, as stated in (Huang et al., 2021; Manhaeve et al., 2018; Winters et al., 2022; Yang et al., 2020), respectively. For the MNIST
+Addition experiments, we have used the same neural module as in the baselines when training SLASH and SAME with the neural NPP represented in Tab. 7. When using a PC
+NPP, we have used an EiNet with the Poon-Domingos (PD) structure (Poon & Domingos,
+2011) and normal distribution for the leaves. The formal hyperparameters for the EiNet
+are depicted in Tab. 8. The learning rate and batch size for SLASH and the baselines are
+shown in Tab. 6.
+Model
+
+learning rate
+
+batch size
+
+Scallop
+DeepProbLog
+DeepStochlog
+NeurASP
+
+0.001
+0.0001
+0.001
+0.001
+
+64
+2
+100
+-
+
+SLASH-DNN
+SLASH-PC
+
+0.005
+0.01
+
+100
+100
+
+Table 6: Learning rate and batch size for the baselines and SLASH.
+ShapeWorld4 Experiments For the baseline slot attention experiments with the
+ShapeWorld4 data set, we have used the architecture presented in Tab. 9. For further
+details on this, we refer to the original work of Locatello et al. (2020). The slot encoder
+had a number of 4 slots and 3 attention iterations over all experiments.
+For the SLASH Attention experiments with ShapeWorld4, we have used the same slot
+encoder as in Tab. 9, however, we replaced the final MLPs with 4 individual EiNets with
+30
+
+Scalable Neural-Probabilistic ASP
+
+Type
+
+Size/Channels
+
+Activation
+
+Comment
+
+Encoder
+Conv 5 x 5
+MaxPool2d
+Conv 5 x 5
+MaxPool2d
+Classifier
+MLP
+MLP
+MLP
+
+1x28x28
+6x24x24
+6x12x12
+16x8x8
+16x4x4,120
+120,84
+84,10
+
+ReLU
+ReLU
+ReLU
+ReLU
+-
+
+stride 1
+kernel size 2, stride 2
+stride 1
+kernel size 2, stride 2
+Softmax
+
+Table 7: Neural module – LeNet5 for MNIST-Addition experiments.
+Variables
+784
+
+Width
+28
+
+Height
+28
+
+Number of Pieces
+[4,7,28]
+
+Class count
+10
+
+Table 8: Probabilistic Circuit module – EiNet for MNIST-Addition experiments.
+Type
+Conv 5 x 5
+Conv 5 x 5
+Conv 5 x 5
+Conv 5 x 5
+Position Embedding
+Flatten
+Layer Norm
+MLP (per location)
+MLP (per location)
+Slot Attention Module
+MLP
+MLP
+
+Size/Channels
+32
+32
+32
+32
+axis: [0, 1, 2 x 3]
+32
+32
+32
+32
+16
+
+Activation
+ReLU
+ReLU
+ReLU
+ReLU
+ReLU
+ReLU
+ReLU
+Sigmoid
+
+Comment
+stride 1
+stride 1
+stride 1
+stride 1
+flatten x, y pos.
+-
+
+Table 9: Baseline slot encoder for ShapeWorld4 experiments.
+
+Poon-Domingos structure (Poon & Domingos, 2011). Their hyperparameters are represented in Tab. 10.
+On CLEVR, we also used the “bigger” slot encoder architecture for the CLEVR images
+as in (Locatello et al., 2020) which have higher resolution than the Shapeworld4 images.
+The PC architecture used is the same for CLEVR, but the number of slots is increased to
+10.
+The learning rate for the baseline slot encoder was 0.0004 and 512. The learning rate
+and batch size for SLASH Attention were 0.01 and 512 for ShapeWorld4 and CLEVR for
+the PCs, and 0.0004 for the slot encoder.
+31
+
+Skryagin, Ochs, Dhami and Kersting
+
+EiNet
+Color
+Shape
+Shade
+Size
+
+Variables
+32
+32
+32
+32
+
+Width
+8
+8
+8
+8
+
+Height
+4
+4
+4
+4
+
+Number of Pieces
+[4]
+[4]
+[4]
+[4]
+
+Class count
+9
+4
+3
+3
+
+Table 10: Probabilistic Circuit module – EiNet for ShapeWorld4 experiments.
+C.5 Training times for SLASH Attention
+ShapeWorld4
+Baseline SLASH SAME
+
+Baseline
+
+CLEVR
+SLASH
+
+SAME
+
+Forward pass
+Potential Solutions
+Gradients
+Backward pass
+
+-
+
+1.7
+50.1
+12.2
+32.9
+
+1.7
+8.8
+11.9
+31.4
+
+-
+
+85.7
+140.5
+71.3
+273.1
+
+78.1
+61.7
+64.2
+243.2
+
+Sum training
+
+9.4
+
+96.9
+
+53.8
+
+95.2
+
+570.6
+
+447.3
+
+Table 11: Average training times per epoch in seconds. The four training stages as well as
+the total training time per epoch are listed.
+
+Figure 14: Training time of the four training steps of the SLASH pipeline with SAME. Over
+time, SAME reduces the time spent on computing Potential Solutions, while all other steps
+stay constant in time.
+In Sec. 4.3 we saw that there is still some gap between SLASH and its baseline. Here we
+want to have a closer look at where the overhead is coming from. The training of SLASH can
+be seen as four steps: The forward pass, computing potential solutions with ASP, computing
+gradients and lastly the backward pass. Tab. 11 gives an overview of the average time spent
+on each of these steps per epoch. The first observation we make is that the forward and
+backward pass in sum takes longer than the total training of the baseline. This is because
+we are using EinsumNetwork’s as the NPPs and that we are using a NPP for each object
+concept instead of using a single MLP for all concepts and objects at once. As a result, a lot
+32
+
+Scalable Neural-Probabilistic ASP
+
+more parameters are used in total, which increases the time spent on neural computations.
+The biggest bottleneck though is computing the potential solutions, which makes up more
+than 50% of the training time. Fig. 14 shows how SAME helps to mitigate this overhead
+and reduces the average time to compute Potential Solutions from 49 seconds to 8.8 seconds,
+making it not longer the training bottleneck. Computing the gradients stays constant over
+time and is responsible for 20% of the total training time for SAME. In general, DPPLs
+as of now utilize a GPU for neural computations, while solving and computing gradients
+happens on the CPU. As argued before, this suggests that an interesting research direction
+would be to find a closer integration of the neural and symbolic components of the pipelines
+for parallel and faster training.
+
+33
+
+Skryagin, Ochs, Dhami and Kersting
+
+References
+Alviano, M., & Faber, W. (2011). Dynamic magic sets and super-coherent answer set
+programs. AI Communications, 24 (2), 125–145.
+Bengio, Y. (2019). From System 1 Deep Learning to System 2 Deep Learning. Invited talk
+NeurIPS.
+Bingham, E., Chen, J. P., Jankowiak, M., Obermeyer, F., Pradhan, N., Karaletsos, T.,
+Singh, R., Szerlip, P. A., Horsfall, P., & Goodman, N. D. (2019). Pyro: Deep universal
+probabilistic programming. Journal of Machine Learning Research, 20, 28:1–28:6.
+Calimeri, F., Faber, W., Gebser, M., Ianni, G., Kaminski, R., Krennwallner, T., Leone,
+N., Maratea, M., Ricca, F., & Schaub, T. (2020). Asp-core-2 input language format.
+Theory and Practice of Logic Programming, 20 (2), 294–309.
+Choi, Y., Vergari, A., & Van den Broeck, G. (2020). Probabilistic circuits: A unifying
+framework for tractable probabilistic models. Tech. rep., UCLA.
+Ciravegna, G., Giannini, F., Gori, M., Maggini, M., & Melacci, S. (2020). Human-driven
+FOL explanations of deep learning. In Proceedings of the Twenty-Ninth International
+Joint Conference on Artificial Intelligence, pp. 2234–2240.
+Clocksin, W. F., & Mellish, C. (1981). Programming in Prolog. Springer.
+Colmerauer, A., & Roussel, P. (1993). The birth of prolog. In Proceedings of History of
+Programming Languages Conference (HOPL-II), pp. 37–52.
+Darwiche, A. (2011). SDD: A new canonical representation of propositional knowledge bases.
+In Proceedings of the 22nd International Joint Conference on Artificial Intelligence,
+pp. 819–826.
+d’Avila Garcez, A., & Lamb, L. C. (2023). Neurosymbolic ai: The 3 rd wave. Artificial
+Intelligence Review.
+d’Avila Garcez, A. S., Gori, M., Lamb, L. C., Serafini, L., Spranger, M., & Tran, S. N. (2019).
+Neural-symbolic computing: An effective methodology for principled integration of
+machine learning and reasoning. Journal of Applied Logics, 611–632.
+d’Avila Garcez, A. S., Lamb, L. C., & Gabbay, D. M. (2009). Neural-Symbolic Cognitive
+Reasoning. Springer.
+Dimopoulos, Y., Nebel, B., & Koehler, J. (1997). Encoding planning problems in nonmonotonic logic programs. In Proceedings of Recent Advances in AI Planning, 4th European
+Conference on Planning, Vol. 1348, pp. 169–181.
+Dong, H., Mao, J., Lin, T., Wang, C., Li, L., & Zhou, D. (2019). Neural logic machines. In
+Proceedings of the 7th International Conference on Learning Representations.
+Eiter, T., Higuera, N., Oetsch, J., & Pritz, M. (2022). A neuro-symbolic ASP pipeline
+for visual question answering. Theory and Practice of Logic Programming, 22 (5),
+739–754.
+Greff, K., Kaufman, R. L., Kabra, R., Watters, N., Burgess, C., Zoran, D., Matthey, L.,
+Botvinick, M. M., & Lerchner, A. (2019). Multi-object representation learning with
+34
+
+Scalable Neural-Probabilistic ASP
+
+iterative variational inference. In Proceedings of the 36th International Conference on
+Machine Learning, Vol. 97, pp. 2424–2433.
+Huang, J., Li, Z., Chen, B., Samel, K., Naik, M., Song, L., & Si, X. (2021). Scallop: From
+probabilistic deductive databases to scalable differentiable reasoning. In Advances in
+Neural Information Processing Systems 34: Annual Conference on Neural Information
+Processing Systems, pp. 25134–25145.
+Hudson, D. A., & Manning, C. D. (2019). Learning by abstraction: The neural state machine. In Advances in Neural Information Processing Systems 32: Annual Conference
+on Neural Information Processing Systems, pp. 5901–5914.
+Jiang, J., & Ahn, S. (2020). Generative neurosymbolic machines. In Advances in Neural Information Processing Systems 33: Annual Conference on Neural Information
+Processing Systems.
+Johnson, J., Hariharan, B., van der Maaten, L., Fei-Fei, L., Zitnick, C. L., & Girshick, R. B.
+(2017). CLEVR: A diagnostic dataset for compositional language and elementary
+visual reasoning. In Proceedings of the Conference on Computer Vision and Pattern
+Recognition, pp. 1988–1997.
+Kingma, D. P., & Ba, J. (2015). Adam: A method for stochastic optimization. In Proceedings
+of the 3rd International Conference on Learning Representations.
+Kodali, V., & Berleant, D. (2022). Recent, rapid advancement in visual question answering: a review. In Proceedings of the International Conference on Electro Information
+Technology, pp. 139–146.
+Kuhn, H. W. (1955). The hungarian method for the assignment problem. Naval research
+logistics quarterly, 2 (1-2), 83–97.
+Kuhnle, A., & Copestake, A. A. (2017). Shapeworld - A new test methodology for multimodal language understanding. CoRR.
+LeCun, Y., Bottou, L., Bengio, Y., & Haffner, P. (1998a). Gradient-based learning applied
+to document recognition. Proceedings of the IEEE, 86 (11), 2278–2324.
+LeCun, Y., Cortes, C., & J.C. Burges, C. (1998b). MNIST handwritten digit database.
+http://yann.lecun.com/exdb/mnist/.
+Lee, J., & Wang, Y. (2016). Weighted rules under the stable model semantics. In Proceedings
+of the 19th International Conference on Principles of Knowledge Representation and
+Reasoning, pp. 145–154.
+Lifschitz, V. (2019). Answer Set Programming. Springer International Publishing.
+Lin, Z., Wu, Y., Peri, S. V., Sun, W., Singh, G., Deng, F., Jiang, J., & Ahn, S. (2020).
+SPACE: unsupervised object-oriented scene representation via spatial attention and
+decomposition. In Proceedings of the 8th International Conference on Learning Representations.
+Locatello, F., Weissenborn, D., Unterthiner, T., Mahendran, A., Heigold, G., Uszkoreit, J.,
+Dosovitskiy, A., & Kipf, T. (2020). Object-centric learning with slot attention. In
+Advances in Neural Information Processing Systems 33: Annual Conference on Neural
+Information Processing Systems.
+35
+
+Skryagin, Ochs, Dhami and Kersting
+
+Manhaeve, R., Dumancic, S., Kimmig, A., Demeester, T., & Raedt, L. D. (2018). DeepProbLog: Neural probabilistic logic programming. In Advances in Neural Information
+Processing Systems 31: Annual Conference on Neural Information Processing Systems,
+pp. 3753–3763.
+Manhaeve, R., Marra, G., & Raedt, L. D. (2021). Approximate inference for neural probabilistic logic programming. In Proceedings of the 18th International Conference on
+Principles of Knowledge Representation and Reasoning, pp. 475–486.
+Manmadhan, S., & Kovoor, B. C. (2020). Visual question answering: a state-of-the-art
+review. Artificial Intelligence Review, 53 (8), 5705–5745.
+Mao, J., Gan, C., Kohli, P., Tenenbaum, J. B., & Wu, J. (2019). The neuro-symbolic
+concept learner: Interpreting scenes, words, and sentences from natural supervision.
+In Proceedings of the 7th International Conference on Learning Representations.
+Marek, V. W., & Truszczynski, M. (1999). Stable models and an alternative logic programming paradigm. In The Logic Programming Paradigm - A 25-Year Perspective, pp.
+375–398. Springer.
+Palù, A. D., Dovier, A., Pontelli, E., & Rossi, G. (2009). GASP: Answer Set Programming
+with Lazy Grounding. Fundamenta Informaticae, 96 (3), 297–322.
+Peharz, R., Lang, S., Vergari, A., Stelzner, K., Molina, A., Trapp, M., den Broeck, G. V.,
+Kersting, K., & Ghahramani, Z. (2020). Einsum networks: Fast and scalable learning
+of tractable probabilistic circuits. In Proceedings of the 37th International Conference
+on Machine Learning, Vol. 119, pp. 7563–7574.
+Poon, H., & Domingos, P. M. (2011). Sum-product networks: A new deep architecture.
+In Proceedings of the 27th Conference on Uncertainty in Artificial Intelligence, pp.
+337–346.
+Redmon, J., Divvala, S. K., Girshick, R. B., & Farhadi, A. (2016). You only look once:
+Unified, real-time object detection. In Proceedings of the Conference on Computer
+Vision and Pattern Recognition, pp. 779–788.
+Richardson, M., & Domingos, P. M. (2006). Markov logic networks. Machine Learning,
+62 (1-2), 107–136.
+Seide, F., Fu, H., Droppo, J., Li, G., & Yu, D. (2014). 1-bit stochastic gradient descent and
+its application to data-parallel distributed training of speech dnns. In Proceedings of
+the 15th Annual Conference of the International Speech Communication Association,
+pp. 1058–1062.
+Skryagin, A., Stammer, W., Ochs, D., Dhami, D. S., & Kersting, K. (2022). Neuralprobabilistic answer set programming. In Proceedings of the 19th International Conference on Principles of Knowledge Representation and Reasoning.
+Soininen, T., & Niemelä, I. (1999). Developing a declarative rule language for applications
+in product configuration. In Proceedings of First International Workshop on Practical
+Aspects of Declarative Languages, Vol. 1551, pp. 305–319.
+Stammer, W., Schramowski, P., & Kersting, K. (2021). Right for the right concept: Revising
+neuro-symbolic concepts by interacting with their explanations. In Proceedings of the
+Conference on Computer Vision and Pattern Recognition, pp. 3619–3629.
+36
+
+Scalable Neural-Probabilistic ASP
+
+Tran, D., Hoffman, M. D., Saurous, R. A., Brevdo, E., Murphy, K., & Blei, D. M. (2017).
+Deep probabilistic programming. In Proceedings of the 5th International Conference
+on Learning Representations.
+Winters, T., Marra, G., Manhaeve, R., & De Raedt, L. (2022). Deepstochlog: Neural stochastic logic programming. In Proceedings of the Thirty-Sixth AAAI Conference on Artificial Intelligence, pp. 10090–10100.
+Yang, Z., Ishay, A., & Lee, J. (2020). NeurASP: Embracing neural networks into answer
+set programming. In Proceedings of the Twenty-Ninth International Joint Conference
+on Artificial Intelligence, pp. 1755–1762.
+Yi, K., Wu, J., Gan, C., Torralba, A., Kohli, P., & Tenenbaum, J. (2018). Neural-symbolic
+VQA: disentangling reasoning from vision and language understanding. In Advances
+in Neural Information Processing Systems: Annual Conference on Neural Information
+Processing Systems, pp. 1039–1050.
+Yu, Z., Zhu, M., Trapp, M., Skryagin, A., & Kersting, K. (2021). Leveraging probabilistic circuits for nonparametric multi-output regression. In Proceedings of the Thirty-Seventh
+Conference on Uncertainty in Artificial Intelligence, Vol. 161, pp. 2008–2018.
+
+37
+
+

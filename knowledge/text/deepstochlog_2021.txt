@@ -1,0 +1,1342 @@
+DeepStochLog: Neural Stochastic Logic Programming
+Thomas Winters∗1 , Giuseppe Marra∗1 , Robin Manhaeve1 , and Luc De Raedt1,2
+
+arXiv:2106.12574v1 [cs.AI] 23 Jun 2021
+
+1
+
+KU Leuven, Dept. of Computer Science; Leuven.AI, B-3000 Leuven, Belgium,
+{firstname.lastname}@kuleuven.be
+2
+AASS, Örebro University, Sweden
+
+Abstract
+Recent advances in neural symbolic learning, such as DeepProbLog, extend probabilistic
+logic programs with neural predicates. Like graphical models, these probabilistic logic programs
+define a probability distribution over possible worlds, for which inference is computationally
+hard. We propose DeepStochLog, an alternative neural symbolic framework based on stochastic
+definite clause grammars, a type of stochastic logic program, which defines a probability
+distribution over possible derivations. More specifically, we introduce neural grammar rules
+into stochastic definite clause grammars to create a framework that can be trained end-to-end.
+We show that inference and learning in neural stochastic logic programming scale much better
+than for neural probabilistic logic programs. Furthermore, the experimental evaluation shows
+that DeepStochLog achieves state-of-the-art results on challenging neural symbolic learning
+tasks.
+
+1
+
+Introduction
+
+The integration of neural and symbolic learning methods is high on the research agenda. It is
+popular to use (variants of) logic programs to represent the available symbolic knowledge and
+use Prolog-like mechanisms to generate computation structures that can then be differentiated
+[23, 7, 31, 43, 5, 37, 36]. Several of these approaches also incorporate probability into these neural
+logic programming models, cf. [8]. There are several ways to incorporate probability into logic
+programs [9]. Most notably, one distinguishes probabilistic from stochastic logic programs (PLPs vs
+SLPs). The more popular PLPs are based on a possible worlds semantics (the so-called distribution
+semantics), which extends probabilistic graphical models, while the SLPs are based on stochastic
+grammars. The difference can also be described as a random graph vs a random walk model.
+So far, the emphasis in neurosymbolic computation has been on the PLP approach, especially
+[43, 23, 37, 40], with only Tensorlog [5] adopting the SLP semantics in an efficient but restricted
+Datalog or database setting that does not handle subsymbolic data such as images (see Section 7
+for details).
+To fill this gap, we introduce DeepStochLog, a neural stochastic logic programming approach.
+It incorporates ideas from DeepProbLog such as the neural predicate. The neural predicate
+encapsulates neural networks to cope, for instance, with subsymbolic data such as images. Without
+loss of generality, we base DeepStochLog on stochastic definite clause grammars (SDCGs) as this
+notation is not only easier to introduce and use, but also results in a sequence-based model. SDCGs
+are a kind of probabilistic unification-based grammar formalism [15]. However, SDCGs and SLPs
+are very closely related. SDCGs can be directly translated and executed as SLPs, and all the
+concepts we introduce for SDCGs can directly apply to SLPs as well. More specifically, the key
+contributions of this paper are: 1) the introduction of the neural stochastic logic programming
+framework DeepStochLog; 2) the introduction of inference and learning algorithms (through gradient
+∗ The authors contributed equally to this paper.
+
+Note that this paper will be extended in the future.
+
+1
+
+descent) for DeepStochLog programs; and 3) experimental results that show that DeepStochLog
+obtains state-of-the-art results on a number of challenging tasks for neural-symbolic computation
+and that it is also several orders of magnitude faster than alternative approaches based on PLPs.
+
+2
+
+Stochastic DCGs
+
+A context-free grammar (CFG) G is a 4-tuple (V, Σ, S, R), with V the set of non-terminals, Σ the
+set of terminals, S ∈ V the starting symbol and R a set of rewrite rules of the form N → S1 , ..., Sk
+where N is a non-terminal, the Si are either terminals or non-terminals. A probabilistic context-free
+grammar (PCFG) extends a CFG by adding probabilities to the rules R, i.e., the rules take the
+form pi :: N → S1 , ..., Sk , where pi is a probability. Furthermore, the sum of the probabilities
+of rules with the same non-terminal N on the left-hand side equals 1. We use list notation for
+sequences of terminals such as [cat] and [the, cat]. Whereas CFGs define whether a sequence can
+be parsed, PCFGs define a probability distribution over possible parses. This allows for the most
+likely parse to be identified. An example PCFG, representing single digit additions, is shown on
+the left of Example 1.
+Definite clause grammars (DCGs) are a well-known logic programming-based extension of CFGs
+[28]. DCGs can represent context-sensitive languages and are unification-based. They differ from
+CFGs in that logical atoms are used instead of the non-terminals. An atom a(t1 , ..., tn ) consists
+of a predicate a of arity n followed by n terms ti . Terms are either constants, logical variables or
+structured terms of the form f (t1 , ..., tk ) with f a functor and tj terms. The production rules are
+called definite clause grammar rules because they can be directly translated to a set of definite
+clauses (i.e., Horn clauses with exactly one positive literal) and can be executed as a Prolog
+program using SLD-resolution. The right hand side of DCG rules are also allowed to contain queries
+to Prolog predicates qi between curly brackets {q1 (t1,1 , ..., t1,m1 ), ..., qn (tn,1 , ..., tn,mn )} to impose
+further constraints and perform additional computations during the inference process. These are
+to be considered atoms as well. DCGs use substitutions {V1 = t1 , ..., Vn = tk }, which are sets of
+variable/term pairs, to unify atoms with heads from the rules. Applying a substitution to an atom
+a yields the atom aθ where all variables Vi have been replaced by their corresponding terms ti . θ is
+a unifier of an atom s and an atom u if and only if sθ = uθ. For more information, see standard
+textbooks on logic programming such as [14, 38].
+Stochastic definite clause grammars (SDCGs) extend DCGs by associating probabilities to the
+rules, just like how PCFGs extend CFGs [15]. As PCFGs, SDCGs require that the sum of the
+probabilities for the rules defining a single non-terminal predicate equals 1. SDCGs also correspond
+directly to stochastic logic programs (SLP) [6, 25, 26] which are well-known in the probabilistic
+(logic) programming community [9]. An example SDCG is shown in Example 1 on the right.
+Example 1. A PCFG (left) and a similar SDCG(right) that constrains the result of the
+expression.
+0.5 :: E → N
+
+0.5 :: e(N ) → n(N )
+
+0.5 :: E → E, [+], N
+
+0.5 :: e(N ) → e(N 1), [+], n(N 2), {N is N 1 + N 2}
+
+0.1 :: N → [0] ... 0.1 :: N → [9]
+
+0.1 :: n(0) → [0] ... 0.1 :: n(9) → [9]
+
+The inference task in (S)DCGs consists of deriving a sequence of terminals from a goal (which
+often captures the starting symbol of the grammar). SLD-derivations are used for this. More
+formally, in an SLD-derivation for a DCG, a goal g1 , ..., gn is a sequence where each gi is either a
+logical atom (a non-terminal) or a list containing terminals and logical variables. An SLD-derivation
+is shown in Example 2 and uses several resolution steps. Applying resolution to a goal g1 , ..., gn and
+a definite clause grammar rule n → t1 , ..., tk yields the goal g1 θ, ..., gi−1 θ, t1 θ, ..., tk θ, gi+1 θ, ..., gn θ
+provided that gi is the leftmost atom in the goal (so g1 , ..., gi−1 are terminal symbols), θ is the
+unifier of gi and n, i.e., gi θ = nθ.1 We write this as g1 , ..., gn ` t1 θ, ..., tk θ, s2 θ, ..., sn θ. A derivation
+1 When a Prolog query q is the first non-terminal to occur in a goal during the derivation process, the query is
+
+2
+
+d(S) is then the repeated application G ` G1 θ1 ` G2 θ1 θ2 ` ... ` Gn θ1 θ2 ...θn of such resolution
+steps onto a goal G. We will write G `∗ Gn . Successful derivations of a goal end in a sequence T
+that consists only of terminal symbols, see Example 2 for an example. We will write that d(S) = T
+and also say that derives(Sθ, T ) is true, with θ = θ1 θ2 ...θn the answer substitution. A successful
+derivation corresponds to a proof. The set of all possible proofs can be depicted using SLD-trees,
+see Figure 1a.
+Q i
+The probability P (d(G)) of a derivation d(G) is the product of the probabilities pm
+of the
+i
+rules i used in the derivation with mi the number of times the rule i was used. An important
+difference between the probability of a parse in a PCFG and a derivation in an SDCG is that
+there can be a loss of probability mass in the latter whenever a derivation fails. Derivations
+can fail when there are non-terminals in the goal that do not unify with the heads of any of
+the rules. This is due to unification and is different from (P)CFGs, where non-terminals can
+always be resolved using rules for that non-terminal. Non-terminating derivations can also lead
+to loss of probability mass. Observe that every G in this way induces a probability distribution
+PG over possible derivations d(G). The goal can consist of one or more atoms, but in general
+for parsing, this will typically be the starting symbol or atom of the grammar. This in turn lets
+us
+P define the probability PG (derives(G, T )) of a terminal sequence T relative to the goal G as
+di (Gθ)=T PG (di (Gθ)), i.e. the sum of the probabilities of all derivations Gθ for G that result in
+the terminal sequence T with answer substitution θ. In a similar way, this allows to define the
+probability of an answer substitution θ relative to a goal G and sequence t as PG (derives(Gθ, tθ))
+where t could contain variables. For ease of notation, when the goal is clear, we shall omit the
+subscript G. Notice that if there are failing derivations, the total probability mass assigned to all
+sequences of terminals for a goal G may be strictly less than 1. This is discussed at length by [6].
+It is possible to obtain normalized probabilities by calculating the normalization constant, but
+this is computationally expensive. We avoid this normalization in the present paper because in
+practice, the goal is often to find the most likely derivation dmax (G, T ) = arg maxd(G)=T PG (d(G)),
+non-normalized probabilities usually suffice. Notice that a SDCG defines a parametric probability
+distribution, where the parameters p of the distribution are the vector of probabilities of the rules.
+When we need to refer to these probabilities we write PG (derives(G, T ); p).
+Example 2 (Derivations). Consider the following successful derivation using the SDCG in
+Example 1 for the goal G = [e(X)], the answer substitution θ = {X/2} and the terminal
+sequence T = [2, +, 0].
+e(X) ` e(N 1), [+], n(N 2), {X is N 1 + N 2}
+
+θ1 = {}
+
+p = 0.5
+
+` n(N 1), [+], n(N 2), {X is N 1 + N 2}
+
+θ2 = {}
+
+×0.5
+
+θ3 = {N 1/2}
+
+×0.1
+
+θ4 = {X/2, N 2/0}
+
+×0.1
+
+` [2, +], n(N 2), {X is 2 + N 2}
+` [2, +, 0], 2 is 2 + 0
+
+3
+
+DeepStochLog
+
+DeepStochLog integrates neural networks and SDCGs by introducing neural definite clause grammars
+(NDCG). More formally, DeepStochLog allows for specifying an SDCG that additionally supports
+neural definite clause grammar rules, or neural rules for short. These are statements of the form:
+nn(m, [I1 , ..., Im ], [O1 , ..., OL ], [D1 , ..., DL ]) :: nt → g1 , ..., gn
+where nt is an atom, g1 , ..., gn is a goal, and the I1 ...Im and O1 , ..., OL are variables occurring in
+g1 , ..., gn and nt. The Di are unary predicates defining the domain of the output variables Oi . The
+nn declaration states that m is a neural network that takes the variables I1 , . . . , Im as input and
+executed in Prolog possibly yielding an answer substitution θ such that qθ is true. For instance, in Example 1, there
+is the Prolog query N is N 1 + N 2 which computes N as the sum of N 1 and N 2. In this paper, we assume that when
+such a query is called there is at most one answer substitution that is true. If there were more such substitutions, we
+would have to introduce a probability for such substitutions in the SDCG case, which unnecessarily complicates the
+semantics.
+
+3
+
+outputs a probability distribution over output variables O1 , ..., OL (i.e. a probability distribution
+over the cross product of the domains specified by Di ). It thus maps an input substitution σ for the
+variables I1 , ..., Im to a set of output substitutions θj with probability pj . The neural rule serves
+as a template. For every input substitution σ, the template (nt → g1 , ..., gn )σ defines the set of
+instantiated stochastic definite clause grammar rules pj :: (nt → g1 , ..., gn )σθj .
+Example 3 (Neural definite clause grammar rules). Consider the SDCG in Example 1. We
+can substitute the n(X) → [X] rules with the following neural rule
+nn(mnist, [M nist], [N ], [digit]) :: n(N ) → [M nist].
+Here, the neural network called mnist takes as input the M nist image and returns a probability
+for every possible number between 0 and 9, indicating how likely it is that every number is for
+the given MNIST image [20]. The predicate digit is defined as digit(0), digit(1), ..., digit(9).
+Given the neural network and the input substitution σ = {Mnist = } (which could be
+obtained through unification with the terminal sequence), the neural network could generate
+the output substitutions θ0 = {N = 0}; ... ; θ9 = {N = 9}; with probabilities 0.87; ... ;0.05.
+Thus, the neural rule with the input substitution σ = {Mnist = } denotes the following set
+of grammar rules: 0.87 :: n(0) → [ ]; . . . ; 0.05 :: n(9) → [ ]
+The neural rules are reminiscent of the neural predicates in DeepProbLog [23], which also encapsulate
+a neural network that outputs a distribution over a number of alternatives. It is worth analyzing
+how a neural rule behaves w.r.t the neural inputs (e.g. images). In fact, a neural rule defines a
+probability distribution over the values of the output variables given the neural inputs, whose
+distribution is not modeled in the program. This conditional setting is akin to conditional PCFGs
+[30, 39] and it is a common modeling strategy in discriminative parsing2 .
+
+4
+
+Inference in DeepStochLog
+
+The goal of the inference is to compute the probability PG (derives(G, T )) for a given goal G and
+(possibly unknown) sequence T . This is divided into two steps, a logical and probabilistic one,
+which we now explain.
+Logical inference Given a DeepStochLog program, a goal G and a (potentially unknown)
+sequence T , logical inference uses resolution to answer derives(G, T )3 . This corresponds to finding
+all the possible derivations for G that result in a terminal sequence T . The resolution process is
+then turned into a compact AND-OR circuit, which represents all possible derivations and will be
+the input for the probabilistic inference. The logical inference procedure is illustrated in Figure
+1, where the SLD resolution tree for the given goal is on the left and its corresponding AND-OR
+circuit on the right. The translation to the AND-OR circuit is straightforward. It has exactly the
+same structure as the SLD-tree. For every resolution step with a rule pi : ri , an AND node is added.
+Furthermore, for a normal SDCG rule, the corresponding probability pi is added, and for a neural
+grammar rule, there is a call to the neural network that returns the probability pm . Whenever
+there are two (or more) branches in the SLD tree for a goal, an OR node is added. Notice that all
+the leaves are either probabilities given as parameters or the result of a neural call.
+During SLD resolution, many identical intermediate goals may be proved multiple times which
+results in an explosion of inference time. To avoid proving the same goals, we use SLG resultion [4],
+which plays a similar role as the dynamic programming CYK algorithm for CFGs [16]. Tabling
+using SLG resolution is a standard logic programming technique that memoizes the answers of
+predicates by tabling the evaluations. This technique is incorporated in Prolog implementations
+such as XSB, SWI-Prolog and Prism [34]. The important difference with SLD resolution is that
+2 DeepStochLog could also be used to define generative grammars on subsymbolic inputs (e.g. images) if provided
+with neural models that can provide a joint probability distribution of both outputs and images. This is also discussed
+in [24] but will not be further analyzed in the current paper.
+3 This is sometimes called phrase or sentence in actual Prolog implementations and it requires an automatic
+syntactical translation of a DCG into Prolog. We show an example in Appendix C.
+
+4
+
+e(1)
+
+p1
+
+AND
+
+e(E1), [+], n(E2), {1 is E1+E2}
+
+p2
+
+AND
+
+n(E1), [+], n(E2), {1 is E1+E2}
+[
+
++], n(E2), {1 is 0+E2}
+[
+
++
+
+], {1 is 0+1}
+[
+
++
+
+[
+
++], n(E2), {1 is 1+E2}
+[
+
+]
+
+OR
+
++
+
+], {1 is 1+0}
+[
+
++
+
+]
+
+pm(
+
+= 0)
+
+AND
+
+AND
+
+pm(
+
+p2
+
+AND
+
+AND
+
+p2
+
+pm(
+
+(a) The SLD tree for derives(e(1), [ + ]). Failing branches
+are omitted. Notice that only the left-hand branch derives the
+correct parse of the images.
+
+= 1)
+
+pm(
+
+= 1)
+
+= 0)
+
+(b) AND-OR circuit for derives(e(1), [
+])
+
++
+
+Figure 1: The different steps of inference on an example grammar.
+the results are not a single derivation tree, but rather a forest, where certain parts are re-used
+for multiple derivations thanks to tabled evaluations. The effect of tabling is carried over to the
+creation of the AND-OR tree. Each time a derivation is reused from the table, its corresponding
+node is returned and linked to the new derivation. Thus, also the AND-OR circuit turns into
+a forest. When a goal admits a finite set of answers, we can resolve it only once and cache the
+corresponding AND-OR tree.
+Probabilistic inference. With
+Pprobabilistic inference,
+Pwe referQto the task iof calculating the
+probability P (derives(G, T )) = d(Gθ)=T P (d(Gθ)) = d(Gθ)=T ri ∈d(Gθ) pm
+i , i.e. the sum of
+the probabilities of all derivations for a given G that result in a given terminal sequence T and
+answer substitution θ. Thanks to SLG resolution and tabling, the shared sub-structure of many
+derivations is explicit in the AND-OR circuit obtained from the logical inference. This dissipates
+the need for a specialized algorithm, like the inside algorithm used in the probabilistic extension of
+CYK. Computing the probability P (derives(Gθ, T )) is just a bottom-up evaluation of the AND-OR
+circuit where AND-nodes are substituted by multiplications and OR-nodes by summations, i.e.
+compiling the logical circuit to an arithmetic circuit using the (+, ×) semiring [17]. Analogously,
+the most probable derivation for the goal G is found with the (max, ×) semiring.
+
+5
+
+Learning in DeepStochLog
+
+Learning in DeepStochLog is achieved by optimizing the parameters of the neural networks and the
+parameters of the logic programs itself. Let us consider a dataset of triples D = {(Gi θi , Ti , ti )},
+where Gi is a goal, θi a substitution for Gi , Ti a sequence of terminals and ti a target probability.
+Let us also consider a DeepStochLog program parameterized by the vector p of rule probabilities.
+Learning in DeepStochLog is defined as the following optimization problem, with L being any
+differentiable loss function:
+
+
+X
+min
+L PG (derives(Gi θi , Ti ); p), ti
+(1)
+p
+
+(Gi θi ,Ti ,ti )∈D
+
+Representing the dynamic programming computation for the inside probability in terms of an
+arithmetic circuit has an important advantage. In fact, the corresponding computational graph is
+differentiable and the derivatives of the loss function L w.r.t. the probabilities p can be carried out
+automatically using out-of-the-box differentiation frameworks. Moreover, when the probabilities p
+are computed by a neural network as for a neural grammar rule, the gradients can be seamlessly
+backpropagated to the network to train its internal parameters. We solve the learning problem
+using standard gradient descent techniques from deep learning, e.g. the Adam optimizer [18].
+One interesting case is when the loss function L is the negative log-likelihood, as it brings
+DeepStochLog into the standard learning scenario for probabilistic grammars. Here, the optimization
+problem is usually carried out in the expectation-maximization (EM) framework. Given an inside
+algorithm, a correspondent outside algorithm is designed to extract the expected counts of the
+5
+
+various grammar rules from data (E-step) and then the counts are used to update the probabilities
+(M-step). Most of the developed inside-outside algorithms are tailored to a specific formalism.
+However, the gradient descent approach of DeepStochLog on the negative log-likelihood is actually
+equivalent to the EM approach but it does not require the explicit definition of the corresponding
+outside algorithm. In fact, the gradients obtained by the backward pass through the AND-OR
+circuit have been shown to actually compute the outside probabilities (E-step), while the gradient
+descent step is used to update the parameters (M-step) [33, 2, 13].
+
+6
+
+Evaluation
+
+6.1
+
+Research Questions
+
+The goal of our experiments is to answer the following questions:
+Q1 Does DeepStochLog reach state-of-the-art predictive performance on neural-symbolic tasks?
+Q2 How does the inference time of DeepStochLog compare to other neural-symbolic frameworks
+and what is the role of tabling?
+Q3 Can DeepStochLog handle larger-scale tasks?
+Q4 Can DeepStochLog go beyond grammars and encode more general programs?
+
+6.2
+
+Tasks
+
+We specify the tasks used in this paper. Complete details are specified in Appendix B.
+T1: MNIST Addition. In the MNIST Addition task [23], the model is given two sequences
+of length N of MNIST images containing handwritten images [20], each representing an N-digit
+number. The task is to predict the sum of these numbers (
++
+= 56). The training data only
+contains the two image sequences and the sum of the corresponding numbers, thus not providing
+the digit labels of the individual images. The datasets for each digit length use all 60K images of
+MNIST images exactly once.
+T2: Handwritten Formulas. In the Handwritten Formulas (HWF) task, the goal is to solve
+mathematical expressions, where both digits and operators (addition, subtraction, multiplication
+and division) are images of handwritten characters, like
+. Like T1, the data of T2
+only contains the outcome of the expression and the sequence of images. For this task, we use the
+Handwritten Formula (HWF) dataset, introduced in [21]. The dataset contains 10000 expressions
+of lengths 1, 3, 5 and 7. Unlike the original paper, we do not consider a curriculum learning setting
+here, and split the dataset into 4 separate parts by length.
+T3: Well-formed Parentheses. We introduce the Well-formed Parentheses task, where the
+model is asked to recognize image sequences that represent well-formed parentheses. Well-formed
+parentheses is a classic context-free grammar language where Σ = {(, )}, and R = {s → ()|(s)|ss},
+i.e. all open brackets are closed in the right order. As images, we use the zeros from MNIST as “(”
+and ones as “)”, and generate 1000 well-formed parenthesis sequences without labels as training
+data. The goal is to predict the most probable parse of the bracket sequence.
+T4: Context-Sensitive Grammar. Since DCGs support context-sensitive grammars, we
+created a dataset of 2000 image sequences representing the canonical context-sensitive grammar
+an bn cn . Since each sequence of length 3n only has one valid parse, we increased the difficulty by
+allowing permutations such as bn an cn . We also generated 2000 negative examples, i.e. random
+sequences of the form ak bl cm , and permutations like ck al bm such that k, l, m are all larger than
+1, sum to a multiple of 3 and are not all the same number. The goal of the task is to recognize
+whether the input sequence belongs to the first grammar or the second.
+T5: Semi-supervised classification in citation networks. Given a set of scientific papers
+represented as bag-of-words and their citation network, the goal is to assign the correct class to a
+large test set of documents by having access only to the true labels of a small training set. The
+intuition is that one can infer the class of a paper not only by the features of the document but also
+by the class of its neighbors. This task is interesting from a neural symbolic perspective because one
+6
+
+Table 1: The test accuracy (%) on the MNIST addition (T1).
+Methods
+NeurASP
+DeepProbLog
+DeepStochLog
+
+Number of digits per number (N)
+1
+2
+3
+97.3 ± 0.3
+97.2 ± 0.5
+97.9 ± 0.1
+
+93.9 ± 0.7
+95.2 ± 1.7
+96.4 ± 0.1
+
+timeout
+timeout
+94.5 ± 1.1
+
+4
+
+timeout
+timeout
+92.7 ± 0.6
+
+Table 2: The accuracy (%) on the HWF dataset (T2).
+Method
+NGS
+DeepProbLog
+DeepStochLog
+
+1
+90.2 ± 1.6
+90.8 ± 1.3
+90.8 ± 1.0
+
+Expression length
+3
+5
+85.7 ± 1.0
+85.6 ± 1.1
+86.3 ± 1.9
+
+91.7 ± 1.3
+timeout
+92.1 ± 1.4
+
+7
+20.4 ± 37.2
+timeout
+94.8 ± 0.9
+
+must be able to use both the features of the documents and the symbolic network. Two well-known
+datasets for this task are the Cora4 (2708 nodes and 5429 edges) and Citeseer (3327 nodes and
+9228 edges) [35] .
+T6: Word Algebra Problems. In this task, a natural language text describes a word algebra
+problem (e.g, "Mark has 6 apples. He eats 2 and divides the remaining among his 2 friends. How
+many apples did each friend get?"). This dataset of this task contains 300 training instances and
+was introduced in [32]. Each text contains 3 numbers, and all numbers have to be used exactly once
+in a formula containing addition subtraction, multiplication and division. The task is to predict the
+right numerical answer to the expression implied by textual description.
+
+6.3
+
+Results
+
+For all experiments and metrics, we report the mean accuracy (or the mean most likely parse
+accuracy where applicable, i.e. T1, T2 and T3) and standard deviation over 5 runs. We report
+“timeout” if a single of these 5 runs took more than 1 hour to execute.
+Q1: Performance of DeepStochLog We first investigate whether DeepStochLog achieves
+state-of-the-art results compared to similar neural-symbolic frameworks. Table 1 shows the result
+for the MNIST addition task (T1), for training and testing on lengths 1 to 4. It shows that
+DeepStochLog performs similarly to the DeepProbLog [23] and NeurASP [43] frameworks but scales
+to larger sequences. Table 2 shows the result on the HWF task (T2). DeepStochLog performs
+similar to NGS and DeepProbLog for expressions of length 1 and 3. Starting from expression length
+5, it becomes infeasible to train DeepProbLog. NGS [21] can still be trained, but for expression
+length 7, some runs fail to converge. DeepStochLog, however, performs well for all expression
+lengths. Table 3 shows the accuracy on task T3. Here we can see that both DeepStochLog and
+DeepProbLog achieve high accuracy, but DeepStochLog reaches a slightly higher accuracy for a
+longer length. For task T6, DeepStochLog and DeepProbLog achieve a similar accuracy of 94.8 ± 1.1
+and 94.2 ± 1.4 respectively. We also compare to δ4 [3], but the authors only report the maximum
+accuracy reached. For all three frameworks, the maximum accuracy reached is 96.0. To conclude,
+DeepStochLog is able to achieve similar or better performance compared to other state-of-the-art
+neural-symbolic frameworks.
+Q2: DeepStochLog scalability We now investigate whether DeepStochLog is more scalable
+than similar neural-symbolic frameworks. First, we observe that in the tasks T1, T2, T4 and T5,
+DeepStochLog scales to settings or datasets that are infeasible for the competitors. Next, in Table 7,
+we compare the execution times for inference in task T1. We selected 100 queries from the training
+4 On the Cora dataset, another common task is link prediction, which is a purely symbolic task (i.e. there are no
+subsymbolic features on the documents).
+
+7
+
+Table 3: The parse accuracy (%) on the well-formed parentheses dataset (T3).
+Method
+DeepProbLog
+DeepStochLog
+
+Maximum expression length
+10
+14
+100.0 ± 0.0
+100.0 ± 0.0
+
+99.4 ± 0.5
+100.0 ± 0.0
+
+18
+
+99.2 ± 0.8
+100.0 ± 0.0
+
+Table 4: The accuracy (%) on the an bn cn dataset (T4).
+Method
+DeepProbLog
+DeepStochLog
+
+Expression length
+3-12
+3-15
+99.8 ± 0.3
+99.4 ± 0.5
+
+timeout
+99.2 ± 0.4
+
+3-18
+
+timeout
+98.8 ± 0.2
+
+data and we computed the average time required from the system to compute the probability of
+the query. We repeated the experiment for increasing number lengths. DeepStochLog shows a huge
+gap over the competitors, especially for large numbers. The advantage of DeepStochLog over the
+competitors is two-fold. Firstly, DeepStochLog is natively implemented on top of SLG resolution
+and tabling, which plays a fundamental role in compactly representing derivations and SLD-trees.
+We analyzed the impact of tabling in Table 6, where we show the comparison between SLD and
+SLG resolution in DeepStochLog. In particular, we compared the resolution time required to find
+all the possible answers for expressions of variable lengths (on task T2). Secondly, DeepStochLog
+is based on a random walk semantics which is computationally cheaper than the possible world
+semantics exploited by DeepProbLog and NeurASP.
+Q3: Larger scale relational datasets The complexity of many of the previous experiments
+comes from the large number of derivations for a single goal, while the number of subsymbolic
+inputs (e.g. images) in a single relational example was quite limited. Here, we focus on task T5, i.e.
+semi-supervised classification in citation networks, where the complexity mainly comes from the large
+number of elements of the unique relational example, i.e. the citation network. This task is usually
+out of the scope of (neural) PLP approaches due to the fact that there is a unique large relational
+example and the possible world semantics is prohibitive in this scenario. We compare against
+the following baselines: label propagation (LP) [44], semi-supervised embedding (SemiEmb) [42],
+manifold regularization (ManiReg) [1], skip-gram based graph embeddings (DeepWalk) [29], ICA
+[22] and GCN [19]. All these baselines are specific to the semi-supervised classification task, while
+DeepStochLog is a much more general framework. We finally tried to compare with DeepProbLog,
+which, however, does not scale to the size of this problem due to the different probabilistic semantics.
+Results are reported in Table 5. DeepStochLog compares similarly or favorably to most of the other
+methods, even though it is the only one that has not been developed for the specific task. However,
+it still underperforms w.r.t. ICA and GCN. But these methods use extra knowledge as input to the
+classifier in the form of precomputed or learned features of the neighbors of a document, which is
+very useful for this task but not considered in the DeepStochLog experiment. Adding or learning
+relational features for input to the neural modules is, however, an interesting future direction.
+Q4: General programs in DeepStochLog Even though DeepStochLog naturally represents
+grammars for parsing sequences, NDCGs with Prolog goals are a powerful formalism to express
+more complex relational problems and programs. Actually, both task T5 and T6 have been solved
+with programs that depart from the pure grammar formalism and are more like general logic
+programs. We provide the complete models in Appendix B. The main ingredients are (neural)
+empty production rules, sometimes referred to as non-consuming or -production rules. They allow
+to take probabilistic decisions, including also neural networks, without consuming any element of
+the sequence, as shown in Example 4. This also shows that DeepStochLog has the full power of
+stochastic logic programs.
+
+8
+
+Table 5: Q3 Accuracy (%) of the classification on the test nodes on task T5
+Method
+
+Citeseer
+
+Cora
+
+ManiReg
+SemiEmb
+LP
+DeepWalk
+ICA
+GCN
+
+60.1
+59.6
+45.3
+43.2
+69.1
+70.3
+
+59.5
+59.0
+68.0
+67.2
+75.1
+81.5
+
+timeout
+65.0
+
+timeout
+69.4
+
+DeepProbLog
+DeepStochLog
+
+Table 6: Q4 Parsing time in seconds (T2). Comparison of the DeepStochLog with and without
+tabling (SLD vs SLG resolution).
+Lengths
+
+# Answers
+
+No Tabling
+
+Tabling
+
+1
+3
+5
+7
+9
+11
+
+10
+95
+1066
+10386
+68298
+416517
+
+0.067
+0.081
+3.78
+30.42
+1494.23
+timeout
+
+0.060
+0.096
+0.95
+10.95
+132.26
+1996.09
+
+Table 7: Inference times in milliseconds for DeepStochLog, DeepProbLog and NeurASP on task T1
+for variable number lengths.
+Numbers Length
+
+1
+
+2
+
+3
+
+4
+
+DeepStochLog
+DeepProbLog
+NeurASP
+
+1.3 ± 0.9
+13.5 ± 3.0
+9.2 ± 1.4
+
+2.3 ± 0.4
+36.0 ± 0.5
+85.7 ± 22.6
+
+4.0 ± 0.4
+199.7 ± 14.0
+158.2 ± 47.7
+
+5.7 ± 1.8
+timeout
+timeout
+
+Example 4 (Empty productions). We show a variant of the MNIST Addition problem using
+empty productions.
+nn(mnist, [X], [Y ], [digit]) :: number(X, Y ) → [].
+addition(X, Y, N ) → number(X, N 1), number(Y, N 2), N is N 1 + N 2.
+This grammar will always produce the empty sequence but through the Prolog unification
+mechanism and the probabilistic modeling, we can express complex stochastic logic programs
+that include calls to neural networks.
+
+7
+
+Related Works
+
+DeepStochLog is an expressive neural symbolic framework whose distinguishing features are: 1) it
+is based on the expressive stochastic logic programming paradigm, which can express probabilistic
+programs (as in T5-T6) as well as probabilistic unification based grammars (T1-T4); 2) it can work
+with both symbolic and subsymbolic data such as images (as shown in T1-T4); and 3) its inference
+and learning mechanism is based on SLG-resolution that naturally supports tabling, a form of
+dynamic programming (as shown in Q2).
+There are several strands of related research. First, DeepStochLog is a neural logic programming
+language in the spirit of DeepProbLog [23], NeurASP [43], the neural theorem prover [31] and
+lifted relational neural networks (LRNNs) [37]. The first two systems are based on a probabilistic
+possible world semantics, while DeepStochLog is based on stochastic grammars, which—as we have
+shown—scales much better (in part also due to the use of tabling). The latter two approaches focus
+on Datalog (which cannot deal with function symbols) and use the logic to construct the neural
+network in a kind of knowledge based model construction approach. Furthermore, they are neither
+probabilistic nor do they deal with subsymbolic inputs such as images. Another related system is
+Tensorlog [5], which is based on stochastic logic programming. While sharing their roots in SLPs, it
+is less expressive than DeepStochLog, as it considers only Datalog and predicates of arity 2. While
+Tensorlog’s implementation is fast thanks to being in terms of tensors, it has only been applied to
+symbolic data.
+Second, DeepStochLog can be viewed as a neural-based grammar, similarly to Neural Gram9
+
+mars [12] and NGS [21]. Neural Grammars have been introduced in the natural language community
+as an effective strategy to learn PCFGs. They are neural parameterizations of PFCG and it is
+possible to learn the structure of the grammar by enumerating a set of candidate rules and using
+neural networks to learn their probabilities. Differently from DeepStochLog, they are restricted to
+context-free grammars. Furthermore, Neural Grammars [12] do not consider subsymbolic inputs
+(as in all our tasks T1-T6). Different from the probabilistic interface of DeepStochLog, NGS
+uses backsearch, a greedy search that defines the backward feedback from the grammar to the
+neural nets. While this makes NGS very scalable, the backsearch must be defined per-program,
+while DeepStochLog backpropagates evidence automatically through any NDCG. Neural Attribute
+Grammars [27] integrate attribute grammars with neural networks. While this is also an expressive
+grammatical framework, they are quite different from DeepStochLog in their approaches and
+applications, and also are not applied to subsymbolic data.
+Third, many systems in the neural symbolic community [11, 10, 37] obtain differentiable logics
+by relaxing logical programs or theories using fuzzy logic and t-norms. While the shift in semantics
+from probabilistic to fuzzy logic has known issues [41], fuzzy logic allows for more scalable systems
+as compared to probabilistic logic based on the possible world semantics. But by exploiting the
+stochastic grammars, DeepStochLog shows the same benefits as fuzzy logic in terms of computational
+complexity (i.e. no disjoint-sum problem required) by resorting to an alternative probabilistic
+semantics.
+
+8
+
+Conclusions
+
+We have introduced a novel and very expressive neural symbolic model based on stochastic logic
+programming, that allows to integrate symbolic knowledge with subsymbolic representations, that
+scales well, and gives state-of-the-art results on various neural symbolic computation tasks.
+There are several limitations of DeepStochLog that we want to explore in further research.
+First, DeepStochLog does not yet learn the structure of the rules, while the neural theorem prover
+[31], DiffLog [36] and the neural grammars [12] can all enumerate rules and then identify the most
+relevant ones. Second, DeepStochLog’s inference could be further optimised by parallelization of the
+circuit using ideas from TensorLog [5]. Third, SLPs and hence, DeepStochLog, may lose probability
+mass due to failing derivations. This can be addressed by normalizing and computing the partition
+function [6]. It would be interesting to approximate the partition function and also to further
+speed up the inference by sampling or by searching for the k-best derivations. Finally, it would be
+interesting to explore the use of DeepStochLog as a generative model to generate sequences.
+
+9
+
+Acknowledgements
+
+We would like to thank Jessa Bekker for her helpful feedback and discussions throughout the
+whole project. This work has received funding by the Research foundation - Flanders, the KU
+Leuven Research Fund, the European Research Council (ERC) under the European Union’s Horizon
+2020 research and innovation programme (grant agreement No [694980] SYNTH: Synthesising
+Inductive Data Models), the EU H2020 ICT48 project “TAILOR”, under contract #952215; the
+Flemish Government under the “Onderzoeksprogramma Artificiële Intelligentie (AI) Vlaanderen”
+programme and the Wallenberg AI, Autonomous Systems and Software Program (WASP) funded
+by the Knut and Alice Wallenberg Foundation. Thomas Winters is a fellow of the Research
+Foundation-Flanders (FWO-Vlaanderen, 11C7720N). Robin Manhaeve is a SB PhD fellow of the
+Research Foundation-Flanders (FWO-Vlaanderen, 1S61718N).
+
+References
+[1] Mikhail Belkin, Partha Niyogi, and Vikas Sindhwani. Manifold regularization: A geometric
+framework for learning from labeled and unlabeled examples. Journal of machine learning
+research, 7(11), 2006.
+
+10
+
+[2] Taylor Berg-Kirkpatrick, Alexandre Bouchard-Côté, John DeNero, and Dan Klein. Painless
+unsupervised learning with features. In Human Language Technologies: The 2010 Annual
+Conference of the North American Chapter of the Association for Computational Linguistics,
+pages 582–590, 2010.
+[3] Matko Bošnjak, Tim Rocktäschel, and Sebastian Riedel. Programming with a differentiable
+forth interpreter. In Proceedings of the 34th International Conference on Machine Learning,
+volume 70, pages 547–556, 2017.
+[4] Weidong Chen and David S. Warren. Tabled evaluation with delaying for general logic programs.
+J. ACM, 43(1):20–74, January 1996.
+[5] William W Cohen, Fan Yang, and Kathryn Rivard Mazaitis. Tensorlog: Deep learning meets
+probabilistic databases. Journal of Artificial Intelligence Research, 1:1–15, 2018.
+[6] James Cussens. Parameter estimation in stochastic logic programs. Machine Learning,
+44(3):245–271, 2001.
+[7] Wang-Zhou Dai, Qiuling Xu, Yang Yu, and Zhi-Hua Zhou. Bridging machine learning
+and logical reasoning by abductive learning. In H. Wallach, H. Larochelle, A. Beygelzimer,
+F. d'Alché-Buc, E. Fox, and R. Garnett, editors, Advances in Neural Information Processing
+Systems, volume 32. Curran Associates, Inc., 2019.
+[8] Luc De Raedt, Sebastijan Dumančić, Robin Manhaeve, and Giuseppe Marra. From statistical
+relational to neuro-symbolic artificial intelligence. In Christian Bessiere, editor, Proceedings of
+the Twenty-Ninth International Joint Conference on Artificial Intelligence, IJCAI-20, pages
+4943–4950. International Joint Conferences on Artificial Intelligence Organization, 7 2020.
+Survey track.
+[9] Luc De Raedt and Angelika Kimmig. Probabilistic (logic) programming concepts. Machine
+Learning, 100(1):5–47, 2015.
+[10] Michelangelo Diligenti, Marco Gori, and Claudio Sacca. Semantic-based regularization for
+learning and inference. Artificial Intelligence, 244:143–165, 2017.
+[11] Ivan Donadello, Luciano Serafini, and Artur S. d’Avila Garcez. Logic tensor networks for
+semantic image interpretation. In Carles Sierra, editor, Proceedings of the Twenty-Sixth
+International Joint Conference on Artificial Intelligence, IJCAI 2017, Melbourne, Australia,
+August 19-25, 2017, pages 1596–1602. ijcai.org, 2017.
+[12] Chris Dyer, Adhiguna Kuncoro, Miguel Ballesteros, and Noah A Smith. Recurrent neural
+network grammars. In Proceedings of the 2016 Conference of the North American Chapter of
+the Association for Computational Linguistics: Human Language Technologies, pages 199–209,
+2016.
+[13] Jason Eisner. Inside-outside and forward-backward algorithms are just backprop (tutorial
+paper). In Proceedings of the Workshop on Structured Prediction for NLP, pages 1–17, 2016.
+[14] Peter A. Flach. Simply Logical Intelligent Reasoning by Example. John Wiley & Sons, Inc.,
+1994.
+[15] Christian Theil Have. Stochastic definite clause grammars. In Proceedings of the International
+Conference RANLP-2009, pages 139–143, 2009.
+[16] Tadao Kasami. An efficient recognition and syntax-analysis algorithm for context-free languages.
+Coordinated Science Laboratory Report no. R-257, 1966.
+[17] Angelika Kimmig, Guy Van den Broeck, and Luc De Raedt. An algebraic prolog for reasoning
+about possible worlds. In Proceedings of the AAAI Conference on Artificial Intelligence,
+volume 25, 2011.
+
+11
+
+[18] Diederik P Kingma and Jimmy Ba. Adam: A method for stochastic optimization. arXiv
+preprint arXiv:1412.6980, 2014.
+[19] Thomas N Kipf and Max Welling. Semi-supervised classification with graph convolutional
+networks. arXiv preprint arXiv:1609.02907, 2016.
+[20] Yann Lecun, Léon Bottou, Yoshua Bengio, and Patrick Haffner. Gradient-based learning
+applied to document recognition. In Proceedings of the IEEE, pages 2278–2324, 1998.
+[21] Qing Li, Siyuan Huang, Yining Hong, Yixin Chen, Ying Nian Wu, and Song-Chun Zhu. Closed
+loop neural-symbolic learning via integrating neural perception, grammar parsing, and symbolic
+reasoning. In International Conference on Machine Learning, pages 5884–5894. PMLR, 2020.
+[22] Qing Lu and Lise Getoor. Link-based classification. In Tom Fawcett and Nina Mishra, editors,
+Machine Learning, Proceedings of the Twentieth International Conference (ICML 2003), August
+21-24, 2003, Washington, DC, USA, pages 496–503. AAAI Press, 2003.
+[23] Robin Manhaeve, Sebastijan Dumancic, Angelika Kimmig, Thomas Demeester, and Luc
+De Raedt. Deepproblog: Neural probabilistic logic programming. Advances in Neural Information Processing Systems, 31:3749–3759, 2018.
+[24] Robin Manhaeve, Sebastijan Dumančić, Angelika Kimmig, Thomas Demeester, and Luc
+De Raedt. Neural probabilistic logic programming in deepproblog. Artificial Intelligence,
+298:103504, 2021.
+[25] Stephen Muggleton. Stochastic logic programs. Advances in inductive logic programming,
+32:254–264, 1996.
+[26] Stephen Muggleton. Learning stochastic logic programs. Electron. Trans. Artif. Intell.,
+4(B):141–153, 2000.
+[27] Rohan Mukherjee, Dipak Chaudhari, Matthew Amodio, Thomas Reps, Swarat Chaudhuri, and
+Chris Jermaine. Neural attribute grammars for semantics-guided program generation, 2021.
+[28] Fernando CN Pereira and David HD Warren. Definite clause grammars for language analysis—a
+survey of the formalism and a comparison with augmented transition networks. Artificial
+intelligence, 13(3):231–278, 1980.
+[29] Bryan Perozzi, Rami Al-Rfou, and Steven Skiena. Deepwalk: Online learning of social representations. In Proceedings of the 20th ACM SIGKDD international conference on Knowledge
+discovery and data mining, pages 701–710, 2014.
+[30] Stefan Riezler, Tracy H. King, Ronald M. Kaplan, Richard Crouch, John T. Maxwell III,
+and Mark Johnson. Parsing the Wall Street Journal using a Lexical-Functional Grammar
+and discriminative estimation techniques. In Proceedings of the 40th Annual Meeting of the
+Association for Computational Linguistics, pages 271–278, Philadelphia, Pennsylvania, USA,
+July 2002. Association for Computational Linguistics.
+[31] Tim Rocktäschel and Sebastian Riedel. End-to-end differentiable proving. In Advances in
+Neural Information Processing Systems, volume 30, pages 3788–3800, 2017.
+[32] Subhro Roy and Dan Roth. Solving general arithmetic word problems. In Proceedings of
+the 2015 Conference on Empirical Methods in Natural Language Processing, pages 1743–1752,
+2015.
+[33] Ruslan Salakhutdinov, Sam T Roweis, and Zoubin Ghahramani. Optimization with em
+and expectation-conjugate-gradient. In Proceedings of the 20th International Conference on
+Machine Learning (ICML-03), pages 672–679, 2003.
+[34] Taisuke Sato and Yoshitaka Kameya. Prism: a language for symbolic-statistical modeling. In
+IJCAI, volume 97, pages 1330–1339, 1997.
+
+12
+
+[35] Prithviraj Sen, Galileo Namata, Mustafa Bilgic, Lise Getoor, Brian Galligher, and Tina
+Eliassi-Rad. Collective classification in network data. AI magazine, 29(3):93–93, 2008.
+[36] Xujie Si, Mukund Raghothaman, Kihong Heo, and Mayur Naik. Synthesizing datalog programs using numerical relaxation. In Sarit Kraus, editor, Proceedings of the Twenty-Eighth
+International Joint Conference on Artificial Intelligence, IJCAI 2019, Macao, China, August
+10-16, 2019, pages 6117–6124. ijcai.org, 2019.
+[37] Gustav Sourek, Vojtech Aschenbrenner, Filip Zelezny, Steven Schockaert, and Ondrej Kuzelka.
+Lifted relational neural networks: Efficient learning of latent relational structures. Journal of
+Artificial Intelligence Research, 62:69–100, 2018.
+[38] Leon Sterling and Ehud Y Shapiro. The art of Prolog: advanced programming techniques. MIT
+press, 1994.
+[39] Charles Sutton and Andrew McCallum. An introduction to conditional random fields for
+relational learning. Introduction to statistical relational learning, 2:93–128, 2006.
+[40] Efthymia Tsamoura and Loizos Michael. Neural-symbolic integration: A compositional
+perspective. CoRR, abs/2010.11926, 2020.
+[41] Emile van Krieken, Erman Acar, and Frank van Harmelen. Analyzing differentiable fuzzy
+implications. In Diego Calvanese, Esra Erdem, and Michael Thielscher, editors, Proceedings of
+the 17th International Conference on Principles of Knowledge Representation and Reasoning,
+KR 2020, Rhodes, Greece, September 12-18, 2020, pages 893–903, 2020.
+[42] Jason Weston, Frédéric Ratle, Hossein Mobahi, and Ronan Collobert. Deep learning via
+semi-supervised embedding. In Neural networks: Tricks of the trade, pages 639–655. Springer,
+2012.
+[43] Zhun Yang, Adam Ishay, and Joohyung Lee. Neurasp: Embracing neural networks into answer
+set programming. In Proceedings of the Twenty-Ninth International Joint Conference on
+Artificial Intelligence, IJCAI, pages 1755–1762, 2020.
+[44] Xiaojin Zhu, Zoubin Ghahramani, and John D Lafferty. Semi-supervised learning using
+gaussian fields and harmonic functions. In Proceedings of the 20th International conference on
+Machine learning (ICML-03), pages 912–919, 2003.
+
+13
+
+A
+
+Appendix
+
+A.1
+
+Data and Licenses
+
+• For tasks T1, T3 and T4, we used the MNIST dataset from [20] to generate new datasets.
+The MNIST dataset itself was released under the Creative Commons Attribution-Share Alike
+3.0 license.
+• The Handwritten Formula Recognition (HWF) dataset (used in T2) originates from [21].
+• The Cora and Citeseer datasets (T5) are from [35].
+• The dataset of the Word Algebra Problem (T6) originates from [32].
+
+A.2
+
+Computational details
+
+Inference time experiments are all executed on a MacBookPro 13 2020 (2.3 GHz Quad-Core Intel
+Core i7 and 16 GB 3733 MHz LPDDR4).
+
+B
+
+Task Details
+
+In this section we show the full DeepStochLog programs and additional experimental details for all
+tasks.
+
+B.1
+
+MNIST Digit Addition
+
+For the MNIST addition problem, we trained the model for 25 epochs using the Adam optimizer
+with a learning rate of 0.001 and used 32 training terms in each batch for each digit length.
+DeepStochLog program for single-digit numbers:
+1
+2
+3
+
+digit(Y) :- member(Y,[0,1,2,3,4,5,6,7,8,9]).
+nn(number, [X],[Y],[digit]):: number(Y) --> [X].
+addition(N) --> number(N1), number(N2), {N is N1+N2}.
+DeepStochLog program for L-long digits numbers:
+
+1
+2
+3
+4
+5
+6
+7
+
+digit(Y) :- member(Y,[0,1,2,3,4,5,6,7,8,9]).
+nn(number, [X],[Y],[digit]):: number(Y) --> [X].
+addition(N) --> number(N1), number(N2), {N is N1+N2}.
+0.5::multi_addition(N, 1) --> addition(N).
+0.5::multi_addition(N, L) --> {L > 1, L2 is L - 1},
+addition(N1), multi_addition(N2, L2),
+{N is N1*(10**L2) + N2}.
+
+B.2
+
+Handwritten Mathematical Expressions
+
+For the Handwritten Mathematical Expression problem, we trained the model for 20 epochs using
+the Adam optimizer with a learning rate of 0.003 and a batch size of 2. We used two separate,
+similar neural networks for recognising the numbers and the operators (see Table 8. The encoder of
+the neural networks has a convolutional layer with 1 input channel, 6 output channels, kernel size 3,
+stride 1, padding 1, a ReLu, max pooling with kernel size 2, a convolutional layer with 6 inputs,
+16 outputs, kernel size 3, stride 1, padding 1, a ReLu, a max pooling with kernel size 2, and a 2d
+dropout layer with p = 0.4. They then use two fully connected layers, one from 1936 to 128 with a
+ReLu, and one linear to the number of classes (10 and 4 respectively). This problem is modeled as
+follows in DeepStochLog:
+
+14
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+
+digit(Y) :- member(Y,[0,1,2,3,4,5,6,7,8,9]).
+operator_d(Y) :- member(Y,[plus, minus, times, div]).
+term_switch_d(Y) :- member(Y,[0, 1, 2]).
+e_switch_d(Y) :- member(Y,[0, 1, 2]).
+nn(number, [X],[Y],[digit]):: number(Y) --> [X].
+nn(operator, [X],[Y],[operator_d]) :: operator(Y) --> [X].
+1 :: factor(N) --> number(N).
+nn(term, [], [Y], [term_switch_d]) :: term(N) --> term_switch(N,Y).
+0.33 :: term_switch(N, 0) --> factor(N).
+0.33 :: term_switch(N, 1) --> term(N1), operator(times), factor(N2),
+{N is N1 * N2}.
+0.33 :: term_switch(N, 2) --> term(N1), operator(div), factor(N2),
+{N2>0, N is N1 / N2}.
+nn(expression, [], [Y], [e_switch_d]) :: expression(N) --> e_switch(N,Y).
+0.33 :: e_switch(N,0) --> term(N).
+0.33 :: e_switch(N,1) --> expression(N1), operator(plus), term(N2),
+{N is N1 + N2}.
+0.33 :: e_switch(N,2) --> expression(N1), operator(minus), term(N2),
+{N is N1 - N2}.
+
+B.3
+
+Well-formed Parentheses
+
+We ran the well-formed parenthesis problem for 1 epoch using the Adam optimizer with a learning
+rate of 0.001 and a batch size of 4. This problem is modelled as follows:
+1
+2
+3
+4
+5
+6
+7
+8
+
+bracket_d(Y) :- member(Y,["(",")"]).
+s_switch_d(Y) :- member(Y,[0,1,2]).
+nn(bracket_nn,[X], [Y], [bracket_d])::bracket(Y) --> [X].
+nn(s_nn,[X],[Y],[s_switch_d])::s --> s_switch(Y).
+0.33::s_switch(0) --> s, s.
+0.33::s_switch(1) --> bracket("("), s, bracket(")").
+0.33::s_switch(2) --> bracket("("), bracket(")").
+
+B.4
+
+Context-Sensitive Grammar
+
+The model was trained on the canonical context-sensitive grammar an bn cn problem for 1 epoch
+using the Adam optimizer with a learning rate of 0.001 and batch size 4. This problem is modelled
+in DeepStochLog as follows:
+1
+2
+3
+4
+5
+6
+7
+
+rep_d(Y):- domain(Y, [a,b,c]).
+0.5:: s(0) --> akblcm(K,L,M),{K\=L; L\=M; M\=K}.
+0.5:: s(1) --> akblcm(N,N,N).
+akblcm(K,L,M) --> rep(K,A), rep(L,B), rep(M,C),{A\=B, B\=C, C\=A}.
+0.5 :: rep(s(0), C) --> terminal(C).
+0.5 :: rep(s(N), C) --> terminal(C), rep(N,C).
+nn(mnist, [X], [C], [rep_d]) :: terminal(C) --> [X].
+
+B.5
+
+Semi-supervised classification in citation networks
+
+The model was trained on the Cora and Citeseer datasets using the Adam optimizer with a learning
+rate of 0.01. We trained for 100 epochs and we selected the model corresponding to the epoch with
+15
+
+the maximum accuracy on the validation set. We can easily and concisely express this problem in
+DeepStochLog as follows:
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+class(Y) :- member(Y, [class0, class1, ..., class6]).
+nn(classifier,[X],[Y],[class]):: doc_neural(X,Y) --> [].
+1/Na :: cite(a,b) --> [].
+1/Na :: cite(a,c) --> [].
+1/Nb :: cite(b,d) --> [].
+...
+0.5:: doc(X,Y) --> doc_neural(X,Y).
+0.5:: doc(X,Y) --> cite(X, X1), doc(X1,Y).
+s(X) --> doc(X,Y), [Y].
+The program simply states that a document X is of class Y (and produce the terminal Y) either
+if a neural network classifies it so or if it is cited by one or more documents of the same class. Even
+if strange, many of these citation networks are actually cyclic. Therefore, we limited the depth of
+the derivations to a maximum value to avoid having a cyclical program. We also experimented
+with a variant of the program in which the probabilities of the rules expanding the doc predicate
+are trained separately for each class Y.
+
+B.6
+
+Word Algebra Problem
+
+We trained the model on the Word Algebra Problem for 40 epochs using the Adam optimizer with
+a learning rate of 0.001 and a batch size of 32. The DeepStochLog program is then modelled as
+follows:
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+
+permute_d(Y) :- member(Y,[0,1,2,3,4,5]).
+op(Y) :- member(Y, [plus,minus,times,div]).
+swap_d(Y) :- member(Y, [no_swap, swap]).
+nn(nn_permute, [X], [Y], [permute_d]):: nn_permute(X,Y) --> [].
+nn(nn_op1, [X], [O], [op]):: nn_op1(X, O) --> [].
+nn(nn_swap, [X], [S], [swap_d]):: nn_swap(X, S) --> [].
+nn(nn_op2, [X], [O], [op]):: nn_op2(X, O) --> [].
+
+0.1666::permute(0,A,B,C,A,B,C) --> [].
+0.1666::permute(1,A,B,C,A,C,B) --> [].
+0.1666::permute(2,A,B,C,B,A,C) --> [].
+0.1666::permute(3,A,B,C,B,C,A) --> [].
+0.1666::permute(4,A,B,C,C,A,B) --> [].
+0.1666::permute(5,A,B,C,C,B,A) --> [].
+0.5:: swap(no_swap,X,Y,X,Y) --> [].
+0.5:: swap(swap,X,Y,Y,X) --> [].
+0.25:: operator(plus,X,Y,Z) --> [], {Z is X+Y}.
+0.25:: operator(minus,X,Y,Z) --> [], {Z is X-Y}.
+0.25:: operator(times,X,Y,Z) --> [], {Z is X*Y}.
+0.25:: operator(div,X,Y,Z) --> [], {Y > 0, 0 =:= X mod Y, Z is X//Y}.
+s(Out,X1,X2,X3) --> [String],
+nn_permute(String, Perm),
+nn_op1(String, Op1),
+16
+
+29
+30
+31
+32
+33
+34
+
+nn_swap(String, Swap),
+nn_op2(String, Op2),
+permute(Perm,X1,X2,X3,N1,N2,N3),
+operator(Op1,N1,N2,Res1),
+swap(Swap,Res1,N3,X,Y),
+operator(Op2,X,Y,Out).
+
+B.7
+
+Neural network architectures
+
+Table 8 summarizes the neural network architectures used in the experiment. Conv(o,k) is a
+convolutional layer with o output channels and kernel size k. Lin(n) is a fully-connected layer of
+size n. (Bi)GRU(h) is a single-layer (bi-directional) GRU with a hidden size h. MaxPool(k) is a
+max-pooling layer with kernal size k, and Dropout(p) a dropout layer with probability p. A layer in
+bold means it is followed by a ReLU activation function. All neural networks end with a Softmax
+layer, unless otherwise specified.
+Table 8: Overview of the neural network architectures used in the experiments.
+Task
+
+Network
+
+Architecture
+
+T1
+T2
+
+number
+number
+
+MNISTConv, Lin(120), Lin(84), Lin(10)
+Conv(6, 3), MaxPool(2), Conv(16,3), MaxPool(2), Dropout(0.4),
+Lin(128), Lin(10)
+Conv(6, 3), MaxPool(2), Conv(16,3), MaxPool(2), Dropout(0.4),
+Lin(128), Lin(4)
+MNISTConv, Lin(120), Lin(84), Lin(2)
+MNISTConv, Lin(120), Lin(84), Lin(3)
+Lin(50), Lin(6)
+Lin(50), Lin(7)
+Embedding(256), BiGRU(512), Dropout(0.5)*
+Lin(6)
+Lin(4)
+Lin(2)
+Lin(4)
+
+operator
+T3
+T4
+T5
+T6
+
+bracket_nn
+mnist
+classifier-Citeseer
+classifier-Cora
+RNN
+nn_permute
+nn_op1
+nn_swap
+nn_op2
+
+MNISTConv: Conv(6,5), MP(2,2), Conv(16,5), MP(2,2)*
+AlexNetConv: Conv(64, 11, 2,2), MP(3,2), Conv(192, 5, 2), MP(3,2),
+Conv(384, 3, 1), Conv(256, 3, 1), Conv(256, 3, 1), MP(3,2)*
+
+* Does not end with a Softmax layer.
+
+C
+
+Translation Example of Neural Definite Clause Grammar
+to Prolog
+
+Consider the following DeepStochLog program.
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+digit(Y) :- member(Y, [0,1,2,3,4,5,6,7,8,9]).
+op(Y) :- member(Y, [+,-]).
+nn(mnist,[I],[N],[digit]) :: n(N) --> [I].
+nn(operator,[I],[N],[op]) :: o(N) --> [I].
+0.33::e(N) --> n(N).
+0.33::e(S) --> e(E1), o(+), n(E2), {S is E1 + E2}.
+0.33::e(S) --> e(E1), o(-), n(E2), {S is E1 - E2}.
+It is translated into:
+17
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+digit(Y) :- member(Y, [0,1,2,3,4,5,6,7,8,9]).
+op(Y) :- member(Y, [+,-]).
+n(N, [I | X], [X]) :- nn(mnist,[I],[N]), digit(X).
+n(N, [I | X], [X]) :- nn(mnist,[I],[O]), op(O).
+e(N, A, B) :- n(N, A, B), p(0.33).
+e(S, A,D) :- e(E1, A, B), o(+, B, C), n(E2, C, D), S is E1 + E2, p(0.33).
+e(S, A,D) :- e(E1, A, B), o(-, B, C), n(E2, C, D), S is E1 - E2, p(0.33).
+Both the calls to nn and p are considered always true during logical inference. During evaluation
+of the arithmetic circuit, nn(mnist,[I],[O]) returns the probability of the output O when provided
+with the image I as input, while p(x) constantly returns the probability x. It is easy to see that
+any derivation of the Prolog program always end with either a nn or a p call, which constitute the
+leaves of the correspondent arithmetic circuit.
+
+18
+
+

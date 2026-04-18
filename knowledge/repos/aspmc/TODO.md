@@ -1,0 +1,13 @@
+- find out which variables can be projected away for 2AMC
+- enable (weighted) model counting directly for all solvers, not only sharpsat-td, when possible
+- in td_guided_clark_completion make sure that we do not have clauses that are too long
+- in the semiring modules make it so that every idempotent semiring supports conversion to a maxsat problem itself
+- set probabilistics facts with probabilities 0/1 to false/true.
+- use magic set transformation idea to reduce the size of the ground program
+- raise errors instead of doing exit(-1)
+Maybe:
+- handle evidence for problog programs
+- integrate a better fvs solver
+- handle queries in asp mode
+- timeout for compile()?
+- handle cnfs that become trivial by unit propagation

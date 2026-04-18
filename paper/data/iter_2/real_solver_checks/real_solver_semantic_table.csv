@@ -1,0 +1,13 @@
+dataset,backend,median_runtime_s,semantic_equivalence_rate,model_count_mean
+counting_v1,enum_frumpy,0.05450158298481256,1.0,11.6
+counting_v1,enum_rewrite_frumpy,0.05847062496468425,1.0,11.6
+formula_eval_v1,enum_frumpy,0.06112104200292379,1.0,10.666666666666666
+formula_eval_v1,enum_rewrite_frumpy,0.062247083988040686,1.0,10.666666666666666
+mnist_sum_k_v1,enum_frumpy,0.05465283303055912,1.0,12.733333333333333
+mnist_sum_k_v1,enum_rewrite_frumpy,0.055829749908298254,1.0,12.733333333333333
+ordering_v1,enum_frumpy,0.05984066694509238,1.0,10.866666666666667
+ordering_v1,enum_rewrite_frumpy,0.05627166701015085,1.0,10.866666666666667
+shortest_path_v1,enum_frumpy,0.05469791707582772,1.0,12.0
+shortest_path_v1,enum_rewrite_frumpy,0.05672962497919798,1.0,12.0
+sudoku_4x4_v1,enum_frumpy,0.05967541702557355,1.0,12.666666666666666
+sudoku_4x4_v1,enum_rewrite_frumpy,0.060856750002130866,1.0,12.666666666666666

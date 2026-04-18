@@ -1,0 +1,802 @@
+                      Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                     Main Track
+
+
+
+
+          Treewidth-Aware Cycle Breaking for Algebraic Answer Set Counting
+
+                            Thomas Eiter , Markus Hecher , Rafael Kiesel
+                                     Vienna University of Technology
+             thomas.eiter@tuwien.ac.at, markus.hecher@tuwien.ac.at, rafael.kiesel@tuwien.ac.at
+
+
+
+                            Abstract                                          2017) uses the fact that answer set counting is fixed parame-
+                                                                              ter tractable (FPT) in the treewidth of the program. How-
+  Probabilistic reasoning, parameter learning, and most proba-                ever, already for normal ASP, the best known FPT algo-
+  ble explanation inference for answer set programming have                   rithm for answer set counting is double exponential in the
+  recently received growing attention. They are only some of
+                                                                              treewidth and therefore only feasible for instances with very
+  the problems that can be formulated as Algebraic Answer Set
+  Counting (AASC) problems. The latter are however hard to                    low treewidth in practice. Last but not least, Problog re-
+  solve, and efficient evaluation techniques are needed. In-                  duces AASC to Algebraic Model Counting (AMC) (Kim-
+  spired by Vlasser et al.’s TP -compilation (JAR, 2016), we                  mig, Van den Broeck, and De Raedt 2017), for which a wider
+  introduce TP -unfolding, which employs forward reasoning                    variety of efficient solvers exist (Oztok and Darwiche 2015a;
+  to break the cycles in the positive dependency graph of a pro-              Sang, Beame, and Kautz 2005; Thurley 2006).
+  gram by unfolding them. TP -unfolding is defined for any                        We focus on Problog as it is the most promising approach.
+  normal answer set program and unfolds programs with re-                     Here, the basic strategy is the following. First one breaks the
+  spect to unfolding sequences, which are akin to elimination                 cyclic dependencies in the input program, obtaining a tight
+  orders in SAT-solving. Using “good” unfolding sequences,
+  we can ensure that the increase of the treewidth of the un-
+                                                                              program, where the answer sets are the models of its Clark
+  folded program is small. Treewidth is a measure adhering                    completion (Fages 1994). The CNF corresponding to the
+  to a program’s tree-likeness, which gives performance guar-                 Clark completion can then be given to a solver that compiles
+  antees for AASC. We give sufficient conditions for the exis-                it into an equivalent d-DNNF/SDD representation. On these
+  tence of good unfolding sequences based on the novel no-                    representations, AMC is possible in linear time (Kimmig,
+  tion of component-boosted backdoor size, which measures                     Van den Broeck, and De Raedt 2017).
+  the cyclicity of the positive dependencies in a program. The                    This approach allows for practically relevant instances to
+  experimental evaluation of a prototype implementation, the                  be solved (Vlasselaer et al. 2016). However, it has limi-
+  AASC solver aspmc, shows promising results.
+                                                                              tations and weaknesses. Firstly, Problog only accepts pro-
+                                                                              grams where negation is limited to a set of intensional atoms
+                                                                              or stratified programs, rather than supporting the full syn-
+                     1    Introduction                                        tax of normal ASP. Secondly, Problog only allows so called
+Recently, there has been a rising interest in reasoning prob-                 factorized algebraic measures, i.e., AASC instances where
+lems for Answer Set Programming (ASP) that go beyond                          the weight of each individual answer set I is computed as a
+the classical reasoning tasks of entailment and consistency.                  product of semiring values over the literals in I rather than
+For example, LPMLN (Lee and Yang 2017), P-log (Baral,                         allowing expressions where sums and products alternate ar-
+Gelfond, and Rushton 2009) and Problog (De Raedt, Kim-                        bitrarily as in wLARS (Eiter and Kiesel 2020). Last but
+mig, and Toivonen 2007) allow for probabilistic reason-                       not least, the way cycles in the positive dependency graph
+ing. Weight Constraints and more generally the asprin                         of the program are broken can have a strong negative ef-
+framework (Brewka et al. 2015) consider preferential rea-                     fect on the treewidth of the instance. This in turn has a
+soning over answer sets. Finally, algebraic Problog (Kim-                     negative effect on performance guarantees for the compila-
+mig, Van den Broeck, and De Raedt 2011) and Weighted                          tion to d-DNNF/SDD: it is merely known that an instance
+LARS (Eiter and Kiesel 2020) capture and generalize both                      of treewidth k has a d-DNNF/SDD representation of size at
+of these ideas in Algebraic Answer Set Counting (AASC), i.e.                  most 2k . Thus an effective way of breaking cycles is needed.
+weighted answer set counting over semirings.                                      Cycle breaking is an often and well studied topic in the
+   While the variety of frameworks that allow the specifi-                    ASP community. Among others, Hecher’s (2020) trans-
+cation of such problems is big, the corresponding choice of                   lation from ASP to SAT guarantees that the treewidth of
+solvers is limited: the clingo solver (Gebser et al. 2014) only               the SAT instance is O(k log(l)), where k is the original
+allows for answer set counting by enumeration, which be-                      treewidth and l is the minimum of k and the size of the
+comes quickly infeasible once the number of answer sets                       largest strongly connected component of the dependency
+exceeds a few millions. The dynASP2.5 solver (Fichte et al.                   graph of the program. Unfortunately, this translation does
+
+
+
+                                                                       269
+                       Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                      Main Track
+
+
+not preserve models bijectively and is thus not helpful                        and B − (r) = {c1 , . . . , cn }.               We slightly abuse
+for answer set counting. In contrast, the cycle breaking                       notation and use ← b1 , . . . , bm , not c1 , . . . , not cn for
+used primarily in Problog (Mantadelis and Janssens 2010;                       ⊥ ← b1 , . . . , bm , not c1 , . . . , not cn , not ⊥. Also, we al-
+Vlasselaer et al. 2016) and another (Janhunen 2004) pre-                       low choice constraints {a} ← B + (r), B − (r) as a short-
+serve models bijectively but their treewidth bounds are not                    hand for the two rules a ← B + (r), B − (r), not na and
+as strong.                                                                     na ← B + (r), B − (r), not a, where na is a fresh proposi-
+   In this work, we tackle all three of the aforementioned                     tional variable. We denote by A(Π) the set of propositional
+issues and make the following main contributions:                              variables that occur in Π.
+• Taking inspiration from TP -compilation (Vlasselaer et al.                      An interpretation I ⊆ A(Π) satisfies Π, if for each rule
+   2016), we introduce TP -unfolding, which uses the idea of                   r ∈ Π it holds that H(r) ∈ I or there exists a ∈ A(Π) s.t.
+   forward reasoning to unfold a cyclic into an acyclic pro-                   a ∈ B + (r) \ I or a ∈ B − (r) ∩ I. Furthermore, I is an
+   gram along an unfolding sequence s. Such a sequence                         answer set of Π if it is a ⊆-minimal satisfying interpretation
+   lists variables for unfolding steps, where variables can                    of the reduct1 ΠI = {r ∈ Π | B + (r) ⊆ I, B − (r)∩I = ∅}.
+   occur multiple times. Intuitively, unfolding sequences                      We denote the set of answer sets of a program Π by AS(Π).
+   are to TP -unfolding what elimination orders are to SAT-                    Example 1 (Smokers). We consider the smokers program2 ,
+   solving: as we will see, they have a big impact on the                      which is a standard example from probabilistic logic pro-
+   treewidth of the unfolded result and thus the performance                   gramming (De Raedt, Kimmig, and Toivonen 2007).
+   guarantees of AASC.                                                             {stress(X)} ← person(X)
+• Furthermore, we introduce conditions that guarantee that                          smokes(X) ← stress(X)
+   TP -unfolding along an unfolding sequence s returns a
+                                                                                   {inf(X, Y )} ← friend(X, Y )
+   program whose answer sets are bijectively preserved. Us-
+   ing these results, we can show that every program of                             smokes(Y ) ← smokes(X), inf(X, Y ), smokes(Y )
+   treewidth k can be translated into an acyclic program with                  This encodes that for all persons it is randomly determined
+   treewidth at most k ·cbs(DEP(Π)), where cbs(DEP(Π)),                        whether they are stressed. If they are, they smoke. Further-
+   is the component-boosted backdoor size of the depen-                        more, if one of their friends influences them, which is again
+   dency graph of Π; notably, cbs(.) is a novel parameter on                   random, and smokes, then they also smoke. We shorten
+   directed graphs that combines backdoor sets and decom-                      stress(.) and smokes(.) to st(.) and sm(.), respectively.
+   posability to measure the cyclicity of a directed graph.
+                                                                                  Especially in Section 4 we will make use of graphs and di-
+• We show that AASC for any algebraic measure can be re-                       graphs, using the following notation. The vertex- and edge-
+   duced in polynomial time to AASC for a factorized mea-                      sets of a (di)graph G are denoted by V (G) and E(G). For
+   sure, which entails that an implementation for AASC over                    V ⊆ V (G) we let G[V ] be the (di)graph obtained by re-
+   factorized measures is sufficient.                                          moving all vertices not in V from V (G) (i.e. V (G[V ]) =
+• Our prototype implementation aspmc performs AASC                             V (G) ∩ V ) and removing all edges that are incident with a
+   not only for Problog programs, but for all normal an-                       vertex not in V (i.e. E(G[V ]) = E(V ) ∩ V × V ). Further,
+   swer set programs. Our experimental results show that                       we define G\V as G[V (G)\V ]. The subgraph C = G[V ] is
+   while clingo’s extremely fast answer set enumeration is                     strongly connected if every vertex in C is reachable from any
+   hard to beat when the number of answer sets is small, in                    other vertex in C. We denote by SCC(G) the set of strongly
+   the unavoidable case where a program has too many an-                       connected components (SCC) of G, which are strongly con-
+   swer sets for clingo, aspmc outperforms both Problog and                    nected subgraphs G[V ], where V is subset maximal.
+   lp2sat (Janhunen 2004).                                                        The (positive) dependency graph DEP(Π) of a program
+                                                                               Π is the digraph G with V (G) = A(Π) and (b, a) ∈ E(G)
+After preliminaries in Section 2, we give in Section 3 the                     if there is a rule r ∈ Π such that a ∈ H(r) and b ∈ B + (r).
+definition of algebraic measures and show that they are                        The primal graph PRIM(Π) of Π is the graph G with
+equivalent in expressive power to factorized measures. Next,                   V (G) = A(Π) and {x, y} ∈ E(G) if there is a rule r ∈ Π
+in Section 4, we introduce TP -unfolding and give bounds                       such that x, y ∈ {H(r)} ∪ B + (r) ∪ B − (r).
+on the increase of the treewidth caused by TP -unfolding in
+terms of the component-boosted backdoor size of the de-                        Example 2 (cont’d). Given the input data person(i), i =
+pendency graph of a program. In Section 5, we describe our                     1, . . . , 3 and friend(i, j), i + 1 ≡ j mod 3 we can ground
+implementation and evaluate it in different relevant settings.                 the smokers program to Πsm
+Finally, in Section 6, we give conclusions and mention is-                                       sm(X) ← st(X)
+sues for further research.                                                                       sm(X) ← inf(Y, X), sm(Y )
+                     2     Preliminaries                                                        {st(x)} ← for x = 1, . . . , 3
+A (normal) answer set program Π is a finite set of rules                                     {inf(y, x)} ← for x + 1 = y mod 3
+                                                                                   1
+          r = a ← b1 , . . . , bm , not c1 , . . . , not cn ,                        All our results hold for both the FLP-reduct (Faber, Pfeifer,
+                                                                               and Leone 2011) and GL-reduct (Gelfond and Lifschitz 1988)
+where a, bj , ck are propositional variables. Given such                           2
+                                                                                     As usual the used schema rules with variables X, Y are implic-
+a rule r, we let H(r) = a, B + (r) = {b1 , . . . , bn }                        itly ∀-quantified and their semantics is the grounding semantics.
+
+
+
+
+                                                                        270
+                        Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                       Main Track
+
+
+
+                               st(1)   inf(1, 2)                                Definition 3 (Weighted Logic). Let R = (R, ⊕, ⊗, e⊕ , e⊗ )
+                                                                                be a semiring. A weighted formula α over R is of the form
+           inf(3, 1)       sm(1)        sm(2)         st(2)                                      α ::= k | v | ¬v | α + α | α ∗ α
+                                                                                where k ∈ R and v is a propositional variable. The seman-
+                                                                                tics of α w.r.t. an interpretation I, denoted JαKR (I), is
+                       st(3)       sm(3)       inf(2, 3)
+                                                                                         JkKR (I) = k,
+                                                                                                     
+              Figure 1: Dependency Graph of Πsm .                                                      e⊗         l = v, v ∈ I or l = ¬v, v 6∈ I
+                                                                                          JlKR (I) =                                             ,
+                                                                                                       e⊕                   otherwise.
+
+The dependency graph of the result is given in Figure 1.                        Jα1 + α2 KR (I) = Jα1 KR (I)⊕Jα2 KR (I),
+                                                                                 Jα1 ∗ α2 KR (I) = Jα1 KR (I)⊗Jα2 KR (I).
+  Next, we recall the definition of treewidth.
+                                                                                  Using weighted formulas, we define algebraic measures.
+Definition 1 (Tree decomposition, Treewidth). Let G be a
+graph. Then a tree decomposition is a pair (T, χ), where T                      Definition 4 (Algebraic Measure). An algebraic measure
+is a tree and χ is a labeling of V (T ) by subsets of V (G) s.t.                µ = hΠ, α, Ri consists of an answer set program Π, a
+                                                                                weighted formula α, and a semiring R. The weight of an
+• for all nodes v ∈ V (G) there is t ∈ V (T ) s.t. v ∈ χ(t);                    answer set I ∈ AS(Π) under µ is
+• for every edge {v1 , v2 } ∈ V (E) there exists t ∈ V (T ) s.t.                                         µ(I) := JαKR (I),
+  v1 , v2 ∈ χ(t);
+                                                                                and a query µ(a) for a ∈ A(Π) has result
+• for all nodes v ∈ V (G) the set of nodes {t ∈ V (T ) | v ∈                                           L
+  χ(t)} forms a (connected) subtree of T .                                                    µ(a) = I∈AS(Π),a∈I µ(I).
+The width of (T, χ) is maxt∈V 0 |χ(t)|−1. The treewidth of a                    Example 3 (cont’d). As mentioned before, the smokers pro-
+graph is the minimal width of any of its tree decompositions.                   gram is a typical example from the probabilistic domain. Us-
+The treewidth of a program Π is the treewidth of PRIM(Π).                       ing algebraic measures we can introduce probabilities. We
+                                                                                define the measure µsm = hΠsm , α, Pi, where
+Definition 2 (Semiring). A semiring R = (R, ⊕, ⊗, e⊕ , e⊗ )
+consists of a nonempty set R equipped with two binary op-                       α =Π3i=1 st(i) ∗ 0.4 + ¬st(i) ∗ 0.6
+erations ⊕ and ⊗, called addition and multiplication, where                       ∗Πi,j=1,2,3,i+1≡j mod 3 inf(i, j) ∗ 0.3 + ¬inf(i, j) ∗ 0.7.
+• (R, ⊕) is a commutative monoid with identity element e⊕ ,                     This means that the probability of a person being stressed is
+• (R, ⊗) is a monoid with identity element e⊗ ,                                 0.4 and the probability that a person influences their friend
+                                                                                is 0.3. The answer set I = {st(1), sm(1)} has weight
+• multiplication left and right distributes over addition, and                  µsm (I) = 0.4 · 0.62 · 0.73 . The query µ(sm(1)) corresponds
+• e⊕ annihilates R, i.e. ∀r ∈ R : r⊗e⊕ = e⊕ = e⊕ ⊗r.                            to the probability that sm(1) holds. To evaluate it we need
+A semiring is commutative, if (R, ⊗) is commutative, and is                     to perform AASC, i.e. sum up the probabilities of all answer
+idempotent, if ∀r ∈ R : r⊕r = r.                                                sets s.t. sm(1) holds.
+                                                                                   Following the conventions of (Belle and De Raedt 2020),
+  In the following, we restrict ourselves to commutative                        we also introduce factorized measures.
+semirings. Some examples of well-known semirings are
+                                                                                Definition 5 (Factorized Measure). Let µ = hΠ, α, Ri be
+• F = (F, +, ·, 0, 1), for F ∈ {N, Z, Q, R} the semiring of                     an algebraic measure and F ⊆ A(Π). Then µ is factorized
+  the numbers in F with addition and multiplication,                            w.r.t. F , if there is a weight function β : F ∪ {¬f | f ∈
+• Rmax = (N ∪ {−∞}, max, +, −∞, 0), the max-plus                                F } → R s.t. for all I ∈ AS(Π) it holds that
+  semiring,
+                                                                                                    N               N
+                                                                                           µ(I) = f ∈F ∩I β(f )⊗ f ∈F \I β(¬f ).
+• B = ({0, 1}, ∨, ∧, 0, 1), the Boolean semiring,                               Example 4 (cont’d). The measure µsm is factorized over
+• P = ([0, 1], +, ·, 0, 1), the probability semiring.                           st(i), i = 1, . . . , 3 and inf(i, j), i + 1 ≡ j mod 3, by let-
+                                                                                ting β(st(i)) = 0.4, β(¬st(i)) = 0.6 and β(inf(i, j)) =
+For a more comprehensive list of semirings and applications                     0.3, β(¬st(i, j)) = 0.7.
+see (Kimmig, Van den Broeck, and De Raedt 2017).
+                                                                                Example 5 (Non-factorized). For an example of a non-
+                                                                                factorized measure, consider the measure µw = hΠ, a +
+       3     Algebraic Answer Set Counting                                      b + (−1 ∗ ¬a ∗ ¬b), Zi. It has value 2 if both a and b
+We now introduce ASP with algebraic measures, which                             hold, 1 if one them holds and −1 otherwise. This measure
+amounts to the restriction of weighted LARS to ASP (Eiter                       is not factorized over F = {a, b} as there are no values
+and Kiesel 2020). This is sufficient, since it was shown that                   β(a), β(b), β(¬a), β(¬b) ∈ Z, s.t.
+algebraic Problog, Problog, LPMLN and P-log can all be ex-                                β(a) · β(b) = 2              β(a) · β(¬b) = 1
+pressed in ASP with algebraic measures.
+   We use a variant of weighted logics (Droste and Gastin                                β(¬a) · β(b) = 1             β(¬a) · β(¬b) = −1
+2007) restricted to propositional formulas.                                     Note that there are also no such values in R.
+
+
+
+                                                                         271
+                       Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                      Main Track
+
+
+   While not every algebraic measure is factorized, there al-                  Theorem 8. For any factorized measure µ = hΠ, α, Ri,
+ways exists a factorized measure that preserves weights of                     there exists µ0 = hΠ0 , α, Ri with an acyclic program Π0 s.t.
+queries. To establish this, we need some notation for sets of                  • for all a ∈ A(Π) it holds that µ(a) = µ0 (a),
+indexed subformulas of a weighted formula α.
+                                                                               • the treewidth of Π0 is bounded by k ·cbs(DEP(Π)), where
+Definition 6 (Subformulas). Let α a weighted formula.                             k is the treewidth of Π.
+Then S(α) is the set of pairs (i, β), where β is a subformula
+of α indexed by position-string i ∈ {0, 1}∗ . That is:                            There are multiple aspects to consider in order to appre-
+                                                                               ciate the usefulness of this Theorem. Firstly, it is important
+• For α ∈ {p(~x), ¬p(~x), k} we let S(α) = {(, α)}.                           that Π0 is acyclic, as it is well-known that when the depen-
+• For α ∈ {α1 + α2 , α1 ∗ α2 } we let S(α) = {(, α)} ∪                        dency graph DEP(Π) of Π is acyclic, then Clark(Π), the
+   {(0r, β) | (r, β) ∈ S(α1 )} ∪ {(1r, β) | (r, β) ∈ S(α2 )}.                  Clark-completion (Fages 1994) of Π, is a propositional for-
+Theorem 7 (Factorization). Let µ = hΠ, α, Ri be an alge-                       mula whose models exactly correspond to the answer sets
+braic measure. Then we can construct a factorized algebraic                    of Π. The removal of cycles may significantly increase the
+measure µ0 = hΠ0 , α0 , Ri s.t. for a ∈ A(Π) : µ(a) = µ0 (a)                   treewidth, which in turn is assumed to have negative effects
+in linear time.                                                                on the efficiency of model counting. However, according
+                                                                               to the above Theorem, we can bound the treewidth over-
+Proof (sketch). Intuitively, we implicitly imply the distribu-                 head using cbs(DEP(()Π)), i.e., a parameter that only de-
+tive law. For this, we introduce a new atom αi for every                       pends on the dependency graph of Π. Here, cbs(.) is the
+subformula (i, β) ∈ S(α), which is true if the value of the                    component-boosted backdoor size, a new digraph-parameter
+subformula β at index i is included in the current product.                    that measures cyclicity.
+To implement this, we let Π0 = Π ∪ Πroot ∪ Π∗ ∪ Π+ ∪ Πleaf .
+Here, Πroot = {← not α0 } ensures that the value of the for-                   4.1 TP -Unfolding
+mula at the root is included.                                                  A current state of the art approach to AASC is TP -
+               αi ← αi.0 , αi.1
+            (                                          )
+                                                                               compilation (Vlasselaer et al. 2016). Intuitively, the idea is
+     Π∗ =      ← αi.0 , not αi.1 (i, β1 ∗ β2 ) ∈ S(α)                          to use forward reasoning to iteratively compile an SDD that
+               ← not αi.0 , αi.1                                               captures the truth of variables in a program in terms of prob-
+ensures that a subformula that uses multiplication is only in-                 abilistic input variables. We also use forward reasoning, but
+cluded if both subformulas are included. Further, we ensure                    in a different way: namely, to break the cycles in the depen-
+that either both or none of the subformulas are included.                      dency graph of a program by unfolding it along paths that
+             (
+                  αi ← αi.1
+                                                      )                        forward reasoning could take. Considering TP -unfolding
+      Π+ =        αi ← αi.0 (i, β1 + β2 ) ∈ S(α)                               allows us to unfold all normal answer set programs while
+                 ← αi.0 , αi.1                                                 TP -compilation is only defined for Problog programs and
+ensures that a subformula that uses addition is only included                  normal answer set programs with stratified negation.
+if one of the subformulas is included. Further, we ensure                         Furthermore, whereas TP -compilation relies on perform-
+that at most one of the subformulas is included.                               ing equivalence checks in order to check whether it is faith-
+                                                                               ful, we unfold programs along an unfolding sequence s ∈
+        Πleaf ={{αi } ← a | (i, a) ∈ S(α)} ∪                                   A(Π)∗ and give conditions that ensure that the unfolding is
+               {{αi } ← not a | (i, ¬a) ∈ S(α)} ∪                              faithful.
+                                                                                  Our procedure is described in Algorithm 1. Intuitively,
+               {{αi } ←| (i, k) ∈ S(α), k ∈ R}.
+                                                                               where the immediate consequence operator TP (Van Em-
+Formally, we define α0 = Π(i,k)∈S(α),k∈R αi ∗ k + ¬αi .                        den and Kowalski 1976) checks if an atom a follows from
+Then µ0 = hΠ0 , α0 , Ri is factorized, by choosing F = {αi |                   previously derived atoms, TP -unfolding introduces copies
+(i, k) ∈ S(α), k ∈ R} and β(αi ) = k, β(¬αi ) = e⊗ .                           of all rules that derive a from previously considered atoms.
+   Further, along a similar line of reasoning as in (Eiter and                 For this, we iterate over the unfolding sequence considering
+Kiesel 2021) it follows that µ(Π) = µ0 (Π0 ).                                  at each step the variable si (line 4). As the head atom of
+                                                                                                                      cnt(si )+1
+                                                                               the rule-copies we take a new copy si             or the original
+  Hence, any AASC instance given as an algebraic measure                       atom si depending on whether si is the last occurrence of si
+can be reduced to AASC for a factorized measure. Thus,                         in s (see lines 5-8). The positive body atoms are replaced by
+we can focus on factorized measures for which AASC can                         the last copy made of them (line 10) and the negative atoms
+be performed on a tractable circuit representation like d-                     in B − (r) are left as they are. After copying all rules with
+DNNFs or SDDs.                                                                 si in the head, we update the last copy of si and increase
+                                                                               the counter storing the number of copies (lines 12, 13). The
+                   4     Cycle Breaking                                        output of TP -U NFOLD(Π, s) is always an acyclic program.
+In order to obtain a tractable circuit representation for a pro-               We further want to preserve models bijectively.
+gram Π using a standard knowledge compiler, we translate
+                                                                               Definition 9 (Faithfulness). We say s ∈ A(Π)∗ is faithful
+Π into a propositional formula φ such that the answer sets of
+                                                                               (for Π), if:
+Π are in a one-to-one correspondence with the models of φ.
+To this end, we will prove the following as our main result                    • |AS(Π)| = |AS(TP -U NFOLD(Π, s))| and
+of this section:                                                               • AS(Π) = {I ∩ A(Π) | I ∈ AS(TP -U NFOLD(Π, s))}.
+
+
+
+                                                                        272
+                      Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                     Main Track
+
+
+
+Algorithm 1 TP -U NFOLD(Π, s)                                                   st(1)                    st(2)                   st(3)
+Input A program Π and an unfolding sequence s ∈ A(Π)∗ .
+Output An acyclic program Π0 .                                                              sm(1)1                  sm(2)1                sm(3)
+ 1: last = {a 7→ ⊥ | a ∈ A(Π)}
+                                                                               sm(1)                    sm(2)
+ 2: cnt = {a 7→ 0 | a ∈ A(Π)}
+ 3: Π0 = {r ∈ Π, H(r) = ⊥}                                                                 inf(3, 1)               inf(1, 2)             inf(2, 3)
+ 4: for i = 1, . . . , len(s) do
+ 5:     if IS L AST O CCURRENCE(si , i, s) then
+                                                                                    Figure 2: Dependency Graph of TP -U NFOLD(Πsm , s).
+ 6:          head = si
+ 7:     else
+                         cnt(s )+1
+ 8:          head = si i
+                                                                              • V (U ) = {ai | 1 ≤ i ≤ |{sj | sj = a}| },
+ 9:     for r ∈ Π, si = H(r) do
+10:            +
+             Bnew    = {last(b) | b ∈ B + (r)}                                • (bi , aj ) ∈ E(U ) if (b, a) ∈ E(G), sk = a for some k and
+11:          Π0 = Π0 ∪ {head ← Bnew   +
+                                           , B − (r)}                           s1 , . . . , sk contains j many a’s and i > 0 many b’s.
+12:     last(si ) = head                                                         The idea is that the digraph unfolding of DEP(Π) w.r.t.
+13:     cnt(si ) = cnt(si ) + 1                                               s ∈ A(Π)∗ is the dependency graph of the unfolded program
+14: return Π0                                                                 TP -U NFOLD(Π, s). Therefore, the vertices are the copies
+                                                                              of the atoms (see lines 6,8) and there is an edge (bi , aj ) if bi
+                                                                              is the last copy of an atom that is used to derive aj , i.e. the
+  Faithfulness is important for us, as it guarantees us that                  j-th occurrence of a in s (see lines 10,11). Formally:
+we can perform AASC over the unfolded program without                         Lemma 12. Let Π be an answer set program and s ∈
+changing the result.                                                          A(Π)∗ be an unfolding sequence. Then UF(DEP(Π), s) =
+Lemma 10. Let µ = hΠ, α, Ri be a measure, s a faithful                        DEP(TP -U NFOLD(Π, s)) (when identifying a with acnt(a) ,
+unfolding sequence and µ0 = hTP -U NFOLD(Π, s), α, Ri.                        where cnt(a) = |{i | si = a}|, for each a ∈ A(Π)).
+Then for all a ∈ A(Π), µ(a) = µ0 (a).
+Example 6 (cont’d). We compute TP -U NFOLD(Πsm , s) us-                       Example 7 (cont’d). The dependency graph of TP -
+ing the unfolding sequence3 s = st(1)nst(1) . . . st(3)nst(3)                 U NFOLD(Πsm , s) is given in Figure 2. As we can see it is
+inf(3, 1)ninf(3, 1) . . . inf(2, 3)ninf(2, 3)sm(1)sm(2)sm(3)                  acyclic and corresponds to UF(DEP(Πsm ), s) as expected.
+sm(1)sm(2) and obtain:                                                           Using the above Lemma, we can provide a sufficient con-
+               {st(x)} ← for x = 1, . . . , 3                                 dition for faithfulness.
+            {inf(y, x)} ← for x + 1 = y mod 3                                 Theorem 13. Let Π be an answer set program and s ∈
+    sm(1)1 ← st(1)            sm(1)1 ← inf(3, 1), ⊥                           A(Π)∗ be an unfolding sequence. If for every simple di-
+                                                                              rected path π = (a1 , . . . , an ) in DEP(Π) there is a directed
+    sm(2)1 ← st(2)            sm(2)1 ← inf(1, 2), sm(1)1                      path πc = (ac11 , . . . , acnn ) in UF(DEP(Π), s), then s is faith-
+     sm(3) ← st(3)            sm(3) ← inf(2, 3), sm(2)1                       ful.
+     sm(1) ← st(1)            sm(1) ← inf(3, 1), sm(3)
+                                                                              Proof (sketch). Let Π be some answer set program, s an un-
+     sm(2) ← st(2)            sm(2) ← inf(1, 2), sm(1)                        folding sequence that satisfies the precondition of the the-
+We observe that s faithful for Πsm .                                          orem and I ⊆ A(Π). We know that, regardless of s,
+   In general, it is enough to iterate over all the variables                 the reduct TP -U NFOLD(Π, s)Iext for Iext ∩ A(Π) = I
+n = |A(Π)| + 1 times, since every derivation in Π can only                    is TP -U NFOLD(Π, s)I because the rules that are added
+take n steps. However, as we have seen in the previous ex-                    in line 12 use the original negative body B − (r), which
+ample, it can suffice to use much fewer steps. This is because                only uses atoms from A(Π). Therefore, we can con-
+the number of times a variable needs to be considered in an                   sider TP -U NFOLD(Π, s)I , which has a unique minimal
+unfolding sequence depends on the positive dependencies it                    model. We see that if there is an answer set Iext of
+takes part in: e.g. st(i), i = 1, . . . , 3 does not positively de-           TP -U NFOLD(Π, s) that is equal to I on A(Π), then it is
+pend on any variable and can therefore be considered once                     the only such answer set.
+before all other variables and never again afterwards.                           By the same argument we see that taking the reduct w.r.t.
+   We give a sufficient condition for faithfulness that ab-                   I and TP -compilation commute: TP -U NFOLD(Π, s)I =
+stracts away the actual program Π and is instead based on                     TP -U NFOLD(ΠI , s). Since I is an answer set iff it is a
+a structural property of the digraph unfolding of DEP(Π).                     minimal model of the reduct ΠI , it remains to show that
+                                                                              a ∈ A(Π) is derivable from ΠI iff it is derivable from
+Definition 11 (Digraph Unfolding). Let G be a digraph and
+                                                                              TP -U NFOLD(ΠI , s). Since both programs are positive, a
+s ∈ V (G)∗ be an unfolding sequence. Then the unfolding
+                                                                              is derivable iff it has an SLD tree. However, we know that s
+UF(G, s) of G w.r.t. s is the digraph U such that
+                                                                              preserves all simple paths and since the paths in every SLD
+   3                                                                          tree correspond to paths in DEP(Π), we know there exists a
+     Recall that choice constraints {a} ← are a shorthand for a ←
+not na and na ← not a.                                                        corresponding SLD-tree in TP -U NFOLD(ΠI , s).
+
+
+
+                                                                       273
+                     Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                    Main Track
+
+
+   Note that a similar theorem can be proven for TP -                                                              v41           v51
+compilation, which reaches a fixed point iff s is faithful.                                                                v21         v31
+   We introduce the component-boosted backdoor size of a
+digraph, which intuitively measures cyclicity. When this pa-                                        v1                           v11
+rameter is low, there exists a faithful unfolding sequence in
+which each variable occurs only a few times.                                                v2               v3                  v12
+Definition 14 (cbs(G)). Let G be a digraph. Then cbs(G),                                                                   v22         v32
+the component-boosted backdoor size of G, is
+                                                                                   v4               v5             v42           v52
+• 1, if G is acyclic (which includes V (G) = ∅)
+• 2, if G is a polytree, i.e. the undirected version of G is                 Figure 3: A polytree G (left) and the unfolding UF(G, spost spre )
+   connected and acyclic                                                     for spost = v4 v5 v2 v3 v1 , spre = v1 v3 v2 v5 v4 (right).
+• max{cbs(C) | C ∈ SCC(G)}, if G is cyclic but not
+   strongly connected
+• min{cbs(G \ S) · (|S| + 1) | S ⊆ V (G)} otherwise                          if for every simple (directed) path π = (a1 , . . . , an ) in G
+                                                                             there is a (directed) path πc = (ac11 , . . . , acnn ) in UF(G, s)
+   As the name suggests, cbs adds component-boosting to a
+                                                                             and every variable a ∈ V (G) occurs at most m times in s.
+specific variant of backdoors, which in general have already
+                                                                                We prove Theorem 8 by showing that there exists a path-
+been considered in the context of ASP (Fichte and Szeider
+                                                                             preserving cbs(DEP(Π))-unfolding sequence for DEP(Π)
+2015). The most related notion of a backdoor for a digraph
+                                                                             using structural induction on the definition of cbs(.).
+G is a vertex set S, such that G \ S is a polytree, polyforest
+or dag, where the backdoor size of G is the minimum size                     Lemma 16. Let G be an acyclic digraph (DAG). Then there
+of a backdoor for G plus 1. Note that component-boosted                      exists a path-preserving 1-unfolding sequence.
+backdoor size additionally takes into account that G \ S may
+consist of separate SCCs that can be handled recursively and                 Proof. Let s be an unfolding sequence, where every a ∈
+is therefore always at most as high as backdoor size.                        V (G) occurs exactly once and which obeys a topological
+                                                                             ordering of G. Then UF(G, s) is equal to G (modulo vari-
+Example 8 (cont’d). Consider the dependency graph                            able renaming) and therefore path-preserving.
+DEP(Πsm ) in Figure 1. It is strongly connected and
+not a polytree, therefore cbs(DEP(Πsm )) is given by                            Next, we consider the second case, where G is a polytree.
+min{cbs(DEP(Πsm ) \ S)(|S| + 1) | S ⊆ V (DEP(Πsm ))}.
+                                                                             Lemma 17. For every polytree G there exists a path-
+We see that if we take away any Si = {sm(i)}, i = 1, . . . , 3,
+                                                                             preserving 2-unfolding sequence s.
+then DEP(Πsm ) \ Si is acyclic. Therefore, we see that
+cbs(DEP(Πsm )) ≤ cbs(DEP(Πsm ) \ Si ) · (|Si | + 1) = 2.
+                                                                             Proof. We know that G is a polytree. We take Gtree , the
+   In this example backdoor size and component-boosted                       corresponding undirected graph, which is a tree with some
+backdoor size align. However, for larger, more complex                       arbitrarily chosen root. Let spost , spre ∈ V (G)∗ be se-
+graphs cbs(.) can be much smaller than backdoor size.                        quences such that every vertex occurs in spost and spre af-
+   The following is the main result of this section.                         ter all its descendants and ancestors in Gtree , respectively.
+Theorem 8. For every answer set program Π, there ex-                         Then spost spre , the concatenation of spost and spre , is a
+ists a faithful unfolding sequence s ∈ A(Π)∗ such that                       path-preserving 2-unfolding sequence of G, as depicted in
+the treewidth of TP -U NFOLD(Π, s) is less or equal to                       Figure 3.
+k · cbs(DEP(Π)), where k is the treewidth of Π.
+                                                                                In the third case, which is the first recursive one, we as-
+   The theorem is based on the following fact.                               sume G is cyclic but not strongly connected. Here, we di-
+Lemma 15. Let Π be an answer set program with treewidth                      vide the problem into one subproblem for each SCC of G
+k and s ∈ A(Π)∗ be an unfolding sequence. If every vari-                     and obtain a global solution by combining the solutions for
+able a ∈ A(Π) only occurs m times in s, then the treewidth                   the subproblems.
+of TP -U NFOLD(Π, s) is less or equal to k · m.
+                                                                             Lemma 18. Let G be a cyclic but not strongly connected
+Proof (sketch). We know that during unfolding we intro-                      digraph, and for each C ∈ SCC(G) let sC ∈ V (C)∗ be a
+duce at most m − 1 copies a1 , . . . , am−1 of a variable                    path-preserving mC -unfolding sequence for C. Then some
+a ∈ A(Π). Now, let (T, χ) be a tree decomposition for                        path-preserving maxC∈SCC(G) mC -unfolding sequence for
+PRIM(Π) of width k. Then (T, χ0 ), where                                     G exists.
+      χ0 (t) = χ(t) ∪ {aj | 1 ≤ j ≤ m − 1, a ∈ χ(t)}                         Proof. Let Gcon be the condensation of G, i.e. V (Gcon ) =
+is a tree decomposition of TP -U NFOLD(Π, s). Further,                       SCC(G) and (C, C 0 ) ∈ E(Gcon ) if there exist v ∈
+|χ0 (t)| ≤ |χ(t)| · m ≤ k · m.                                               V (C), v 0 ∈ V (C 0 ) such that (v, v 0 ) ∈ E(G). Since Gcon
+                                                                             is acyclic we can assume a topological order (C1 , . . . , Cn )
+   We remark that the converse of this Lemma does not hold.                  of Gcon to be given. Consider, s = sC1 . . . sCn , the con-
+   Motivated by this Lemma and Theorem 13, we say that s                     catenation of the unfolding sequences for the SCCs in the
+is a path-preserving m-unfolding sequence (for digraph G),                   chosen topological order. It is a path-preserving unfolding
+
+
+
+                                                                      274
+                        Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                       Main Track
+
+
+                  a1           ...                a|S|                         2. We compute an initial treewidth upper bound for the pri-
+                               ...                                                mal graph of Π using htd (Abseher, Musliu, and Woltran
+                  S                                S                              2017), which is a highly efficient tool for computing tree
+          π1                         π|S|                π|S|+1
+                                                                                  decompositions via heuristics. On all our benchmark in-
+ UF(G \ S, sr )        ...     UF(G \ S, sr )       UF(G \ S, sr )                stances this required at most 60 seconds.
+                                                                               3. Next, we start the actual cycle breaking. While cbs(.) is
+Figure 4: Sketch of UF(G, s) and a path π through it, for the sec-                hard to compute exactly, we can compute a backdoor, i.e.
+ond recursive case, as in the proof of Lemma 19.                                  a subset of the vertices such that the dependency graph
+                                                                                  of the program without them is a polytree or polyforest.
+                                                                                  These backdoors are estimated by running clingo on an
+sequence for G since for every directed simple path in G                          ASP encoding of the problem and using the best result
+that contains a, b ∈ V (G) it holds that if a ∈ Ci and b ∈ Cj                     found after 30s. Using the backdoor computed by clingo
+such that i < j then a must occur after b. Therefore, as the                      we extract an unfolding sequence using Lemma 16 to 19
+sequences sCi per component are path-preserving, we know                          and apply TP -unfolding.
+that the whole sequence is path-preserving. Further, since                     4. The resulting cycle-free program Π0 is then converted to
+V (Ci ) ∩ V (Cj ) = ∅ for i 6= j and sCi ∈ V (Ci )∗ , it is                       a propositional formula Clark(Π0 ), by using a treewidth-
+clear that the maximum number of times a vertex a ∈ V (G)                         aware Clark completion due to (Hecher 2020).
+occurs in s is bounded by maxC∈SCC(G) mC .                                     5. Last but not least we perform weighted/algebraic model
+                                                                                  counting (Problog mode) or model counting (ASP mode)
+  Last but not least, we consider the second recursive case.
+                                                                                  on Clark(Π0 ) using a knowledge compiler/model counter.
+Here, G is strongly connected but not a polytree. We re-
+move a set S ⊆ V (G) of “problematic” vertices such                             Benchmark Setting. In order to evaluate the performance
+that the component-boosted backdoor size of the rest, i.e.,                     of aspmc, we considered the following scenarios.
+cbs(G \ S), is small and handle S and G \ S separately.
+                                                                                S1 Probabilistic reasoning: Computing probabilities for
+Lemma 19. Let G be a strongly connected digraph, S ⊆                               atoms of Problog programs
+V (G) and sr ∈ V (G \ S)∗ a path-preserving mr -unfolding
+                                                                                S2 Counting (small number of solutions on average):
+sequence. Then there exists a path-preserving mr (|S| + 1)-
+                                                                                   Counting the number of different paths between stations
+unfolding sequence for G.
+                                                                                   in public transport networks
+Proof. Let S = {a1 , . . . , s|S| }. We define sS = a1 . . . a|S|               S3 Counting (many solutions on average): Counting
+and s = (sr sS )|S| sr , i.e., s ∈ V (G)∗ is the sequence ob-                      conflict-free extensions in abstract argumentation
+tained by concatenating the sequence sr sS with itself |S|−1                       Scenario S1 aims at improving the evaluation of Problog
+times and then concatenating sr . Then s is a mr (|S| + 1)-                     programs by employing TP -unfolding. Scenario S2 tackles
+unfolding sequence, as every a ∈ S occurs exactly |S| ≤                         an important #P-complete problem (Valiant 1979). Scenario
+mr (|S| + 1) times, and every a ∈ V (G \ S) occurs at most                      S3 is motivated by the recent decision of the biennial com-
+mr times in sr and at most mr (|S| + 1) times in general.                       petition in abstract argumentation (Mailly et al. 2021) to also
+   Furthermore, s is path-preserving: every simple directed                     include dedicated counting tracks.
+path π in G uses k ≤ |S| vertices from S and thus π =                              For each of these three scenarios, we state corresponding
+π1 , ai1 , π2 , ai2 , . . . , aik , πk , where πi is a simple directed          hypotheses that we want to study and verify in the course of
+path in G \ S. Consider Figure 4, which sketches UF(G, s)                       our experimental analysis.
+and the path π. As sr is path-preserving for G \ S, we know                     H1 Treewidth-aware cycle breaking as presented in this
+that we can walk π1 in UF(G \ S, sr ), then go to a1 ∈ S,                         work has a significant impact on solving reasoning tasks
+walk the path π2 in UF(G \ S, sr ) and so forth.                                  based on cyclic logic programs.
+                                                                                H2 For real-world settings as in counting problems originat-
+          5    Implementation & Experiments                                       ing on networks of practical relevance, like public trans-
+                                                                                  port networks, TP -unfolding is beneficial as long as the
+Our prototypical implementation aspmc4 , written in                               treewidth is not excessively large.
+Python3, currently allows for two main settings: (algebraic)
+Problog mode, where the accepted inputs are Problog pro-                        H3.1 Counting by enumeration is outperformed by count-
+grams Π and aspmc computes the answers to probabilistic                           ing via compilation for instances with many solutions.
+(resp. algebraic) queries in Π, and ASP mode, which accepts                     H3.2 Even in an acyclic setting, like S3, our treewidth-
+any normal program Π and computes the number of answer                            aware version of Clark completion improves counting
+sets of Π. Our implementation aspmc proceeds as follows:                          performance.
+1. We parse the input program Π, using the Python API of
+                                                                                Compared Solvers. In our experiments, we mainly com-
+   clingo (Gebser et al. 2014) for normal programs and our
+                                                                                pare the performance of the following configurations.
+   own parser for Problog programs.
+                                                                                • Problog: we use version 2.1.0.42 of Problog run with the
+   4
+       available at github.com/raki123/aspmc (open source).                       arguments “-k sdd”, which proved to be the best overall.
+
+
+
+                                                                         275
+                                                  Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                                                 Main Track
+
+
+                      1800                                                                                                          1800
+                                 aspmc+c2d                                                                                                   aspmc+c2d & clingo
+                      1600       problog                                                                                            1600     clingo
+                                 lp2sat+c2d*                                                                                                 aspmc+c2d
+                      1400                                                                                                          1400
+                                 clingo*                                                                                                     lp2sat+c2d
+wall clock time [s]
+
+
+
+
+                                                                                                              wall clock time [s]
+                      1200                                                                                                          1200
+
+                      1000                                                                                                          1000
+
+                       800                                                                                                           800
+
+                       600                                                                                                           600
+
+                       400                                                                                                           400
+
+                       200                                                                                                           200
+
+                         0                                                                                                              0
+                             0         50            100       150          200         250       300                                    100 200 300 400 500 600 700 800 900 1000 1100 1200 13001400 1500
+                                                           number of instances                                                                                   number of instances
+
+Figure 5: Runtime of the compared solver configurations for Sce-                                              Figure 6: Runtime of the compared solver configuration for Sce-
+nario S1. The x-axis shows the number of instances and the y-axis                                             nario S2. The plot is of the same type as in Figure 5.
+depicts runtimes in seconds. Instances are ordered for each config-
+uration individually in ascending order of their runtimes. The plot                                                                 solver                              tw ranges
+legend lists solvers from best to worst (“right” to “left” in the plot).                                                            configuration
+                                                                                                                                                           P
+                                                                                                                                                                  0-5     6-10 >10    unique   time[h]
+                                                                                                                                    aspmc+c2d & clingo   1520     767     355   398       0     824.08
+                                                                                                                                    clingo               1439     686     355   398       4     846.07
+                      solver                P           tw ranges                                                                   aspmc+c2d            1059     767     224    68       3    1083.11
+                      configuration                  0-3 4-6 >6            unique       time[h]                                     lp2sat+c2d            870     609     202    59       1     1182.7
+                      aspmc+c2d             299      184     113       2          116    133.44
+                      Problog               182      168      12       2            0    187.41                                         Table 2: Detailed results over instances of Scenario S2.
+                      lp2sat+c2d*           174      167       3       4            2    194.42
+                      clingo*                56       56       0       0            0    248.92
+                                                                                                              Benchmark Instances. The instances used in Scenario S1
+Table 1: Detailed results for Scenario S1: “Σ” is the num-
+                                                                                                              are the benchmarks from (Tsamoura, Gutiérrez-Basulto, and
+ber of solved instances in total; “tw ranges” gives more fine
+grained insights showing the number of solved instances grouped                                               Kimmig 2020) and were kindly provided to us by the authors
+by treewidth upper bounds; “unique” refers to the number of in-                                               via personal communication. They adhere to typical bench-
+stances solved only by that configuration. Finally, “time[h]” is the                                          mark domains consisting of 490 instances of the standard
+total runtime over all instances in hours (unsolved instances count                                           smoker’s example, 50 instances of the gene’s problem (Our-
+as timeout, i.e., 1800s). Configurations marked with an asterisk                                              fali et al. 2007) and 63 web knowledge base instances (Davis
+(“*”) refer to counting solutions instead of probabilistic reasoning.                                         and Domingos 2009). For Scenario S2 we used real-world
+                                                                                                              graphs, more specifically, public transport networks of sev-
+                                                                                                              eral transport agencies over the world (Fichte 2016) as in-
+• clingo: this configuration is based on version 5.4.0 and we                                                 stances. They were also used in the so-called PACE chal-
+  used arguments “-q -n 0” in order to count answer sets.                                                     lenge competitions 2016 and 2017 (Dell et al. 2017). In total
+                                                                                                              these instances amount to 561 graph networks and 2553 sub-
+• lp2sat+c2d: instances are translated (Bomanson 2017) to                                                     graphs with a focus on different transportation modes. For
+  CNFs by lp2normal 2.18 in combination with lp2atomic                                                        each instance, we assume the station with the smallest and
+  1.17 and lp2sat 1.24, in order to preserve answer set                                                       largest index to be the start and end stations, respectively.
+  counts. Then, the answer sets are counted via counting                                                         For Scenario S3 we took the instances of the abstract argu-
+  satisfying assignments of the resulting formula, by using                                                   mentation competition (Mailly et al. 2021) from 2019, since
+  c2d version 2.2 (Darwiche 2004). Overall, c2d with argu-                                                    at the time of submission the instances for 2021 were not
+  ments “-smooth all -reduce -in memory -count” seemed                                                        available. The ASP encoding for conflict-free extensions
+  to provide the best results on our instances, even faster                                                   was taken from the ASPARTIX suite (Dvorák et al. 2020).
+  results than, e.g., minic2d (Oztok and Darwiche 2015b).
+                                                                                                                 Note that all our instances5 as well as raw data are avail-
+• aspmc+c2d: this configuration uses aspmc to break the                                                       able at github.com/raki123/aspmc/tree/results/results.
+  cycles and performs AASC on a tractable circuit repre-
+  sentation of the constructed CNF, which is obtained via                                                     Benchmark Platform. All our solvers ran on a cluster
+  c2d 2.2 with arguments “-smooth all -reduce”.                                                               consisting of 12 nodes. Each node of the cluster is equipped
+                                                                                                              with two Intel Xeon E5-2650 CPUs, where each of these
+   For scenario S1, we mainly compare aspmc+c2d with                                                          12 physical cores runs at 2.2 GHz clock speed and has
+Problog, since both solvers are able to solve the reason-                                                     access to 256 GB shared RAM. Results are gathered on
+ing tasks of S1. However, for S1 we still depict results                                                      Ubuntu 16.04.1 LTS powered on kernel 4.4.0-139 with hy-
+of lp2sat+c2d and clingo when counting answer sets, since                                                     perthreading disabled using version 3.7.6 of Python3.
+counting can be seen as the basis for solving these reasoning                                                                       5
+                                                                                                                   With the exception of the Problog instances (Tsamoura,
+tasks. Scenarios S2 and S3 focus on counting answer sets,                                                     Gutiérrez-Basulto, and Kimmig 2020) that were kindly provided
+where we compare aspmc+c2d with clingo and lp2sat+c2d.                                                        to us in personal communication and are not yet published.
+
+
+
+
+                                                                                                        276
+                     Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                    Main Track
+
+
+Experimental Results & Discussion. In our evaluation,                           solver                      P               tw ranges
+                                                                                configuration                       0-300    300-600 >600       unique     time[h]
+we mainly compare total wall clock time and number of
+solved instances. Concerning benchmark limits, we con-                          aspmc+c2d                  241       185         26       30          12    45.16
+                                                                                lp2sat+c2d                 182       182          0        0           0    73.85
+sider a timeout of 1800 seconds and an 8 GB RAM limit                           clingo                     144        97         21       26           2    94.78
+per instance and solver.
+   Figure 5 shows a plot over all instances of Scenario S1,                        Table 3: Detailed results over instances of Scenario S3.
+which indicates that aspmc+c2d solves more instances faster
+than any of the other configurations that we benchmarked.
+                                                                                                         1800
+The detailed results in Table 1 indicate that cycle breaking
+works well for probabilistic reasoning, thus confirming H1.                                              1600
+
+   Notably, for the instances from S1, we also benchmarked                                               1400
+
+aspmc+c2d and Problog for AASC over other semirings like                                                 1200
+the gradient semiring from (Eisner 2002) that is used for pa-
+
+
+
+
+                                                                                            lp2sat+c2d
+                                                                                                         1000
+rameter learning in probabilistic settings. Here, we observed
+                                                                                                         800
+almost identical results, implying a benefit not only for prob-
+abilistic reasoning but for AASC over general semirings.                                                 600
+
+   For Scenario S2 we observed that since the number of                                                  400
+solutions is on the smaller side, clingo can outperform                                                  200
+compilation-based solvers by enumerating all solutions, as
+                                                                                                           0
+indicated in Figure 6. Note, however, that aspmc+c2d                                                            0       500       1000         1500
+still outperforms lp2sat+c2d, the other compilation-based                                                                     aspmc+c2d
+
+approach. Furthermore, Table 2 reveals that there are in-                    Figure 7: Scatter plot of aspmc+c2d and lp2sat+c2d for Scenario
+stances of small treewidth that aspmc+c2d solved but clingo                  S3, comparing the runtime of instances one by one.
+did not solve. Therefore, for instances of small treewidth
+aspmc+c2d is still the configuration one would choose,
+thereby confirming H2. Indeed, the decomposer htd allows
+us to estimate whether an instance has a small treewidth up-                 solved, given that their treewidth does not become too large.
+per bound in a matter of seconds. Consequently, we can con-                  This is especially visible in Figure 5 and Table 1, which
+struct an interesting portfolio, referred to by “aspmc+c2d &                 correspond to our targeted application domain of probabilis-
+clingo”, that chooses aspmc+c2d for instances of treewidth                   tic reasoning. Here, clingo finishes fastest on about 30 in-
+smaller than six and clingo for the rest. This configuration                 stances but solves less than one-fifth of the instances aspmc
+is also included both in Figure 6 and Table 2. While it does                 solves.
+not provide the best performance on every instance, it solves
+about 80 instances more in less total time over all instances                           6                Conclusion and Future Work
+than the second best configuration clingo.
+   Finally, Scenario S3 supports H3.1, the hypothesis that                   We have presented TP -unfolding, which uses the idea
+compilation outperforms enumeration on instances with                        of forward reasoning to unfold any normal program into
+many solutions, as both lp2sat+c2d and aspmc+c2d solve                       an acyclic program. The combination with unfolding se-
+more instances than clingo. On top of that, we confirm H3.2                  quences, which guide the unfolding, ensures that we can ob-
+by the results of Table 3: even though the instances are cy-                 tain a treewidth upper bound for the unfolded program. For
+cle free, thus requiring no cycle-breaking but only transla-                 any program Π, the treewidth can be at most cbs(DEP(Π))
+tion to CNF using Clark completion, aspmc+c2d solves al-                     times bigger, where cbs(.) is a novel parameter that mea-
+most 60 more instances than the second best configuration                    sures the cyclicity of directed graphs. The bound on the
+lp2sat+c2d. The improvement is especially visible in Fig-                    treewidth provides us in turn with worst case guarantees for
+ure 7, which depicts a so-called scatter plot comparing the                  the knowledge compilation step in AASC. Our experimen-
+performance of instances one by one. Indeed, aspmc+c2d                       tal evaluation of the prototype implementation aspmc shows
+outperforms lp2sat+c2d on almost every instance.                             that this idea does not only provide interesting theoretical re-
+   By comparing results among different scenarios, we ob-                    sults but provides a significant speedup on standard Problog
+serve that clingo is extremely fast at enumerating solutions.                benchmarks compared to other solvers. In our other bench-
+Thus, on instances with not that many solutions, clingo is                   mark settings, we saw that while clingo’s enumeration based
+faster than any of the compilation-based approaches we con-                  approach for answer set counting is hard to beat for instances
+sidered. On the other hand, when there are more solutions,                   with few answer sets, it can be very beneficial to use aspmc
+the compilation-based approaches lp2sat+c2d, aspmc+c2d                       instead of clingo or lp2sat when this is not the case. This
+and Problog (where applicable) solve significantly more in-                  applies even to programs that are already acyclic due to the
+stances. Thus, our results suggest that overall, one is forced               treewidth-aware Clark completion employed by aspmc.
+to choose between (a) high performance on instances with                        For future work it would be interesting to find better ap-
+few solutions at the cost of not being able to obtain a re-                  proximation algorithms for cbs(.), to consider the combi-
+sult otherwise, and (b) an overhead cost on instances with                   nation of TP -compilation with unfolding sequences, and to
+few solutions, which in turn allows for more instances to be                 minimize input programs before cycle breaking.
+
+
+
+                                                                      277
+                     Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                    Main Track
+
+
+                  Acknowledgements                                           Eiter, T., and Kiesel, R. 2020. Weighted LARS for quan-
+This work has been supported by the Austrian Science Fund                    titative stream reasoning. In ECAI 2020, volume 325 of
+(FWF), Grants P32830, Y698 and W1255-N23, as well as                         Frontiers in Artificial Intelligence and Applications, 729–
+the Vienna Science and Technology Fund, Grant WWTF                           736. IOS Press.
+ICT19-065. Hecher is also affiliated with the University of                  Eiter, T., and Kiesel, R. 2021. On the complexity of sum-
+Potsdam, Germany; part of the work was carried out while                     of-products problems over semirings. In AAAI 2021, 6304–
+he was visiting the Simons Institute for the Theory of Com-                  6311. AAAI Press.
+puting.                                                                      Faber, W.; Pfeifer, G.; and Leone, N. 2011. Semantics and
+                                                                             complexity of recursive aggregates in answer set program-
+                        References                                           ming. Artificial Intelligence 175(1):278–298.
+Abseher, M.; Musliu, N.; and Woltran, S. 2017. htd – A                       Fages, F. 1994. Consistency of Clark’s completion and ex-
+Free, Open-Source Framework for (Customized) Tree De-                        istence of stable models. Journal of Methods of logic in
+compositions and Beyond. In International Conference on                      computer science 1(1):51–60.
+the Integration of Constraint Programming, Artificial Intel-
+                                                                             Fichte, J. K., and Szeider, S. 2015. Backdoors to tractable
+ligence, and Operations Research, volume 10335 of Lecture
+                                                                             answer set programming. Artif. Intell. 220:64–103.
+Notes in Computer Science, 376–386. Springer.
+                                                                             Fichte, J. K.; Hecher, M.; Morak, M.; and Woltran, S. 2017.
+Baral, C.; Gelfond, M.; and Rushton, N. 2009. Probabilistic
+                                                                             Dynasp2. 5: Dynamic programming on tree decompositions
+reasoning with answer sets. Theory and Practice of Logic
+                                                                             in action. In International Symposium on Parameterized
+Programming 9(1):57–144.
+                                                                             and Exact Computation (IPEC), volume 89 of LIPIcs, 17:1–
+Belle, V., and De Raedt, L. 2020. Semiring programming: A                    17:13. Schloss Dagstuhl - Leibniz-Zentrum für Informatik.
+semantic framework for generalized sum product problems.
+                                                                             Fichte, J. K.           2016.       daajoe/gtfs2graphs – a
+International Journal of Approximate Reasoning 126:181–
+                                                                             GTFS transit feed to graph format converter.
+201.
+                                                                             https://github.com/daajoe/gtfs2graphs         at     commit
+Bomanson, J. 2017. lp2normal - A normalization tool for                      219944893f874b365de1ed87fc265fd5d19d5972.
+extended logic programs. In LPNMR, volume 10377 of Lec-
+                                                                             Gebser, M.; Kaminski, R.; Kaufmann, B.; and Schaub, T.
+ture Notes in Computer Science, 222–228. Springer.
+                                                                             2014. Clingo= ASP+ control: Preliminary report. arXiv
+Brewka, G.; Delgrande, J.; Romero, J.; and Schaub, T.                        preprint arXiv:1405.3694.
+2015. asprin: Customizing answer set preferences without
+a headache. In Twenty-Ninth AAAI Conference on Artificial                    Gelfond, M., and Lifschitz, V. 1988. The stable model se-
+Intelligence.                                                                mantics for logic programming. In ICLP/SLP, volume 88,
+                                                                             1070–1080.
+Darwiche, A. 2004. New advances in compiling CNF into
+decomposable negation normal form. In ECAI, 328–332.                         Hecher, M. 2020. Treewidth-aware Reductions of Normal
+IOS Press.                                                                   ASP to SAT - Is Normal ASP Harder than SAT after All? In
+                                                                             Proceedings of the 17th International Conference on Princi-
+Davis, J., and Domingos, P. 2009. Deep transfer via second-                  ples of Knowledge Representation and Reasoning, 485–495.
+order markov logic. In Proceedings of the 26th annual in-
+ternational conference on machine learning, 217–224.                         Janhunen, T. 2004. Representing normal programs with
+                                                                             clauses. In ECAI, volume 16, 358. Citeseer.
+De Raedt, L.; Kimmig, A.; and Toivonen, H. 2007. Problog:
+A probabilistic prolog and its application in link discovery.                Kimmig, A.; Van den Broeck, G.; and De Raedt, L. 2011.
+In IJCAI, volume 7, 2462–2467. Hyderabad.                                    An algebraic prolog for reasoning about possible worlds. In
+                                                                             Twenty-Fifth AAAI Conference on Artificial Intelligence.
+Dell, H.; Komusiewicz, C.; Talmon, N.; and Weller, M.
+2017. The PACE 2017 Parameterized Algorithms and Com-                        Kimmig, A.; Van den Broeck, G.; and De Raedt, L. 2017.
+putational Experiments Challenge: The Second Iteration. In                   Algebraic model counting. Journal of Applied Logic 22:46–
+International Symposium on Parameterized and Exact Com-                      62.
+putation (IPEC), Leibniz International Proceedings in Infor-                 Lee, J., and Yang, Z. 2017. LPMLN, weak constraints, and
+matics, 30:1—30:13. Dagstuhl.                                                P-log. In Thirty-First AAAI Conference on Artificial Intelli-
+Droste, M., and Gastin, P. 2007. Weighted automata and                       gence.
+weighted logics. Theoretical Computer Science 380(1):69.                     Mailly, J.-G.; Lonca, E.; Lagniez, J.-M.; and Rossit,
+Dvorák, W.; Gaggl, S. A.; Rapberger, A.; Wallner, J. P.; and                J.      2021.     International Competition on Computa-
+Woltran, S. 2020. The ASPARTIX system suite. In Prakken,                     tional Models of Argumentation 2021. Website: http://
+H.; Bistarelli, S.; Santini, F.; and Taticchi, C., eds., Com-                argumentationcompetition.org/2021/rules.html.
+putational Models of Argument (COMMA), volume 326 of                         Mantadelis, T., and Janssens, G. 2010. Dedicated tabling
+Frontiers in Artificial Intelligence and Applications, 461–                  for a probabilistic setting. In Technical Communications of
+462. IOS Press.                                                              the 26th International Conference on Logic Programming.
+Eisner, J. 2002. Parameter estimation for probabilistic finite-              Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik.
+state transducers. In Proceedings of the 40th Annual Meeting                 Ourfali, O.; Shlomi, T.; Ideker, T.; Ruppin, E.; and Sha-
+of the Association for Computational Linguistics, 1–8.                       ran, R. 2007. Spine: a framework for signaling-regulatory
+
+
+
+                                                                      278
+                    Proceedings of the 18th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                   Main Track
+
+
+pathway inference from cause-effect experiments. Bioinfor-
+matics 23(13):i359–i366.
+Oztok, U., and Darwiche, A. 2015a. A top-down compiler
+for sentential decision diagrams. In Twenty-Fourth Interna-
+tional Joint Conference on Artificial Intelligence.
+Oztok, U., and Darwiche, A. 2015b. A top-down com-
+piler for sentential decision diagrams. In IJCAI, 3141–3148.
+AAAI Press.
+Sang, T.; Beame, P.; and Kautz, H. A. 2005. Performing
+bayesian inference by weighted model counting. In AAAI,
+volume 5, 475–481.
+Thurley, M. 2006. sharpSAT–counting models with ad-
+vanced component caching and implicit BCP. In Interna-
+tional Conference on Theory and Applications of Satisfia-
+bility Testing, 424–429. Springer.
+Tsamoura, E.; Gutiérrez-Basulto, V.; and Kimmig, A. 2020.
+Beyond the Grounding Bottleneck: Datalog Techniques for
+Inference in Probabilistic Logic Programs. In Conference on
+Artificial Intelligence (AAAI), 10284–10291. AAAI Press.
+Valiant, L. G. 1979. The complexity of enumeration and
+reliability problems. SIAM Journal of Computing 8(3):410–
+421.
+Van Emden, M. H., and Kowalski, R. A. 1976. The seman-
+tics of predicate logic as a programming language. Journal
+of the ACM (JACM) 23(4):733–742.
+Vlasselaer, J.; Van den Broeck, G.; Kimmig, A.; Meert, W.;
+and De Raedt, L. 2016. Tp-compilation for inference in
+probabilistic logic programs. International Journal of Ap-
+proximate Reasoning 78:15–32.
+
+
+
+
+                                                                     279
+

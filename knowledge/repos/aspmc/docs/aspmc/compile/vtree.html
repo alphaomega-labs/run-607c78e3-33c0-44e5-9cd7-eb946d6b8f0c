@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>aspmc.compile.vtree API documentation</title>
+<meta name="description" content="Vtree module providing methods to construct, visualize and generally work with vtrees." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aspmc.compile.vtree</code></h1>
+</header>
+<section id="section-intro">
+<p>Vtree module providing methods to construct, visualize and generally work with vtrees.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Vtree module providing methods to construct, visualize and generally work with vtrees.
+&#34;&#34;&#34;
+
+import aspmc.graph.treedecomposition as treedecomposition
+from aspmc.graph.bintree import bintree
+
+class Vtree(bintree):
+    &#34;&#34;&#34;A Vtree class that manages vtrees. 
+
+    These can be used as the input to miniC2D to (exactly) specify in which order atoms are decided.
+    Is a subclass of aspmc.graph.bintree.bintree and therefore has some utility functions, like writing to file, 
+    counting the leaves or iterating over the nodes of the tree.
+    &#34;&#34;&#34;
+    def __str__(self):
+        self.index()
+        res = &#34;&#34;
+        res += f&#34;vtree {2*self.leaf_count() - 1}\n&#34;
+        cur_max = -1
+        def get_next():
+            nonlocal cur_max
+            cur_max += 1
+            return cur_max
+        for node in self:
+            if node.val is not None:
+                node.w_idx = get_next()
+                res += f&#34;L {node.w_idx} {node.val}\n&#34;
+            else:
+                node.w_idx = get_next()
+                res += f&#34;I {node.w_idx} {node.left.w_idx} {node.right.w_idx}\n&#34;
+        return res
+
+
+def from_order(order):
+    &#34;&#34;&#34;Constructs a (partial) vtree from a list of atoms in the specified order.
+    Args:
+        order (:obj:`list`): The list specifying which atoms should be eliminated and the order in which they should be eliminated.
+        
+    Returns:
+        :obj:`Vtree`: The (right-linear) vtree that eliminates the atoms in `order` in the order they are in `order`.
+    &#34;&#34;&#34;
+    root = Vtree()
+    cur = root
+    for v in order[:-1]:
+        cur.left = Vtree(val = v)
+        cur.right = Vtree()
+        cur = cur.right
+    cur.val = order[-1]
+    return root
+
+def TD_to_vtree(td):    
+    &#34;&#34;&#34;Constructs a (partial) vtree from a tree decomposition.
+
+    Build a vtree from the given tree decomposition `td` adding variables to the dtree 
+    in the order in which they are included in the tree decompositions bags. 
+    Branches, when a tree decomposition bag has multiple children.
+        
+    Args:
+        td (:obj:`aspmc.graph.treedecomposition.TreeDecomposition`): A tree decomposition.
+        
+    Returns:
+        :obj:`Vtree`: The (partial) vtree corresponding to the tree decomposition.
+    &#34;&#34;&#34;
+    # at which td node each variable occurs last
+    last = {}
+    # at which td node to handle which variables
+    variables = { bag : [] for bag in td.bag_iter()}
+    idx = 0
+    td_idx = list(td.bag_iter())
+    for t in td.bag_iter():
+        for a in t.vertices:
+            last[a] = idx
+        t.idx = idx
+        idx += 1
+    
+    for a, i in last.items():
+        variables[td_idx[i]].append(a)
+    
+
+    vtree_idx = [ None for _ in range(td.bags) ]
+    for bag in td.bag_iter():
+        cur_vtree = None        
+        # take care of the dtrees for the children
+        for child in bag.children:
+            child_vtree = vtree_idx[child.idx]
+            if cur_vtree == None:
+                cur_vtree = child_vtree
+            else:
+                if child_vtree != None:
+                    new_vtree = Vtree()
+                    new_vtree.right = cur_vtree
+                    new_vtree.left = child_vtree
+                    cur_vtree = new_vtree
+
+        # take care of the clauses that are here
+        for i in variables[bag]:
+            if cur_vtree == None:
+                cur_vtree = Vtree(val = i)
+            else:
+                new_vtree = Vtree()
+                new_vtree.right = cur_vtree
+                new_vtree.left = Vtree(val = i)
+                cur_vtree = new_vtree
+
+        vtree_idx[bag.idx] = cur_vtree
+    return vtree_idx[td.get_root().idx]
+
+def TD_vtree(cnf, solver = &#34;htd&#34;, timeout = &#34;0.5&#34;):
+    &#34;&#34;&#34;Constructs a vtree for a cnf by generating a tree decomposition and calling `TD_to_vtree` with it.
+
+    Args:
+        cnf (:obj:`aspmc.compile.cnf.CNF`): The cnf to construct the dtree for.
+        solver (:obj:`string`, optional): Which solver to use to generate the tree decomposition. Defaults to &#34;htd&#34;.
+        timeout (:obj:`string`, optional): The timeout in second to give to the solver. Defaults to &#34;0.5&#34;.
+        
+    Returns:
+        :obj:`Vtree`: The vtree generated by the constructed tree decomposition.
+    &#34;&#34;&#34;
+    td = treedecomposition.from_hypergraph(cnf.primal_hypergraph(), solver = solver, timeout=timeout)
+    return TD_to_vtree(td)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="aspmc.compile.vtree.TD_to_vtree"><code class="name flex">
+<span>def <span class="ident">TD_to_vtree</span></span>(<span>td)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a (partial) vtree from a tree decomposition.</p>
+<p>Build a vtree from the given tree decomposition <code>td</code> adding variables to the dtree
+in the order in which they are included in the tree decompositions bags.
+Branches, when a tree decomposition bag has multiple children.</p>
+<h2 id="args">Args</h2>
+<p>td (:obj:<code><a title="aspmc.graph.treedecomposition.TreeDecomposition" href="../graph/treedecomposition.html#aspmc.graph.treedecomposition.TreeDecomposition">TreeDecomposition</a></code>): A tree decomposition.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.compile.vtree.Vtree" href="#aspmc.compile.vtree.Vtree">Vtree</a></code>: The (partial) vtree corresponding to the tree decomposition.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def TD_to_vtree(td):    
+    &#34;&#34;&#34;Constructs a (partial) vtree from a tree decomposition.
+
+    Build a vtree from the given tree decomposition `td` adding variables to the dtree 
+    in the order in which they are included in the tree decompositions bags. 
+    Branches, when a tree decomposition bag has multiple children.
+        
+    Args:
+        td (:obj:`aspmc.graph.treedecomposition.TreeDecomposition`): A tree decomposition.
+        
+    Returns:
+        :obj:`Vtree`: The (partial) vtree corresponding to the tree decomposition.
+    &#34;&#34;&#34;
+    # at which td node each variable occurs last
+    last = {}
+    # at which td node to handle which variables
+    variables = { bag : [] for bag in td.bag_iter()}
+    idx = 0
+    td_idx = list(td.bag_iter())
+    for t in td.bag_iter():
+        for a in t.vertices:
+            last[a] = idx
+        t.idx = idx
+        idx += 1
+    
+    for a, i in last.items():
+        variables[td_idx[i]].append(a)
+    
+
+    vtree_idx = [ None for _ in range(td.bags) ]
+    for bag in td.bag_iter():
+        cur_vtree = None        
+        # take care of the dtrees for the children
+        for child in bag.children:
+            child_vtree = vtree_idx[child.idx]
+            if cur_vtree == None:
+                cur_vtree = child_vtree
+            else:
+                if child_vtree != None:
+                    new_vtree = Vtree()
+                    new_vtree.right = cur_vtree
+                    new_vtree.left = child_vtree
+                    cur_vtree = new_vtree
+
+        # take care of the clauses that are here
+        for i in variables[bag]:
+            if cur_vtree == None:
+                cur_vtree = Vtree(val = i)
+            else:
+                new_vtree = Vtree()
+                new_vtree.right = cur_vtree
+                new_vtree.left = Vtree(val = i)
+                cur_vtree = new_vtree
+
+        vtree_idx[bag.idx] = cur_vtree
+    return vtree_idx[td.get_root().idx]</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.vtree.TD_vtree"><code class="name flex">
+<span>def <span class="ident">TD_vtree</span></span>(<span>cnf, solver='htd', timeout='0.5')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a vtree for a cnf by generating a tree decomposition and calling <code><a title="aspmc.compile.vtree.TD_to_vtree" href="#aspmc.compile.vtree.TD_to_vtree">TD_to_vtree()</a></code> with it.</p>
+<h2 id="args">Args</h2>
+<p>cnf (:obj:<code><a title="aspmc.compile.cnf.CNF" href="cnf.html#aspmc.compile.cnf.CNF">CNF</a></code>): The cnf to construct the dtree for.
+solver (:obj:<code>string</code>, optional): Which solver to use to generate the tree decomposition. Defaults to "htd".
+timeout (:obj:<code>string</code>, optional): The timeout in second to give to the solver. Defaults to "0.5".</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.compile.vtree.Vtree" href="#aspmc.compile.vtree.Vtree">Vtree</a></code>: The vtree generated by the constructed tree decomposition.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def TD_vtree(cnf, solver = &#34;htd&#34;, timeout = &#34;0.5&#34;):
+    &#34;&#34;&#34;Constructs a vtree for a cnf by generating a tree decomposition and calling `TD_to_vtree` with it.
+
+    Args:
+        cnf (:obj:`aspmc.compile.cnf.CNF`): The cnf to construct the dtree for.
+        solver (:obj:`string`, optional): Which solver to use to generate the tree decomposition. Defaults to &#34;htd&#34;.
+        timeout (:obj:`string`, optional): The timeout in second to give to the solver. Defaults to &#34;0.5&#34;.
+        
+    Returns:
+        :obj:`Vtree`: The vtree generated by the constructed tree decomposition.
+    &#34;&#34;&#34;
+    td = treedecomposition.from_hypergraph(cnf.primal_hypergraph(), solver = solver, timeout=timeout)
+    return TD_to_vtree(td)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.compile.vtree.from_order"><code class="name flex">
+<span>def <span class="ident">from_order</span></span>(<span>order)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a (partial) vtree from a list of atoms in the specified order.</p>
+<h2 id="args">Args</h2>
+<p>order (:obj:<code>list</code>): The list specifying which atoms should be eliminated and the order in which they should be eliminated.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.compile.vtree.Vtree" href="#aspmc.compile.vtree.Vtree">Vtree</a></code>: The (right-linear) vtree that eliminates the atoms in <code>order</code> in the order they are in <code>order</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_order(order):
+    &#34;&#34;&#34;Constructs a (partial) vtree from a list of atoms in the specified order.
+    Args:
+        order (:obj:`list`): The list specifying which atoms should be eliminated and the order in which they should be eliminated.
+        
+    Returns:
+        :obj:`Vtree`: The (right-linear) vtree that eliminates the atoms in `order` in the order they are in `order`.
+    &#34;&#34;&#34;
+    root = Vtree()
+    cur = root
+    for v in order[:-1]:
+        cur.left = Vtree(val = v)
+        cur.right = Vtree()
+        cur = cur.right
+    cur.val = order[-1]
+    return root</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="aspmc.compile.vtree.Vtree"><code class="flex name class">
+<span>class <span class="ident">Vtree</span></span>
+<span>(</span><span>val=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A Vtree class that manages vtrees. </p>
+<p>These can be used as the input to miniC2D to (exactly) specify in which order atoms are decided.
+Is a subclass of aspmc.graph.bintree.bintree and therefore has some utility functions, like writing to file,
+counting the leaves or iterating over the nodes of the tree.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Vtree(bintree):
+    &#34;&#34;&#34;A Vtree class that manages vtrees. 
+
+    These can be used as the input to miniC2D to (exactly) specify in which order atoms are decided.
+    Is a subclass of aspmc.graph.bintree.bintree and therefore has some utility functions, like writing to file, 
+    counting the leaves or iterating over the nodes of the tree.
+    &#34;&#34;&#34;
+    def __str__(self):
+        self.index()
+        res = &#34;&#34;
+        res += f&#34;vtree {2*self.leaf_count() - 1}\n&#34;
+        cur_max = -1
+        def get_next():
+            nonlocal cur_max
+            cur_max += 1
+            return cur_max
+        for node in self:
+            if node.val is not None:
+                node.w_idx = get_next()
+                res += f&#34;L {node.w_idx} {node.val}\n&#34;
+            else:
+                node.w_idx = get_next()
+                res += f&#34;I {node.w_idx} {node.left.w_idx} {node.right.w_idx}\n&#34;
+        return res</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="aspmc.graph.bintree.bintree" href="../graph/bintree.html#aspmc.graph.bintree.bintree">bintree</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="aspmc.graph.bintree.bintree" href="../graph/bintree.html#aspmc.graph.bintree.bintree">bintree</a></b></code>:
+<ul class="hlist">
+<li><code><a title="aspmc.graph.bintree.bintree.draw" href="../graph/bintree.html#aspmc.graph.bintree.bintree.draw">draw</a></code></li>
+<li><code><a title="aspmc.graph.bintree.bintree.index" href="../graph/bintree.html#aspmc.graph.bintree.bintree.index">index</a></code></li>
+<li><code><a title="aspmc.graph.bintree.bintree.leaf_count" href="../graph/bintree.html#aspmc.graph.bintree.bintree.leaf_count">leaf_count</a></code></li>
+<li><code><a title="aspmc.graph.bintree.bintree.to_networkx" href="../graph/bintree.html#aspmc.graph.bintree.bintree.to_networkx">to_networkx</a></code></li>
+<li><code><a title="aspmc.graph.bintree.bintree.write" href="../graph/bintree.html#aspmc.graph.bintree.bintree.write">write</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aspmc.compile" href="index.html">aspmc.compile</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="aspmc.compile.vtree.TD_to_vtree" href="#aspmc.compile.vtree.TD_to_vtree">TD_to_vtree</a></code></li>
+<li><code><a title="aspmc.compile.vtree.TD_vtree" href="#aspmc.compile.vtree.TD_vtree">TD_vtree</a></code></li>
+<li><code><a title="aspmc.compile.vtree.from_order" href="#aspmc.compile.vtree.from_order">from_order</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="aspmc.compile.vtree.Vtree" href="#aspmc.compile.vtree.Vtree">Vtree</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

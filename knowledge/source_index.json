@@ -1,0 +1,1790 @@
+{
+  "source_count": 51,
+  "generated_from": "knowledge/refs.jsonl",
+  "records": [
+    {
+      "id": "src_001",
+      "title": "A linear time algorithm for finding tree-decompositions of small treewidth",
+      "url": "https://doi.org/10.1145/167088.167161",
+      "source_type": "paper",
+      "citation": "Hans L. Bodlaender (1993). A linear time algorithm for finding tree-decompositions of small treewidth. https://doi.org/10.1145/167088.167161",
+      "venue": "Unknown venue",
+      "year": 1993,
+      "authors": [
+        "Hans L. Bodlaender"
+      ],
+      "summary": "In this paper, we give, for constant k, a linear time algorithm, that given a graph G = (V, E), determines whether the treewidth of G is at most k, and if so, finds a treedecomposition of G with treewidth at most k. A consequence is that every minor-closed class of graphs that does not contain all planar graphs has a l...",
+      "claims": [
+        "In this paper, we give, for constant k, a linear time algorithm, that given a graph G = (V, E), determines whether the treewidth of G is at most k, and if so, finds a treedecomposition of G with treewidth at most k. A consequence is that every minor-closed class of graphs that does not contain all planar graphs has a l..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "In this paper, we give, for constant k, a linear time algorithm, that given a graph G = (V, E), determines whether the treewidth of G is at most k, and if so, finds a treedecomposition of G with treewidth at most k. A co..."
+        }
+      ]
+    },
+    {
+      "id": "src_002",
+      "title": "A Knowledge Compilation Map",
+      "url": "https://doi.org/10.1613/jair.989",
+      "source_type": "paper",
+      "citation": "A. Darwiche, P. Marquis (2002). A Knowledge Compilation Map. Journal of Artificial Intelligence Research. https://doi.org/10.1613/jair.989",
+      "venue": "Journal of Artificial Intelligence Research",
+      "year": 2002,
+      "authors": [
+        "A. Darwiche",
+        "P. Marquis",
+        "Adnan Darwiche",
+        "Pierre Marquis"
+      ],
+      "summary": "We propose a perspective on knowledge compilation which calls for analyzing different compilation approaches according to two key dimensions: the succinctness of the target compilation language, and the class of queries and transformations that the language supports in polytime. We then provide a knowledge compilation...",
+      "assumptions": [
+        "Compilation is offline amortized over many online queries.",
+        "Representation language tradeoffs can be formalized by tractable operations.",
+        "Compilation target language properties determine query tractability and transformation costs."
+      ],
+      "contributions": [
+        "Systematic map of NNF-family target languages and tractable operations.",
+        "Taxonomy and complexity map of knowledge compilation languages."
+      ],
+      "claims": [
+        "Different compilation targets provide different succinctness-vs-tractability tradeoffs.",
+        "Language choice governs feasible tractable operations post-compilation."
+      ],
+      "conclusions": [
+        "Choose the most succinct language that still supports required polytime operations.",
+        "Compilation is powerful but representation selection is critical."
+      ],
+      "limitations": [
+        "Focuses on propositional settings and known language families.",
+        "Compilation blow-up can dominate for unfavorable structure."
+      ],
+      "future_work": [
+        "Extend map to additional target languages and operation sets.",
+        "Refined language design and practical compiler strategies."
+      ],
+      "key_equations": [
+        "target language choice is governed by succinctness and polytime query/transformation support"
+      ],
+      "notation_seeds": [
+        "NNF",
+        "DNNF",
+        "d-DNNF",
+        "OBDD"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "Introduction",
+          "content": "Compilation map links succinctness to polytime query/transformation support."
+        }
+      ]
+    },
+    {
+      "id": "src_003",
+      "title": "DPLL with a Trace: From SAT to Knowledge Compilation",
+      "url": "https://www.ijcai.org/Proceedings/05/Papers/0876.pdf",
+      "source_type": "paper",
+      "citation": "Huang, J., and Darwiche, A. (2005). DPLL with a Trace: From SAT to Knowledge Compilation. IJCAI 2005. https://www.ijcai.org/Proceedings/05/Papers/0876.pdf",
+      "venue": "IJCAI 2005",
+      "year": 2005,
+      "authors": [
+        "Jinbo Huang",
+        "Adnan Darwiche",
+        "Rina Dechter",
+        "Roni Mateescu"
+      ],
+      "summary": "The paper connects exhaustive DPLL traces to knowledge-compilation targets and shows how restrictions map traces into d-DNNF, FBDD, and OBDD families.",
+      "assumptions": [
+        "Exhaustive DPLL traces are recorded as DAGs.",
+        "Trace language membership determines tractable query classes.",
+        "Structured traces of search can enable reusable inference computations."
+      ],
+      "contributions": [
+        "Unified SAT-search to compilation perspective.",
+        "Language-membership view for understanding search algorithm capabilities.",
+        "Trace-based extension to DPLL-style solving."
+      ],
+      "claims": [
+        "Compiled traces can land in d-DNNF/FBDD/OBDD depending on search constraints.",
+        "Trace capture improves reusability of search-derived reasoning artifacts."
+      ],
+      "conclusions": [
+        "Compilation and SAT search can be studied under one framework with clear tractability tradeoffs.",
+        "Search traces are useful intermediates for exact reasoning tasks."
+      ],
+      "limitations": [
+        "Trace classes from common solvers may occupy strict subsets (e.g., restricted d-DNNF fragments).",
+        "Benefit depends on structural reuse patterns."
+      ],
+      "future_work": [
+        "Design compilers/solvers that move beyond restricted trace subsets.",
+        "Richer trace formalisms and integrations with counting."
+      ],
+      "notation_seeds": [
+        "d-DNNF",
+        "FBDD",
+        "OBDD"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "Abstract and Section 2",
+          "content": "DPLL traces correspond to compiled artifacts in d-DNNF/FBDD/OBDD families."
+        }
+      ]
+    },
+    {
+      "id": "src_004",
+      "title": "On probabilistic inference by weighted model counting",
+      "url": "https://doi.org/10.1016/j.artint.2007.11.002",
+      "source_type": "paper",
+      "citation": "Chavira, M., and Darwiche, A. (2008). On probabilistic inference by weighted model counting. Artificial Intelligence 172(6-7), 772-799. https://doi.org/10.1016/j.artint.2007.11.002",
+      "venue": "Artificial Intelligence 172(6-7), 772-799",
+      "year": 2008,
+      "authors": [
+        "Mark Chavira",
+        "Adnan Darwiche",
+        "Guy Van den Broeck"
+      ],
+      "summary": "This work formalizes exact probabilistic inference as weighted model counting over CNF encodings and studies how encoding, counting backend, and local structure influence performance.",
+      "assumptions": [
+        "Probabilistic models can be encoded as weighted CNF.",
+        "Exact inference can exploit determinism and local structure after encoding.",
+        "Probabilistic inference can be reduced to weighted counting over compiled forms."
+      ],
+      "contributions": [
+        "Comparative analysis of WMC-based exact inference design choices.",
+        "Empirical evidence that WMC/compilation can expand tractable exact inference regimes.",
+        "Formal link between probabilistic inference and model counting."
+      ],
+      "claims": [
+        "Encoding and compilation choices substantially affect exact inference scalability.",
+        "WMC provides a unifying lens for exact probabilistic inference complexity."
+      ],
+      "conclusions": [
+        "WMC-based formulations are effective for exact inference when structure is exploitable.",
+        "Compilation+counting pipelines are principled but structure-sensitive."
+      ],
+      "limitations": [
+        "Performance remains sensitive to model structure and encoding quality.",
+        "Complexity remains high for large/high-treewidth instances."
+      ],
+      "future_work": [
+        "Further improve encodings and hybrid exact/approximate strategies.",
+        "More efficient counting/compilation methods."
+      ],
+      "key_equations": [
+        "Pr(evidence) is computed from weighted counts over CNF models consistent with evidence."
+      ],
+      "notation_seeds": [
+        "WMC",
+        "CNF",
+        "Pr(e)"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "Abstract lines 7-13",
+          "content": "Probabilistic inference is reduced to weighted model counting on CNF."
+        },
+        {
+          "atom_type": "procedure",
+          "locator": "Intro and method sections",
+          "content": "Encode Bayesian network and evidence into weighted CNF then count weighted satisfying assignments."
+        }
+      ]
+    },
+    {
+      "id": "src_005",
+      "title": "Lifted Probabilistic Inference by First-Order Knowledge Compilation",
+      "url": "https://doi.org/10.5591/978-1-57735-516-8/ijcai11-363",
+      "source_type": "paper",
+      "citation": "Guy Van den Broeck, Nima Taghipour, Wannes Meert, Jesse Davis (2011). Lifted Probabilistic Inference by First-Order Knowledge Compilation. Lirias (KU Leuven). https://doi.org/10.5591/978-1-57735-516-8/ijcai11-363",
+      "venue": "Lirias (KU Leuven)",
+      "year": 2011,
+      "authors": [
+        "Guy Van den Broeck",
+        "Nima Taghipour",
+        "Wannes Meert",
+        "Jesse Davis",
+        "Luc De Raedt"
+      ],
+      "summary": "Probabilistic logical languages provide power-ful formalisms for knowledge representation and learning. Yet performing inference in these lan-guages is extremely costly, especially if it is done at the propositional level. Lifted inference algo-rithms, which avoid repeated computation by treat-ing indistinguishable gro...",
+      "claims": [
+        "Probabilistic logical languages provide power-ful formalisms for knowledge representation and learning. Yet performing inference in these lan-guages is extremely costly, especially if it is done at the propositional level. Lifted inference algo-rithms, which avoid repeated computation by treat-ing indistinguishable gro..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Probabilistic logical languages provide power-ful formalisms for knowledge representation and learning. Yet performing inference in these lan-guages is extremely costly, especially if it is done at the propositional leve..."
+        }
+      ]
+    },
+    {
+      "id": "src_006",
+      "title": "Dsharp: Fast d-DNNF Compilation with sharpSAT",
+      "url": "https://doi.org/10.1007/978-3-642-30353-1_36",
+      "source_type": "paper",
+      "citation": "Christian Muise, Sheila A. McIlraith, J. Christopher Beck, Eric Hsu (2012). Dsharp: Fast d-DNNF Compilation with sharpSAT. Lecture notes in computer science. https://doi.org/10.1007/978-3-642-30353-1_36",
+      "venue": "Lecture notes in computer science",
+      "year": 2012,
+      "authors": [
+        "Christian Muise",
+        "Sheila A. McIlraith",
+        "J. Christopher Beck",
+        "Eric Hsu"
+      ],
+      "summary": "This source discusses dsharp: fast d-dnnf compilation with sharpsat and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation.",
+      "claims": [
+        "This source discusses dsharp: fast d-dnnf compilation with sharpsat and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This source discusses dsharp: fast d-dnnf compilation with sharpsat and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+        }
+      ]
+    },
+    {
+      "id": "src_007",
+      "title": "Inference in Probabilistic Logic Programs using Weighted CNF's",
+      "url": "https://doi.org/10.48550/arxiv.1202.3719",
+      "source_type": "paper",
+      "citation": "Daan Fierens, Guy Van den Broeck, Ingo Thon, Bernd Gutmann (2012). Inference in Probabilistic Logic Programs using Weighted CNF's. arXiv (Cornell University). https://doi.org/10.48550/arxiv.1202.3719",
+      "venue": "arXiv (Cornell University)",
+      "year": 2012,
+      "authors": [
+        "Daan Fierens",
+        "Guy Van den Broeck",
+        "Ingo Thon",
+        "Bernd Gutmann",
+        "Luc De Raedt"
+      ],
+      "summary": "Probabilistic logic programs are logic programs in which some of the facts are annotated with probabilities. Several classical probabilistic inference tasks (such as MAP and computing marginals) have not yet received a lot of attention for this formalism. The contribution of this paper is that we develop efficient infe...",
+      "claims": [
+        "Probabilistic logic programs are logic programs in which some of the facts are annotated with probabilities. Several classical probabilistic inference tasks (such as MAP and computing marginals) have not yet received a lot of attention for this formalism. The contribution of this paper is that we develop efficient infe..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Probabilistic logic programs are logic programs in which some of the facts are annotated with probabilities. Several classical probabilistic inference tasks (such as MAP and computing marginals) have not yet received a l..."
+        }
+      ]
+    },
+    {
+      "id": "src_008",
+      "title": "Knowledge Compilation Meets Database Theory: Compiling Queries to Decision Diagrams",
+      "url": "https://doi.org/10.1007/s00224-012-9392-5",
+      "source_type": "paper",
+      "citation": "Abhay K. Jha, Dan Suciu (2012). Knowledge Compilation Meets Database Theory: Compiling Queries to Decision Diagrams. Theory of Computing Systems. https://doi.org/10.1007/s00224-012-9392-5",
+      "venue": "Theory of Computing Systems",
+      "year": 2012,
+      "authors": [
+        "Abhay K. Jha",
+        "Dan Suciu"
+      ],
+      "summary": "This source discusses knowledge compilation meets database theory: compiling queries to decision diagrams and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation.",
+      "claims": [
+        "This source discusses knowledge compilation meets database theory: compiling queries to decision diagrams and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This source discusses knowledge compilation meets database theory: compiling queries to decision diagrams and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+        }
+      ]
+    },
+    {
+      "id": "src_009",
+      "title": "Inference and learning in probabilistic logic programs using weighted Boolean formulas",
+      "url": "https://doi.org/10.1017/s1471068414000076",
+      "source_type": "paper",
+      "citation": "DAAN FIERENS, GUY VAN DEN BROECK, JORIS RENKENS, DIMITAR SHTERIONOV (2014). Inference and learning in probabilistic logic programs using weighted Boolean formulas. Theory and Practice of Logic Programming. https://doi.org/10.1017/s147106841...",
+      "venue": "Theory and Practice of Logic Programming",
+      "year": 2014,
+      "authors": [
+        "DAAN FIERENS",
+        "GUY VAN DEN BROECK",
+        "JORIS RENKENS",
+        "DIMITAR SHTERIONOV",
+        "BERND GUTMANN",
+        "INGO THON"
+      ],
+      "summary": "Abstract Probabilistic logic programs are logic programs in which some of the facts are annotated with probabilities. This paper investigates how classical inference and learning tasks known from the graphical model community can be tackled for probabilistic logic programs. Several such tasks, such as computing the mar...",
+      "claims": [
+        "Abstract Probabilistic logic programs are logic programs in which some of the facts are annotated with probabilities. This paper investigates how classical inference and learning tasks known from the graphical model community can be tackled for probabilistic logic programs. Several such tasks, such as computing the mar..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Abstract Probabilistic logic programs are logic programs in which some of the facts are annotated with probabilities. This paper investigates how classical inference and learning tasks known from the graphical model comm..."
+        }
+      ]
+    },
+    {
+      "id": "src_010",
+      "title": "Probabilistic (logic) programming concepts",
+      "url": "https://doi.org/10.1007/s10994-015-5494-z",
+      "source_type": "paper",
+      "citation": "Luc De Raedt, Angelika Kimmig (2015). Probabilistic (logic) programming concepts. Machine Learning. https://doi.org/10.1007/s10994-015-5494-z",
+      "venue": "Machine Learning",
+      "year": 2015,
+      "authors": [
+        "Luc De Raedt",
+        "Angelika Kimmig"
+      ],
+      "summary": "This source discusses probabilistic (logic) programming concepts and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation.",
+      "claims": [
+        "This source discusses probabilistic (logic) programming concepts and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This source discusses probabilistic (logic) programming concepts and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+        }
+      ]
+    },
+    {
+      "id": "src_011",
+      "title": "DeepProbLog: Neural Probabilistic Logic Programming",
+      "url": "https://doi.org/10.48550/arxiv.1805.10872",
+      "source_type": "paper",
+      "citation": "Robin Manhaeve, Sebastijan Duman\u010di\u0107, Angelika Kimmig, Thomas Demeester (2018). DeepProbLog: Neural Probabilistic Logic Programming. ORCA Online Research @Cardiff (Cardiff University). https://doi.org/10.48550/arxiv.1805.10872",
+      "venue": "ORCA Online Research @Cardiff (Cardiff University)",
+      "year": 2018,
+      "authors": [
+        "Robin Manhaeve",
+        "Sebastijan Duman\u010di\u0107",
+        "Angelika Kimmig",
+        "Thomas Demeester",
+        "Luc De Raedt"
+      ],
+      "summary": "We introduce DeepProbLog, a probabilistic logic programming language that incorporates deep learning by means of neural predicates. We show how existing inference and learning techniques can be adapted for the new language. Our experiments demonstrate that DeepProbLog supports both symbolic and subsymbolic representati...",
+      "assumptions": [
+        "ProbLog semantics with neural-parameterized probabilistic facts.",
+        "Gradient flow from logic loss to neural modules is available."
+      ],
+      "contributions": [
+        "DeepProbLog unifies ProbLog inference with trainable neural predicates."
+      ],
+      "claims": [
+        "Supports symbolic+subsymbolic inference, program induction, and end-to-end training."
+      ],
+      "conclusions": [
+        "Neural probabilistic logic programming supports compositional neuro-symbolic tasks."
+      ],
+      "limitations": [
+        "Inference speed depends on grounding and compilation complexity."
+      ],
+      "future_work": [
+        "Broader scalable approximate inference and larger domains."
+      ],
+      "key_equations": [
+        "Neural predicates supply probabilistic facts whose probabilities are outputs of neural networks."
+      ],
+      "notation_seeds": [
+        "neural predicate",
+        "query probability"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "Abstract and intro",
+          "content": "DeepProbLog introduces neural predicates and adapts inference/learning accordingly."
+        },
+        {
+          "atom_type": "procedure",
+          "locator": "Implementation details section",
+          "content": "Experiments optimize cross-entropy and backpropagate through neural predicates."
+        }
+      ]
+    },
+    {
+      "id": "src_012",
+      "title": "NeurASP: Embracing Neural Networks into Answer Set Programming",
+      "url": "https://doi.org/10.24963/ijcai.2020/243",
+      "source_type": "paper",
+      "citation": "Zhun Yang, Adam Ishay, Joohyung Lee (2020). NeurASP: Embracing Neural Networks into Answer Set Programming. https://doi.org/10.24963/ijcai.2020/243",
+      "venue": "Unknown venue",
+      "year": 2020,
+      "authors": [
+        "Zhun Yang",
+        "Adam Ishay",
+        "Joohyung Lee"
+      ],
+      "summary": "We present NeurASP, a simple extension of answer set programs by embracing neural networks. By treating the neural network output as the probability distribution over atomic facts in answer set programs, NeurASP provides a simple and effective way to integrate sub-symbolic and symbolic computation. We demonstrate how N...",
+      "assumptions": [
+        "Neural outputs are calibrated as probabilities over neural atoms.",
+        "Stable-model semantics governs symbolic part.",
+        "Neural predictions can be coupled with symbolic constraints through ASP semantics."
+      ],
+      "contributions": [
+        "NeurASP framework coupling neural predicates with ASP rules and stable-model reasoning.",
+        "Neurosymbolic training framework linking neural outputs and ASP reasoning."
+      ],
+      "claims": [
+        "Logical constraints can improve training and inference consistency compared with pure neural baselines.",
+        "Symbolic constraints improve consistency versus unconstrained neural models."
+      ],
+      "conclusions": [
+        "NeurASP integrates symbolic constraints and neural perception in end-to-end learning.",
+        "NeurASP is an effective basis for exact neurosymbolic reasoning tasks."
+      ],
+      "limitations": [
+        "Inference can be costly due to stable-model enumeration on large/high-count instances.",
+        "Inference can become expensive as program structure grows."
+      ],
+      "future_work": [
+        "Scale exact inference via compilation and improved backend routing.",
+        "Scalability and inference acceleration."
+      ],
+      "key_equations": [
+        "P_{Pi(theta)}(I) = product over neural atoms of predicted probabilities for assignments in I"
+      ],
+      "notation_seeds": [
+        "Pi(theta)",
+        "stable model",
+        "neural atom"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "assumption",
+          "locator": "Section defining stable models",
+          "content": "Stable models are defined over transformed program with neural atoms."
+        },
+        {
+          "atom_type": "procedure",
+          "locator": "lines 85-89",
+          "content": "Public implementation and experiments are provided in NeurASP repository."
+        }
+      ]
+    },
+    {
+      "id": "src_013",
+      "title": "Approximate Inference for Neural Probabilistic Logic Programming",
+      "url": "https://doi.org/10.24963/kr.2021/45",
+      "source_type": "paper",
+      "citation": "Robin Manhaeve, Giuseppe Marra, Luc De Raedt (2021). Approximate Inference for Neural Probabilistic Logic Programming. https://doi.org/10.24963/kr.2021/45",
+      "venue": "Unknown venue",
+      "year": 2021,
+      "authors": [
+        "Robin Manhaeve",
+        "Giuseppe Marra",
+        "Luc De Raedt"
+      ],
+      "summary": "DeepProbLog is a neural-symbolic framework that integrates probabilistic logic programming and neural networks. It is realized by providing an interface between the probabilistic logic and the neural networks. Inference in probabilistic neural symbolic methods is hard, since it combines logical theorem proving with pro...",
+      "claims": [
+        "DeepProbLog is a neural-symbolic framework that integrates probabilistic logic programming and neural networks. It is realized by providing an interface between the probabilistic logic and the neural networks. Inference in probabilistic neural symbolic methods is hard, since it combines logical theorem proving with pro..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "DeepProbLog is a neural-symbolic framework that integrates probabilistic logic programming and neural networks. It is realized by providing an interface between the probabilistic logic and the neural networks. Inference..."
+        }
+      ]
+    },
+    {
+      "id": "src_014",
+      "title": "Neural probabilistic logic programming in DeepProbLog",
+      "url": "https://doi.org/10.1016/j.artint.2021.103504",
+      "source_type": "paper",
+      "citation": "Robin Manhaeve, Sebastijan Duman\u010di\u0107, Angelika Kimmig, Thomas Demeester (2021). Neural probabilistic logic programming in DeepProbLog. Artificial Intelligence. https://doi.org/10.1016/j.artint.2021.103504",
+      "venue": "Artificial Intelligence",
+      "year": 2021,
+      "authors": [
+        "Robin Manhaeve",
+        "Sebastijan Duman\u010di\u0107",
+        "Angelika Kimmig",
+        "Thomas Demeester",
+        "Luc De Raedt"
+      ],
+      "summary": "This source discusses neural probabilistic logic programming in deepproblog and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation.",
+      "claims": [
+        "This source discusses neural probabilistic logic programming in deepproblog and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This source discusses neural probabilistic logic programming in deepproblog and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+        }
+      ]
+    },
+    {
+      "id": "src_045",
+      "title": "Treewidth-Aware Cycle Breaking for Algebraic Answer Set Counting",
+      "url": "https://proceedings.kr.org/2021/26/kr2021-0026-eiter-et-al.pdf",
+      "source_type": "paper",
+      "citation": "Thomas Eiter, Markus Hecher, Rafael Kiesel (2021). Treewidth-Aware Cycle Breaking for Algebraic Answer Set Counting. Proceedings of KR 2021. https://proceedings.kr.org/2021/26/kr2021-0026-eiter-et-al.pdf",
+      "venue": "Proceedings of KR 2021",
+      "year": 2021,
+      "authors": [
+        "Thomas Eiter",
+        "Markus Hecher",
+        "Rafael Kiesel",
+        "Roland Kiesel"
+      ],
+      "summary": "Introduces TP-unfolding to break positive-dependency cycles in normal ASP while preserving answer sets bijectively, enabling stronger treewidth-aware reductions to algebraic model counting pipelines.",
+      "assumptions": [
+        "Programs are normal ASP programs with stable-model semantics.",
+        "Cycle breaking should preserve model bijectivity for counting-based objectives.",
+        "Compilation cost is sensitive to structural width after transformation.",
+        "Cycle handling under bounded structural width can preserve semantics while reducing complexity."
+      ],
+      "contributions": [
+        "Defines TP-unfolding as a semantics-preserving cycle-breaking mechanism for AASC.",
+        "Provides treewidth-aware correctness/runtime analysis for transformed encodings.",
+        "Empirically compares cycle-breaking variants under counting workloads.",
+        "Treewidth-aware cycle-breaking methods for answer set counting."
+      ],
+      "claims": [
+        "Treewidth-aware cycle breaking can improve downstream algebraic counting efficiency compared with prior bijective reductions.",
+        "Model-preserving transformations are critical for probabilistic and weighted ASP inference.",
+        "Structure-guided transformations improve tractability in counting settings."
+      ],
+      "conclusions": [
+        "TP-unfolding broadens practical AASC applicability by reducing structural burden before compilation.",
+        "No single cycle-breaking strategy dominates for every instance family.",
+        "Cycle-breaking strategy should be conditioned on structural regime."
+      ],
+      "limitations": [
+        "Performance gains vary by graph structure and SCC composition.",
+        "Transformation overhead can offset improvements on small/easy instances.",
+        "Effectiveness depends on program topology and decomposition quality."
+      ],
+      "future_work": [
+        "Adaptive selection among cycle-breaking operators based on structural diagnostics.",
+        "Stronger integration with learned backend selectors for mixed workloads.",
+        "Broader transformation libraries and integrated structure-aware compilers."
+      ],
+      "key_equations": [
+        "treewidth(G) = min_{(T,chi)} max_{t in V(T)} |chi(t)| - 1",
+        "#ASP(Pi) = #SAT(Clark(Pi_unfolded)) for correctness-preserving cycle-breaking constructions"
+      ],
+      "notation_seeds": [
+        "k for treewidth",
+        "SCC for strongly connected component size"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "knowledge/text/kr2021_treewidth_cycle_breaking.txt: title/authors/abstract block",
+          "content": "Treewidth-aware cycle breaking can improve downstream algebraic counting efficiency compared with prior bijective reductions."
+        },
+        {
+          "atom_type": "equation",
+          "locator": "knowledge/text/kr2021_treewidth_cycle_breaking.txt: Theorem 7/8/13 references around lines 228-433",
+          "content": "treewidth(G) = min_{(T,chi)} max_{t in V(T)} |chi(t)| - 1"
+        },
+        {
+          "atom_type": "assumption",
+          "locator": "knowledge/text/kr2021_treewidth_cycle_breaking.txt: Theorem 7/8/13 references around lines 228-433",
+          "content": "Programs are normal ASP programs with stable-model semantics."
+        },
+        {
+          "atom_type": "procedure",
+          "locator": "knowledge/text/kr2021_treewidth_cycle_breaking.txt: Theorem 7/8/13 references around lines 228-433",
+          "content": "Construct unfolding sequence over SCCs"
+        }
+      ]
+    },
+    {
+      "id": "src_046",
+      "title": "Treewidth-aware reductions of normal ASP to SAT - Is normal ASP harder than SAT after all?",
+      "url": "https://doi.org/10.1016/j.artint.2021.103651",
+      "source_type": "paper",
+      "citation": "Markus Hecher, Roland Kiesel, Michael Morak, Johannes K. Fichte, Stefan Szeider (2021). Treewidth-aware reductions of normal ASP to SAT - Is normal ASP harder than SAT after all? https://doi.org/10.1016/j.artint.2021.103651",
+      "venue": "Artificial Intelligence",
+      "year": 2021,
+      "authors": [
+        "Markus Hecher",
+        "Roland Kiesel",
+        "Michael Morak",
+        "Johannes K. Fichte",
+        "Stefan Szeider"
+      ],
+      "summary": "Presents a treewidth-aware reduction from normal ASP to SAT and proves ETH-tight lower bounds showing unavoidable treewidth overhead, clarifying structural hardness separation from SAT.",
+      "assumptions": [
+        "Exponential Time Hypothesis (ETH) is assumed for lower-bound claims.",
+        "Input programs are normal/HCF ASP instances with dependency-graph structure.",
+        "Treewidth-preserving reductions can transfer tractability from SAT to ASP instances."
+      ],
+      "contributions": [
+        "Defines reduction that keeps explicit control over treewidth growth from ASP to SAT.",
+        "Proves ETH-tightness of treewidth overhead for the reduction family.",
+        "Provides empirical comparison against existing translations using decomposition heuristics.",
+        "Formal treewidth-aware reductions and complexity characterization."
+      ],
+      "claims": [
+        "Normal ASP is structurally harder than SAT under treewidth-sensitive complexity assumptions.",
+        "Sub-quadratic elimination of treewidth overhead in generic reductions is unlikely under ETH.",
+        "Normal ASP can be made closer to SAT complexity under structure-aware reductions."
+      ],
+      "conclusions": [
+        "Treewidth-aware translation must be paired with ASP-specific optimizations rather than generic SAT reduction alone.",
+        "Complexity-theoretic bounds justify explicit routing decisions between ASP-native and compiled backends.",
+        "Reduction design materially impacts practical exact inference runtime."
+      ],
+      "limitations": [
+        "Lower bounds are conditional on ETH.",
+        "Empirical section depends on decomposition heuristic quality and benchmark mix.",
+        "Advantages depend on decomposition quality and reduction overhead."
+      ],
+      "future_work": [
+        "Explore restricted program classes with improved practical constants.",
+        "Hybrid reductions that exploit additional structural parameters beyond treewidth.",
+        "Stronger reduction templates for broader ASP fragments."
+      ],
+      "key_equations": [
+        "runtime lower bound under ETH: no 2^{o(k*log(k))} * poly(n) algorithm for normal ASP by treewidth k",
+        "reduction overhead implies SAT treewidth tracks ASP structure up to provable asymptotic inflation"
+      ],
+      "notation_seeds": [
+        "k for treewidth",
+        "SCC for strongly connected component size"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "knowledge/text/arxiv_2210_03553.txt: abstract/introduction lines 1-80",
+          "content": "Normal ASP is structurally harder than SAT under treewidth-sensitive complexity assumptions."
+        },
+        {
+          "atom_type": "equation",
+          "locator": "knowledge/text/arxiv_2210_03553.txt: ETH and corollary references around lines 1025-1058",
+          "content": "runtime lower bound under ETH: no 2^{o(k*log(k))} * poly(n) algorithm for normal ASP by treewidth k"
+        },
+        {
+          "atom_type": "assumption",
+          "locator": "knowledge/text/arxiv_2210_03553.txt: ETH and corollary references around lines 1025-1058",
+          "content": "Exponential Time Hypothesis (ETH) is assumed for lower-bound claims."
+        },
+        {
+          "atom_type": "procedure",
+          "locator": "knowledge/text/arxiv_2210_03553.txt: ETH and corollary references around lines 1025-1058",
+          "content": "Construct reduction R from ASP program to SAT formula"
+        }
+      ]
+    },
+    {
+      "id": "src_015",
+      "title": "A-NeSI: A Scalable Approximate Method for Probabilistic Neurosymbolic Inference",
+      "url": "https://doi.org/10.48550/arxiv.2212.12393",
+      "source_type": "paper",
+      "citation": "Emile van Krieken, Thiviyan Thanapalasingam, Jakub M. Tomczak, Frank van Harmelen (2022). A-NeSI: A Scalable Approximate Method for Probabilistic Neurosymbolic Inference. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2212.12393",
+      "venue": "arXiv (Cornell University)",
+      "year": 2022,
+      "authors": [
+        "Emile van Krieken",
+        "Thiviyan Thanapalasingam",
+        "Jakub M. Tomczak",
+        "Frank van Harmelen",
+        "Annette ten Teije"
+      ],
+      "summary": "We study the problem of combining neural networks with symbolic reasoning. Recently introduced frameworks for Probabilistic Neurosymbolic Learning (PNL), such as DeepProbLog, perform exponential-time exact inference, limiting the scalability of PNL solutions. We introduce Approximate Neurosymbolic Inference (A-NeSI): a...",
+      "claims": [
+        "We study the problem of combining neural networks with symbolic reasoning. Recently introduced frameworks for Probabilistic Neurosymbolic Learning (PNL), such as DeepProbLog, perform exponential-time exact inference, limiting the scalability of PNL solutions. We introduce Approximate Neurosymbolic Inference (A-NeSI): a..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "We study the problem of combining neural networks with symbolic reasoning. Recently introduced frameworks for Probabilistic Neurosymbolic Learning (PNL), such as DeepProbLog, perform exponential-time exact inference, lim..."
+        }
+      ]
+    },
+    {
+      "id": "src_016",
+      "title": "DeepStochLog: Neural Stochastic Logic Programming",
+      "url": "https://doi.org/10.1609/aaai.v36i9.21248",
+      "source_type": "paper",
+      "citation": "Thomas Winters, Giuseppe Marra, Robin Manhaeve, Luc De Raedt (2022). DeepStochLog: Neural Stochastic Logic Programming. Proceedings of the AAAI Conference on Artificial Intelligence. https://doi.org/10.1609/aaai.v36i9.21248",
+      "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+      "year": 2022,
+      "authors": [
+        "Thomas Winters",
+        "Giuseppe Marra",
+        "Robin Manhaeve",
+        "Luc De Raedt",
+        "Yonas Kassa"
+      ],
+      "summary": "Recent advances in neural-symbolic learning, such as DeepProbLog, extend probabilistic logic programs with neural predicates. Like graphical models, these probabilistic logic programs define a probability distribution over possible worlds, for which inference is computationally hard. We propose DeepStochLog, an alterna...",
+      "assumptions": [
+        "Hierarchical stochastic logic program structure can represent compositional tasks.",
+        "Neural predictors parameterize stochastic choices.",
+        "Stochastic logic programs with neural predicates can model uncertainty in symbolic reasoning."
+      ],
+      "contributions": [
+        "DeepStochLog framework and scalability analysis for neural stochastic logic programming.",
+        "Neural stochastic logic programming framework."
+      ],
+      "claims": [
+        "Inference and learning scale better than prior alternatives on larger relational datasets.",
+        "Improved handling of uncertain symbolic-neural tasks."
+      ],
+      "conclusions": [
+        "Neural stochastic logic programming is viable for larger, structured neuro-symbolic tasks.",
+        "Supports scalable probabilistic neurosymbolic inference in richer settings."
+      ],
+      "limitations": [
+        "Runtime still sensitive to proof-space growth and relational complexity.",
+        "Inference complexity remains sensitive to symbolic program structure."
+      ],
+      "future_work": [
+        "Further acceleration and broader dataset coverage.",
+        "More efficient exact and approximate inference paths."
+      ],
+      "key_equations": [
+        "Stochastic logic programs with neuralized probabilities over probabilistic choices."
+      ],
+      "notation_seeds": [
+        "stochastic logic program"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "Abstract line 21",
+          "content": "Inference and learning scale better in neural stochastic logic programming."
+        },
+        {
+          "atom_type": "procedure",
+          "locator": "experiment section lines 407+ and 970+",
+          "content": "Experimental protocol reports means over runs and includes inference-time experiments."
+        }
+      ]
+    },
+    {
+      "id": "src_017",
+      "title": "Inductive Logic Programming At 30: A New Introduction",
+      "url": "https://doi.org/10.1613/jair.1.13507",
+      "source_type": "paper",
+      "citation": "Andrew Cropper, Sebastijan Duman\u010di\u0107 (2022). Inductive Logic Programming At 30: A New Introduction. Journal of Artificial Intelligence Research. https://doi.org/10.1613/jair.1.13507",
+      "venue": "Journal of Artificial Intelligence Research",
+      "year": 2022,
+      "authors": [
+        "Andrew Cropper",
+        "Sebastijan Duman\u010di\u0107"
+      ],
+      "summary": "Inductive logic programming (ILP) is a form of machine learning. The goal of ILP is to induce a hypothesis (a set of logical rules) that generalises training examples. As ILP turns 30, we provide a new introduction to the field. We introduce the necessary logical notation and the main learning settings; describe the bu...",
+      "claims": [
+        "Inductive logic programming (ILP) is a form of machine learning. The goal of ILP is to induce a hypothesis (a set of logical rules) that generalises training examples. As ILP turns 30, we provide a new introduction to the field. We introduce the necessary logical notation and the main learning settings; describe the bu..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Inductive logic programming (ILP) is a form of machine learning. The goal of ILP is to induce a hypothesis (a set of logical rules) that generalises training examples. As ILP turns 30, we provide a new introduction to th..."
+        }
+      ]
+    },
+    {
+      "id": "src_018",
+      "title": "Is neuro-symbolic AI meeting its promises in natural language processing? A structured review",
+      "url": "https://doi.org/10.3233/sw-223228",
+      "source_type": "paper",
+      "citation": "Kyle Hamilton, Aparna Nayak, Bojan Bo\u017ei\u0107, Luca Longo (2022). Is neuro-symbolic AI meeting its promises in natural language processing? A structured review. Semantic Web. https://doi.org/10.3233/sw-223228",
+      "venue": "Semantic Web",
+      "year": 2022,
+      "authors": [
+        "Kyle Hamilton",
+        "Aparna Nayak",
+        "Bojan Bo\u017ei\u0107",
+        "Luca Longo"
+      ],
+      "summary": "Advocates for Neuro-Symbolic Artificial Intelligence (NeSy) assert that combining deep learning with symbolic reasoning will lead to stronger AI than either paradigm on its own. As successful as deep learning has been, it is generally accepted that even our best deep learning systems are not very good at abstract reaso...",
+      "claims": [
+        "Advocates for Neuro-Symbolic Artificial Intelligence (NeSy) assert that combining deep learning with symbolic reasoning will lead to stronger AI than either paradigm on its own. As successful as deep learning has been, it is generally accepted that even our best deep learning systems are not very good at abstract reaso..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Advocates for Neuro-Symbolic Artificial Intelligence (NeSy) assert that combining deep learning with symbolic reasoning will lead to stronger AI than either paradigm on its own. As successful as deep learning has been, i..."
+        }
+      ]
+    },
+    {
+      "id": "src_019",
+      "title": "Neural-Probabilistic Answer Set Programming",
+      "url": "https://doi.org/10.24963/kr.2022/48",
+      "source_type": "paper",
+      "citation": "Arseny Skryagin, Wolfgang Stammer, Daniel Ochs, Devendra Singh Dhami (2022). Neural-Probabilistic Answer Set Programming. https://doi.org/10.24963/kr.2022/48",
+      "venue": "Unknown venue",
+      "year": 2022,
+      "authors": [
+        "Arseny Skryagin",
+        "Wolfgang Stammer",
+        "Daniel Ochs",
+        "Devendra Singh Dhami",
+        "Kristian Kersting"
+      ],
+      "summary": "The goal of combining the robustness of neural networks and the expressivity of symbolic methods has rekindled the interest in Neuro-Symbolic AI. One specifically interesting branch of research is deep probabilistic programming languages (DPPLs) which carry out probabilistic logical programming via the probability esti...",
+      "claims": [
+        "The goal of combining the robustness of neural networks and the expressivity of symbolic methods has rekindled the interest in Neuro-Symbolic AI. One specifically interesting branch of research is deep probabilistic programming languages (DPPLs) which carry out probabilistic logical programming via the probability esti..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "The goal of combining the robustness of neural networks and the expressivity of symbolic methods has rekindled the interest in Neuro-Symbolic AI. One specifically interesting branch of research is deep probabilistic prog..."
+        }
+      ]
+    },
+    {
+      "id": "src_020",
+      "title": "Neuro-Symbolic Inductive Logic Programming with Logical Neural Networks",
+      "url": "https://doi.org/10.1609/aaai.v36i8.20795",
+      "source_type": "paper",
+      "citation": "Prithviraj Sen, Breno W. Carvalho, Ryan Riegel, Alexander Gray (2022). Neuro-Symbolic Inductive Logic Programming with Logical Neural Networks. Proceedings of the AAAI Conference on Artificial Intelligence. https://doi.org/10.1609/aaai.v36i...",
+      "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+      "year": 2022,
+      "authors": [
+        "Prithviraj Sen",
+        "Breno W. Carvalho",
+        "Ryan Riegel",
+        "Alexander Gray"
+      ],
+      "summary": "Recent work on neuro-symbolic inductive logic programming has led to promising approaches that can learn explanatory rules from noisy, real-world data. While some proposals approximate logical operators with differentiable operators from fuzzy or real-valued logic that are parameter-free thus diminishing their capacity...",
+      "claims": [
+        "Recent work on neuro-symbolic inductive logic programming has led to promising approaches that can learn explanatory rules from noisy, real-world data. While some proposals approximate logical operators with differentiable operators from fuzzy or real-valued logic that are parameter-free thus diminishing their capacity..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Recent work on neuro-symbolic inductive logic programming has led to promising approaches that can learn explanatory rules from noisy, real-world data. While some proposals approximate logical operators with differentiab..."
+        }
+      ]
+    },
+    {
+      "id": "src_021",
+      "title": "An Experimental Overview of Neural-Symbolic Systems",
+      "url": "https://doi.org/10.1007/978-3-031-49299-0_9",
+      "source_type": "paper",
+      "citation": "Arne Vermeulen, Robin Manhaeve, Giuseppe Marra (2023). An Experimental Overview of Neural-Symbolic Systems. Lecture notes in computer science. https://doi.org/10.1007/978-3-031-49299-0_9",
+      "venue": "Lecture notes in computer science",
+      "year": 2023,
+      "authors": [
+        "Arne Vermeulen",
+        "Robin Manhaeve",
+        "Giuseppe Marra"
+      ],
+      "summary": "This source discusses an experimental overview of neural-symbolic systems and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation.",
+      "claims": [
+        "This source discusses an experimental overview of neural-symbolic systems and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This source discusses an experimental overview of neural-symbolic systems and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+        }
+      ]
+    },
+    {
+      "id": "src_022",
+      "title": "Anytime Weighted Model Counting with Approximation Guarantees for Probabilistic Inference",
+      "url": "https://doi.org/10.4230/lipics.cp.2023.15",
+      "source_type": "paper",
+      "citation": "Dubray, Alexandre, Schaus, Pierre, Nijssen, Siegfried (2023). Anytime Weighted Model Counting with Approximation Guarantees for Probabilistic Inference. DROPS (Schloss Dagstuhl \u2013 Leibniz Center for Informatics). https://doi.org/10.4230/lipi...",
+      "venue": "DROPS (Schloss Dagstuhl \u2013 Leibniz Center for Informatics)",
+      "year": 2023,
+      "authors": [
+        "Dubray, Alexandre",
+        "Schaus, Pierre",
+        "Nijssen, Siegfried"
+      ],
+      "summary": "Weighted model counting, that is, counting the weighted number of satisfying assignments of a propositional formula, is an important tool in probabilistic reasoning. Recently, the use of projected weighted model counting (PWMC) has been proposed as an approach to formulate and answer probabilistic queries. In this work...",
+      "claims": [
+        "Weighted model counting, that is, counting the weighted number of satisfying assignments of a propositional formula, is an important tool in probabilistic reasoning. Recently, the use of projected weighted model counting (PWMC) has been proposed as an approach to formulate and answer probabilistic queries. In this work..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Weighted model counting, that is, counting the weighted number of satisfying assignments of a propositional formula, is an important tool in probabilistic reasoning. Recently, the use of projected weighted model counting..."
+        }
+      ]
+    },
+    {
+      "id": "src_023",
+      "title": "FFNSL: Feed-Forward Neural-Symbolic Learner",
+      "url": "https://doi.org/10.1007/s10994-022-06278-6",
+      "source_type": "paper",
+      "citation": "Daniel Cunnington, Mark Law, Jorge Lobo, Alessandra Russo (2023). FFNSL: Feed-Forward Neural-Symbolic Learner. Machine Learning. https://doi.org/10.1007/s10994-022-06278-6",
+      "venue": "Machine Learning",
+      "year": 2023,
+      "authors": [
+        "Daniel Cunnington",
+        "Mark Law",
+        "Jorge Lobo",
+        "Alessandra Russo"
+      ],
+      "summary": "Abstract Logic-based machine learning aims to learn general, interpretable knowledge in a data-efficient manner. However, labelled data must be specified in a structured logical form. To address this limitation, we propose a neural-symbolic learning framework, called Feed-Forward Neural-Symbolic Learner (FFNSL) , that...",
+      "claims": [
+        "Abstract Logic-based machine learning aims to learn general, interpretable knowledge in a data-efficient manner. However, labelled data must be specified in a structured logical form. To address this limitation, we propose a neural-symbolic learning framework, called Feed-Forward Neural-Symbolic Learner (FFNSL) , that..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Abstract Logic-based machine learning aims to learn general, interpretable knowledge in a data-efficient manner. However, labelled data must be specified in a structured logical form. To address this limitation, we propo..."
+        }
+      ]
+    },
+    {
+      "id": "src_024",
+      "title": "Interpretable Neural-Symbolic Concept Reasoning",
+      "url": "https://doi.org/10.48550/arxiv.2304.14068",
+      "source_type": "paper",
+      "citation": "Pietro Barbiero, Gabriele Ciravegna, Francesco Giannini, Mateo Espinosa Zarlenga (2023). Interpretable Neural-Symbolic Concept Reasoning. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2304.14068",
+      "venue": "arXiv (Cornell University)",
+      "year": 2023,
+      "authors": [
+        "Pietro Barbiero",
+        "Gabriele Ciravegna",
+        "Francesco Giannini",
+        "Mateo Espinosa Zarlenga",
+        "Lucie Charlotte Magister",
+        "Alberto Tonda"
+      ],
+      "summary": "Deep learning methods are highly accurate, yet their opaque decision process prevents them from earning full human trust. Concept-based models aim to address this issue by learning tasks based on a set of human-understandable concepts. However, state-of-the-art concept-based models rely on high-dimensional concept embe...",
+      "claims": [
+        "Deep learning methods are highly accurate, yet their opaque decision process prevents them from earning full human trust. Concept-based models aim to address this issue by learning tasks based on a set of human-understandable concepts. However, state-of-the-art concept-based models rely on high-dimensional concept embe..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Deep learning methods are highly accurate, yet their opaque decision process prevents them from earning full human trust. Concept-based models aim to address this issue by learning tasks based on a set of human-understan..."
+        }
+      ]
+    },
+    {
+      "id": "src_025",
+      "title": "Neural Probabilistic Logic Programming in Discrete-Continuous Domains",
+      "url": "https://doi.org/10.48550/arxiv.2303.04660",
+      "source_type": "paper",
+      "citation": "Lennert De Smet, Pedro Zuidberg Dos Martires, Robin Manhaeve, Giuseppe Marra (2023). Neural Probabilistic Logic Programming in Discrete-Continuous Domains. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2303.04660",
+      "venue": "arXiv (Cornell University)",
+      "year": 2023,
+      "authors": [
+        "Lennert De Smet",
+        "Pedro Zuidberg Dos Martires",
+        "Robin Manhaeve",
+        "Giuseppe Marra",
+        "Angelika Kimmig",
+        "Luc De Raedt"
+      ],
+      "summary": "Neural-symbolic AI (NeSy) allows neural networks to exploit symbolic background knowledge in the form of logic. It has been shown to aid learning in the limited data regime and to facilitate inference on out-of-distribution data. Probabilistic NeSy focuses on integrating neural networks with both logic and probability...",
+      "claims": [
+        "Neural-symbolic AI (NeSy) allows neural networks to exploit symbolic background knowledge in the form of logic. It has been shown to aid learning in the limited data regime and to facilitate inference on out-of-distribution data. Probabilistic NeSy focuses on integrating neural networks with both logic and probability..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Neural-symbolic AI (NeSy) allows neural networks to exploit symbolic background knowledge in the form of logic. It has been shown to aid learning in the limited data regime and to facilitate inference on out-of-distribut..."
+        }
+      ]
+    },
+    {
+      "id": "src_026",
+      "title": "Neuro Symbolic Reasoning and Learning",
+      "url": "https://doi.org/10.1007/978-3-031-39179-8",
+      "source_type": "paper",
+      "citation": "Paulo Shakarian, Chitta Baral, Gerardo I. Simari, Bowen Xi (2023). Neuro Symbolic Reasoning and Learning. SpringerBriefs in computer science. https://doi.org/10.1007/978-3-031-39179-8",
+      "venue": "SpringerBriefs in computer science",
+      "year": 2023,
+      "authors": [
+        "Paulo Shakarian",
+        "Chitta Baral",
+        "Gerardo I. Simari",
+        "Bowen Xi",
+        "Lahari Pokala"
+      ],
+      "summary": "This source discusses neuro symbolic reasoning and learning and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation.",
+      "claims": [
+        "This source discusses neuro symbolic reasoning and learning and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This source discusses neuro symbolic reasoning and learning and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+        }
+      ]
+    },
+    {
+      "id": "src_027",
+      "title": "Neuro-Symbolic Continual Learning: Knowledge, Reasoning Shortcuts and Concept Rehearsal",
+      "url": "https://doi.org/10.48550/arxiv.2302.01242",
+      "source_type": "paper",
+      "citation": "Emanuele Marconato, Gianpaolo Bontempo, Elisa Ficarra, Simone Calderara (2023). Neuro-Symbolic Continual Learning: Knowledge, Reasoning Shortcuts and Concept Rehearsal. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2302.01242",
+      "venue": "arXiv (Cornell University)",
+      "year": 2023,
+      "authors": [
+        "Emanuele Marconato",
+        "Gianpaolo Bontempo",
+        "Elisa Ficarra",
+        "Simone Calderara",
+        "Andrea Passerini",
+        "Stefano Teso"
+      ],
+      "summary": "We introduce Neuro-Symbolic Continual Learning, where a model has to solve a sequence of neuro-symbolic tasks, that is, it has to map sub-symbolic inputs to high-level concepts and compute predictions by reasoning consistently with prior knowledge. Our key observation is that neuro-symbolic tasks, although different, o...",
+      "claims": [
+        "We introduce Neuro-Symbolic Continual Learning, where a model has to solve a sequence of neuro-symbolic tasks, that is, it has to map sub-symbolic inputs to high-level concepts and compute predictions by reasoning consistently with prior knowledge. Our key observation is that neuro-symbolic tasks, although different, o..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "We introduce Neuro-Symbolic Continual Learning, where a model has to solve a sequence of neuro-symbolic tasks, that is, it has to map sub-symbolic inputs to high-level concepts and compute predictions by reasoning consis..."
+        }
+      ]
+    },
+    {
+      "id": "src_028",
+      "title": "Neurosymbolic AI and its Taxonomy: a survey",
+      "url": "https://doi.org/10.48550/arxiv.2305.08876",
+      "source_type": "paper",
+      "citation": "Wandemberg Gibaut, Leonardo Pereira, Fabio Grassiotto, Alexandre Osorio (2023). Neurosymbolic AI and its Taxonomy: a survey. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2305.08876",
+      "venue": "arXiv (Cornell University)",
+      "year": 2023,
+      "authors": [
+        "Wandemberg Gibaut",
+        "Leonardo Pereira",
+        "Fabio Grassiotto",
+        "Alexandre Osorio",
+        "Eder Gadioli",
+        "Amparo Mun\u00f5z"
+      ],
+      "summary": "Neurosymbolic AI deals with models that combine symbolic processing, like classic AI, and neural networks, as it's a very established area. These models are emerging as an effort toward Artificial General Intelligence (AGI) by both exploring an alternative to just increasing datasets' and models' sizes and combining Le...",
+      "claims": [
+        "Neurosymbolic AI deals with models that combine symbolic processing, like classic AI, and neural networks, as it's a very established area. These models are emerging as an effort toward Artificial General Intelligence (AGI) by both exploring an alternative to just increasing datasets' and models' sizes and combining Le..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Neurosymbolic AI deals with models that combine symbolic processing, like classic AI, and neural networks, as it's a very established area. These models are emerging as an effort toward Artificial General Intelligence (A..."
+        }
+      ]
+    },
+    {
+      "id": "src_029",
+      "title": "Neurosymbolic AI: the 3rd wave",
+      "url": "https://doi.org/10.1007/s10462-023-10448-w",
+      "source_type": "paper",
+      "citation": "Artur d\u2019Avila Garcez, Lu\u00eds C. Lamb (2023). Neurosymbolic AI: the 3rd wave. Artificial Intelligence Review. https://doi.org/10.1007/s10462-023-10448-w",
+      "venue": "Artificial Intelligence Review",
+      "year": 2023,
+      "authors": [
+        "Artur d\u2019Avila Garcez",
+        "Lu\u00eds C. Lamb"
+      ],
+      "summary": "This source discusses neurosymbolic ai: the 3rd wave and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation.",
+      "claims": [
+        "This source discusses neurosymbolic ai: the 3rd wave and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This source discusses neurosymbolic ai: the 3rd wave and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+        }
+      ]
+    },
+    {
+      "id": "src_030",
+      "title": "Not All Neuro-Symbolic Concepts Are Created Equal: Analysis and Mitigation of Reasoning Shortcuts",
+      "url": "https://doi.org/10.48550/arxiv.2305.19951",
+      "source_type": "paper",
+      "citation": "Emanuele Marconato, Stefano Teso, Antonio Vergari, Andrea Passerini (2023). Not All Neuro-Symbolic Concepts Are Created Equal: Analysis and Mitigation of Reasoning Shortcuts. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2305.1...",
+      "venue": "arXiv (Cornell University)",
+      "year": 2023,
+      "authors": [
+        "Emanuele Marconato",
+        "Stefano Teso",
+        "Antonio Vergari",
+        "Andrea Passerini"
+      ],
+      "summary": "Neuro-Symbolic (NeSy) predictive models hold the promise of improved compliance with given constraints, systematic generalization, and interpretability, as they allow to infer labels that are consistent with some prior knowledge by reasoning over high-level concepts extracted from sub-symbolic inputs. It was recently s...",
+      "claims": [
+        "Neuro-Symbolic (NeSy) predictive models hold the promise of improved compliance with given constraints, systematic generalization, and interpretability, as they allow to infer labels that are consistent with some prior knowledge by reasoning over high-level concepts extracted from sub-symbolic inputs. It was recently s..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Neuro-Symbolic (NeSy) predictive models hold the promise of improved compliance with given constraints, systematic generalization, and interpretability, as they allow to infer labels that are consistent with some prior k..."
+        }
+      ]
+    },
+    {
+      "id": "src_031",
+      "title": "Out-of-Distribution Generalization by Neural-Symbolic Joint Training",
+      "url": "https://doi.org/10.1609/aaai.v37i10.26444",
+      "source_type": "paper",
+      "citation": "Anji Liu, Hongming Xu, Guy Van den Broeck, Yitao Liang (2023). Out-of-Distribution Generalization by Neural-Symbolic Joint Training. Proceedings of the AAAI Conference on Artificial Intelligence. https://doi.org/10.1609/aaai.v37i10.26444",
+      "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+      "year": 2023,
+      "authors": [
+        "Anji Liu",
+        "Hongming Xu",
+        "Guy Van den Broeck",
+        "Yitao Liang"
+      ],
+      "summary": "This paper develops a novel methodology to simultaneously learn a neural network and extract generalized logic rules. Different from prior neural-symbolic methods that require background knowledge and candidate logical rules to be provided, we aim to induce task semantics with minimal priors. This is achieved by a two-...",
+      "claims": [
+        "This paper develops a novel methodology to simultaneously learn a neural network and extract generalized logic rules. Different from prior neural-symbolic methods that require background knowledge and candidate logical rules to be provided, we aim to induce task semantics with minimal priors. This is achieved by a two-..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This paper develops a novel methodology to simultaneously learn a neural network and extract generalized logic rules. Different from prior neural-symbolic methods that require background knowledge and candidate logical r..."
+        }
+      ]
+    },
+    {
+      "id": "src_032",
+      "title": "Reliable Natural Language Understanding with Large Language Models and Answer Set Programming",
+      "url": "https://doi.org/10.4204/eptcs.385.27",
+      "source_type": "paper",
+      "citation": "Abhiramon Rajasekharan, Yankai Zeng, Parth Padalkar, Gopal Gupta (2023). Reliable Natural Language Understanding with Large Language Models and Answer Set Programming. Electronic Proceedings in Theoretical Computer Science. https://doi.org/...",
+      "venue": "Electronic Proceedings in Theoretical Computer Science",
+      "year": 2023,
+      "authors": [
+        "Abhiramon Rajasekharan",
+        "Yankai Zeng",
+        "Parth Padalkar",
+        "Gopal Gupta"
+      ],
+      "summary": "Humans understand language by extracting information (meaning) from sentences, combining it with existing commonsense knowledge, and then performing reasoning to draw conclusions.While large language models (LLMs) such as GPT-3 and ChatGPT are able to leverage patterns in the text to solve a variety of NLP tasks, they...",
+      "claims": [
+        "Humans understand language by extracting information (meaning) from sentences, combining it with existing commonsense knowledge, and then performing reasoning to draw conclusions.While large language models (LLMs) such as GPT-3 and ChatGPT are able to leverage patterns in the text to solve a variety of NLP tasks, they..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Humans understand language by extracting information (meaning) from sentences, combining it with existing commonsense knowledge, and then performing reasoning to draw conclusions.While large language models (LLMs) such a..."
+        }
+      ]
+    },
+    {
+      "id": "src_033",
+      "title": "Scalable Neural-Probabilistic Answer Set Programming",
+      "url": "https://doi.org/10.1613/jair.1.15027",
+      "source_type": "paper",
+      "citation": "Arseny Skryagin, Daniel Ochs, Devendra Singh Dhami, Kristian Kersting (2023). Scalable Neural-Probabilistic Answer Set Programming. Journal of Artificial Intelligence Research. https://doi.org/10.1613/jair.1.15027",
+      "venue": "Journal of Artificial Intelligence Research",
+      "year": 2023,
+      "authors": [
+        "Arseny Skryagin",
+        "Daniel Ochs",
+        "Devendra Singh Dhami",
+        "Kristian Kersting"
+      ],
+      "summary": "The goal of combining the robustness of neural networks and the expressiveness of symbolic methods has rekindled the interest in Neuro-Symbolic AI. Deep Probabilistic Programming Languages (DPPLs) have been developed for probabilistic logic programming to be carried out via the probability estimations of deep neural ne...",
+      "assumptions": [
+        "Scalable neural-probabilistic ASP requires tractable approximation/truncation over probabilistic choices.",
+        "Careful inference design can scale NP-ASP to larger tasks while retaining useful accuracy."
+      ],
+      "contributions": [
+        "SLASH/SAME-style scalable neural-probabilistic ASP pipeline with extensive experiments.",
+        "Scalability strategies for NP-ASP inference and training."
+      ],
+      "claims": [
+        "Demonstrates efficiency/scalability on VQA and MNIST-addition style tasks.",
+        "Runtime improvements on neurosymbolic ASP benchmarks."
+      ],
+      "conclusions": [
+        "Scalable variants make NP-ASP practical on larger datasets.",
+        "Scaling techniques broaden practical deployment of NP-ASP."
+      ],
+      "limitations": [
+        "Approximation/truncation choices can influence exactness and calibration.",
+        "Efficiency-accuracy tradeoffs depend on approximation/configuration choices."
+      ],
+      "future_work": [
+        "Improve exactness-efficiency tradeoffs and broader benchmarks.",
+        "Better exactness-runtime balancing for larger structures."
+      ],
+      "notation_seeds": [
+        "NPP",
+        "top-99%"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "procedure",
+          "locator": "lines 1288-1290",
+          "content": "Experiments use top-99% mass and multiple seeds in ablations."
+        }
+      ]
+    },
+    {
+      "id": "src_034",
+      "title": "Scallop: A Language for Neurosymbolic Programming",
+      "url": "https://doi.org/10.1145/3591280",
+      "source_type": "paper",
+      "citation": "Ziyang Li, Jiani Huang, Mayur Naik (2023). Scallop: A Language for Neurosymbolic Programming. Proceedings of the ACM on Programming Languages. https://doi.org/10.1145/3591280",
+      "venue": "Proceedings of the ACM on Programming Languages",
+      "year": 2023,
+      "authors": [
+        "Ziyang Li",
+        "Jiani Huang",
+        "Mayur Naik"
+      ],
+      "summary": "We present Scallop, a language which combines the benefits of deep learning and logical reasoning. Scallop enables users to write a wide range of neurosymbolic applications and train them in a data- and compute-efficient manner. It achieves these goals through three key features: 1) a flexible symbolic representation t...",
+      "claims": [
+        "We present Scallop, a language which combines the benefits of deep learning and logical reasoning. Scallop enables users to write a wide range of neurosymbolic applications and train them in a data- and compute-efficient manner. It achieves these goals through three key features: 1) a flexible symbolic representation t..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "We present Scallop, a language which combines the benefits of deep learning and logical reasoning. Scallop enables users to write a wide range of neurosymbolic applications and train them in a data- and compute-efficient..."
+        }
+      ]
+    },
+    {
+      "id": "src_047",
+      "title": "Characterizing Structural Hardness of Logic Programs: What makes Cycles and Reachability Hard for Treewidth?",
+      "url": "https://arxiv.org/abs/2301.07472",
+      "source_type": "paper",
+      "citation": "Markus Hecher, Georg I. Roos, Roland Kiesel, Stefan Szeider (2023). Characterizing Structural Hardness of Logic Programs: What Makes Cycles and Reachability Hard for Treewidth? https://arxiv.org/abs/2301.07472",
+      "venue": "arXiv preprint cs.LO",
+      "year": 2023,
+      "authors": [
+        "Markus Hecher",
+        "Georg I. Roos",
+        "Roland Kiesel",
+        "Stefan Szeider"
+      ],
+      "summary": "Characterizes how cycle size and reachability structure drive treewidth hardness in normal ASP, including SAT-to-ASP reductions that exploit structural power and establish near-optimal hardness dependencies.",
+      "assumptions": [
+        "ETH-based parameterized complexity framework.",
+        "Structural hardness is evaluated on dependency-graph treewidth and SCC size.",
+        "Not all hard structures are eliminated by low-width decompositions."
+      ],
+      "contributions": [
+        "Provides SAT-to-normal-ASP reduction reducing treewidth to O(k/log(k)) in the constructed regime.",
+        "Separates role of reachability and cycle size in hardness characterizations.",
+        "Supplies theorem-level bounds linking SCC structure to algorithmic limits.",
+        "Structural hardness analysis for cycles/reachability in logic programs."
+      ],
+      "claims": [
+        "Cycles/reachability are principal structural bottlenecks for treewidth-parameterized ASP solving.",
+        "Known hardness dependence is close to optimal under ETH.",
+        "Specific motifs induce persistent hardness even with treewidth-aware treatment."
+      ],
+      "conclusions": [
+        "Structural analysis should inform rewrite targets beyond raw clause count minimization.",
+        "Cycle-aware transformations are necessary to unlock robust treewidth improvements.",
+        "Routers should account for hardness motifs beyond raw treewidth."
+      ],
+      "limitations": [
+        "Theoretical emphasis; practical solver integration is limited.",
+        "Results are anchored in worst-case analysis.",
+        "Findings are structure-family specific and require careful transfer to new domains."
+      ],
+      "future_work": [
+        "Translate hardness characterizations into actionable preprocessing heuristics.",
+        "Extend analysis to richer ASP fragments and probabilistic variants.",
+        "Motif-aware transformations and richer hardness predictors."
+      ],
+      "key_equations": [
+        "runtime scale for normal ASP under treewidth: 2^{O(k*log(k))} * poly(n)",
+        "cycle-size bound in constructed dependency graphs: |SCC| <= 2^{O(k*log(k))}"
+      ],
+      "notation_seeds": [
+        "k for treewidth",
+        "SCC for strongly connected component size"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "knowledge/text/arxiv_2301_07472.txt: abstract and contributions block lines 1-80",
+          "content": "Cycles/reachability are principal structural bottlenecks for treewidth-parameterized ASP solving."
+        },
+        {
+          "atom_type": "equation",
+          "locator": "knowledge/text/arxiv_2301_07472.txt: theorem references around lines 386-471",
+          "content": "runtime scale for normal ASP under treewidth: 2^{O(k*log(k))} * poly(n)"
+        },
+        {
+          "atom_type": "assumption",
+          "locator": "knowledge/text/arxiv_2301_07472.txt: theorem references around lines 386-471",
+          "content": "ETH-based parameterized complexity framework."
+        },
+        {
+          "atom_type": "procedure",
+          "locator": "knowledge/text/arxiv_2301_07472.txt: theorem references around lines 386-471",
+          "content": "Construct SAT-to-ASP structural reduction"
+        }
+      ]
+    },
+    {
+      "id": "src_048",
+      "title": "The Impact of Structure in Answer Set Counting: Fighting Cycles and its Limits",
+      "url": "https://proceedings.kr.org/2023/34/kr2023-0034-hecher-et-al.pdf",
+      "source_type": "paper",
+      "citation": "Markus Hecher, Roland Kiesel, Georg I. Roos, Stefan Szeider (2023). The Impact of Structure in Answer Set Counting: Fighting Cycles and its Limits. KR 2023. https://proceedings.kr.org/2023/34/kr2023-0034-hecher-et-al.pdf",
+      "venue": "Proceedings of KR 2023",
+      "year": 2023,
+      "authors": [
+        "Markus Hecher",
+        "Rafael Kiesel",
+        "Roland Kiesel",
+        "Georg I. Roos",
+        "Stefan Szeider"
+      ],
+      "summary": "Studies answer-set counting through cycle-size-sensitive transformations, proving runtime bounds and limits for small/medium/large cycles, and connecting ASP counting to #SAT/PMC techniques.",
+      "assumptions": [
+        "Normal ASP programs with explicit cycle-breaking transformations.",
+        "ETH-based lower bounds for counting complexity comparisons.",
+        "Cycle structure critically influences counting complexity and algorithmic effectiveness."
+      ],
+      "contributions": [
+        "Combines FVS-based and prior cycle-breaking ideas into tighter counting reductions.",
+        "Derives theorem-level runtime bounds for normal answer-set counting.",
+        "Analyzes limits of cycle-fighting strategies across structural regimes.",
+        "Empirical and theoretical analysis of structure-sensitive answer set counting."
+      ],
+      "claims": [
+        "Cycle-aware preprocessing materially changes tractability in #ASP.",
+        "Different cycle-size regimes require distinct counting strategies.",
+        "Cycle patterns can dominate practical exact counting runtime."
+      ],
+      "conclusions": [
+        "Structure-sensitive counting pipelines should pick transformations based on observed cycle regime.",
+        "Projected/model counting tools are useful for large-cycle fallback handling.",
+        "Structure-aware decision features are necessary for robust routing."
+      ],
+      "limitations": [
+        "Gap remains between upper and lower bounds in medium-cycle regimes.",
+        "Practical gains depend on accurate structural diagnostics.",
+        "Transferability depends on benchmark structure diversity."
+      ],
+      "future_work": [
+        "Close remaining complexity gap for medium cycles.",
+        "Automate regime detection and strategy selection in solvers.",
+        "Adaptive cycle-aware preprocessing and hybrid solving strategies."
+      ],
+      "key_equations": [
+        "#ASP(Pi) = #SAT(Clark(Pi_FVS)) under correctness-preserving cycle breaking",
+        "runtime bounds depend on treewidth k and feedback-vertex-set size |f_S| through O(k*log(|f_S|)) style terms"
+      ],
+      "notation_seeds": [
+        "k for treewidth",
+        "SCC for strongly connected component size"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "knowledge/text/kr2023_treewidth_counting.txt: title/abstract block lines 1-80",
+          "content": "Cycle-aware preprocessing materially changes tractability in #ASP."
+        },
+        {
+          "atom_type": "equation",
+          "locator": "knowledge/text/kr2023_treewidth_counting.txt: Theorem 2/3/4/9/13 references around lines 391-638",
+          "content": "#ASP(Pi) = #SAT(Clark(Pi_FVS)) under correctness-preserving cycle breaking"
+        },
+        {
+          "atom_type": "assumption",
+          "locator": "knowledge/text/kr2023_treewidth_counting.txt: Theorem 2/3/4/9/13 references around lines 391-638",
+          "content": "Normal ASP programs with explicit cycle-breaking transformations."
+        },
+        {
+          "atom_type": "procedure",
+          "locator": "knowledge/text/kr2023_treewidth_counting.txt: Theorem 2/3/4/9/13 references around lines 391-638",
+          "content": "Apply Pi_FVS cycle-breaking transformation"
+        }
+      ]
+    },
+    {
+      "id": "src_035",
+      "title": "From statistical relational to neurosymbolic artificial intelligence: A survey",
+      "url": "https://doi.org/10.1016/j.artint.2023.104062",
+      "source_type": "paper",
+      "citation": "Giuseppe Marra, Sebastijan Duman\u010di\u0107, Robin Manhaeve, Luc De Raedt (2024). From statistical relational to neurosymbolic artificial intelligence: A survey. Artificial Intelligence. https://doi.org/10.1016/j.artint.2023.104062",
+      "venue": "Artificial Intelligence",
+      "year": 2024,
+      "authors": [
+        "Giuseppe Marra",
+        "Sebastijan Duman\u010di\u0107",
+        "Robin Manhaeve",
+        "Luc De Raedt"
+      ],
+      "summary": "This survey explores the integration of learning and reasoning in two different fields of artificial intelligence: neurosymbolic and statistical relational artificial intelligence. Neurosymbolic artificial intelligence (NeSy) studies the integration of symbolic reasoning and neural networks, while statistical relationa...",
+      "claims": [
+        "This survey explores the integration of learning and reasoning in two different fields of artificial intelligence: neurosymbolic and statistical relational artificial intelligence. Neurosymbolic artificial intelligence (NeSy) studies the integration of symbolic reasoning and neural networks, while statistical relationa..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This survey explores the integration of learning and reasoning in two different fields of artificial intelligence: neurosymbolic and statistical relational artificial intelligence. Neurosymbolic artificial intelligence (..."
+        }
+      ]
+    },
+    {
+      "id": "src_036",
+      "title": "Learning differentiable logic programs for abstract visual reasoning",
+      "url": "https://doi.org/10.1007/s10994-024-06610-2",
+      "source_type": "paper",
+      "citation": "Hikaru Shindo, Viktor Pfanschilling, Devendra Singh Dhami, Kristian Kersting (2024). Learning differentiable logic programs for abstract visual reasoning. Machine Learning. https://doi.org/10.1007/s10994-024-06610-2",
+      "venue": "Machine Learning",
+      "year": 2024,
+      "authors": [
+        "Hikaru Shindo",
+        "Viktor Pfanschilling",
+        "Devendra Singh Dhami",
+        "Kristian Kersting"
+      ],
+      "summary": "Abstract Visual reasoning is essential for building intelligent agents that understand the world and perform problem-solving beyond perception. Differentiable forward reasoning has been developed to integrate reasoning with gradient-based machine learning paradigms. However, due to the memory intensity, most existing a...",
+      "claims": [
+        "Abstract Visual reasoning is essential for building intelligent agents that understand the world and perform problem-solving beyond perception. Differentiable forward reasoning has been developed to integrate reasoning with gradient-based machine learning paradigms. However, due to the memory intensity, most existing a..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Abstract Visual reasoning is essential for building intelligent agents that understand the world and perform problem-solving beyond perception. Differentiable forward reasoning has been developed to integrate reasoning w..."
+        }
+      ]
+    },
+    {
+      "id": "src_037",
+      "title": "Quantified neural Markov logic networks",
+      "url": "https://doi.org/10.1016/j.ijar.2024.109172",
+      "source_type": "paper",
+      "citation": "Peter Jung, Giuseppe Marra, Ond\u0159ej Ku\u017eelka (2024). Quantified neural Markov logic networks. International Journal of Approximate Reasoning. https://doi.org/10.1016/j.ijar.2024.109172",
+      "venue": "International Journal of Approximate Reasoning",
+      "year": 2024,
+      "authors": [
+        "Peter Jung",
+        "Giuseppe Marra",
+        "Ond\u0159ej Ku\u017eelka"
+      ],
+      "summary": "This source discusses quantified neural markov logic networks and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation.",
+      "claims": [
+        "This source discusses quantified neural markov logic networks and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "This source discusses quantified neural markov logic networks and is relevant to neurosymbolic reasoning, logic programming, or knowledge compilation."
+        }
+      ]
+    },
+    {
+      "id": "src_038",
+      "title": "Towards Cognitive AI Systems: a Survey and Prospective on Neuro-Symbolic AI",
+      "url": "https://doi.org/10.48550/arxiv.2401.01040",
+      "source_type": "paper",
+      "citation": "Zishen Wan, Che-Kai Liu, Hanchen Yang, Chaojian Li (2024). Towards Cognitive AI Systems: a Survey and Prospective on Neuro-Symbolic AI. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2401.01040",
+      "venue": "arXiv (Cornell University)",
+      "year": 2024,
+      "authors": [
+        "Zishen Wan",
+        "Che-Kai Liu",
+        "Hanchen Yang",
+        "Chaojian Li",
+        "Haoran You",
+        "Yonggan Fu"
+      ],
+      "summary": "The remarkable advancements in artificial intelligence (AI), primarily driven by deep neural networks, have significantly impacted various aspects of our lives. However, the current challenges surrounding unsustainable computational trajectories, limited robustness, and a lack of explainability call for the development...",
+      "claims": [
+        "The remarkable advancements in artificial intelligence (AI), primarily driven by deep neural networks, have significantly impacted various aspects of our lives. However, the current challenges surrounding unsustainable computational trajectories, limited robustness, and a lack of explainability call for the development..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "The remarkable advancements in artificial intelligence (AI), primarily driven by deep neural networks, have significantly impacted various aspects of our lives. However, the current challenges surrounding unsustainable c..."
+        }
+      ]
+    },
+    {
+      "id": "src_039",
+      "title": "aspmc: New frontiers of algebraic answer set counting",
+      "url": "https://repositum.tuwien.at/bitstream/20.500.12708/209319/1/Eiter-2024-Artificial%20Intelligence-vor.pdf",
+      "source_type": "paper",
+      "citation": "Eiter, T., Hecher, M., and Kiesel, R. (2024). aspmc: New frontiers of algebraic answer set counting. Artificial Intelligence 330. https://repositum.tuwien.at/bitstream/20.500.12708/209319/1/Eiter-2024-Artificial%20Intelligence-vor.pdf",
+      "venue": "Artificial Intelligence 330",
+      "year": 2024,
+      "authors": [
+        "Thomas Eiter",
+        "Markus Hecher",
+        "Rafael Kiesel"
+      ],
+      "summary": "The paper extends algebraic answer set counting with treewidth-aware completion and cycle-breaking strategies, and evaluates resulting CNF/compilation efficiency under multiple encodings.",
+      "assumptions": [
+        "Programs are normal ASP programs after preprocessing.",
+        "Compilation performance depends strongly on CNF size and structural width."
+      ],
+      "contributions": [
+        "Improved Clark-completion variants with stronger width guarantees.",
+        "Treewidth-aware cycle breaking and backend choices for algebraic counting.",
+        "Extensive empirical analysis of CNF size, width, and solver/runtime effects."
+      ],
+      "claims": [
+        "Incidence-treewidth-aware transformations can reduce compilation burden compared with naive encodings.",
+        "Encoding choices materially change downstream counting and learning performance."
+      ],
+      "conclusions": [
+        "Treewidth-sensitive transformations are practical and improve algebraic ASP counting workflows."
+      ],
+      "limitations": [
+        "Benefits are instance- and structure-dependent; no single transformation dominates all workloads."
+      ],
+      "future_work": [
+        "Improve compiler integration and reduce worst-case exponential width dependence."
+      ],
+      "key_equations": [
+        "treewidth(G) = min_{(T,chi)} max_{t in V(T)} |chi(t)| - 1"
+      ],
+      "notation_seeds": [
+        "tw: treewidth",
+        "pw: pathwidth"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "equation",
+          "locator": "Section 2, graph decomposition definitions",
+          "content": "treewidth uses max bag size minus one over all decompositions"
+        },
+        {
+          "atom_type": "claim",
+          "locator": "Introduction around line 129",
+          "content": "incidence treewidth gives tighter or equal bounds than primal treewidth in their setting"
+        }
+      ]
+    },
+    {
+      "id": "src_040",
+      "title": "dPASP: A Probabilistic Logic Programming Environment For Neurosymbolic Learning and Reasoning",
+      "url": "https://doi.org/10.24963/kr.2024/69",
+      "source_type": "paper",
+      "citation": "Renato Lui Geh, Jonas Gon\u00e7alves, Igor C. Silveira, Denis Deratani Mau\u00e1 (2024). dPASP: A Probabilistic Logic Programming Environment For Neurosymbolic Learning and Reasoning. https://doi.org/10.24963/kr.2024/69",
+      "venue": "Unknown venue",
+      "year": 2024,
+      "authors": [
+        "Renato Lui Geh",
+        "Jonas Gon\u00e7alves",
+        "Igor C. Silveira",
+        "Denis Deratani Mau\u00e1",
+        "F\u00e1bio Gagliardi Cozman"
+      ],
+      "summary": "We present dPASP, a novel declarative probabilistic logic programming framework that allows for the specification of discrete probabilistic models by neural predicates, relational logic constraints, and interval-valued probabilistic choices. This expressive combination facilitates the construction of models that combin...",
+      "claims": [
+        "We present dPASP, a novel declarative probabilistic logic programming framework that allows for the specification of discrete probabilistic models by neural predicates, relational logic constraints, and interval-valued probabilistic choices. This expressive combination facilitates the construction of models that combin..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "We present dPASP, a novel declarative probabilistic logic programming framework that allows for the specification of discrete probabilistic models by neural predicates, relational logic constraints, and interval-valued p..."
+        }
+      ]
+    },
+    {
+      "id": "src_041",
+      "title": "A Comprehensive Review of Neuro-symbolic AI for Robustness, Uncertainty Quantification, and Intervenability",
+      "url": "https://doi.org/10.1007/s13369-025-10887-3",
+      "source_type": "paper",
+      "citation": "Kamal Acharya, Houbing Song (2025). A Comprehensive Review of Neuro-symbolic AI for Robustness, Uncertainty Quantification, and Intervenability. Arabian Journal for Science and Engineering. https://doi.org/10.1007/s13369-025-10887-3",
+      "venue": "Arabian Journal for Science and Engineering",
+      "year": 2025,
+      "authors": [
+        "Kamal Acharya",
+        "Houbing Song"
+      ],
+      "summary": "Abstract As Artificial Intelligence (AI) systems are increasingly deployed in high-stakes domains such as healthcare, autonomous systems, finance, and critical infrastructure, ensuring their trustworthiness has become imperative. This paper presents a comprehensive survey of neuro-symbolic AI, a hybrid paradigm that co...",
+      "claims": [
+        "Abstract As Artificial Intelligence (AI) systems are increasingly deployed in high-stakes domains such as healthcare, autonomous systems, finance, and critical infrastructure, ensuring their trustworthiness has become imperative. This paper presents a comprehensive survey of neuro-symbolic AI, a hybrid paradigm that co..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Abstract As Artificial Intelligence (AI) systems are increasingly deployed in high-stakes domains such as healthcare, autonomous systems, finance, and critical infrastructure, ensuring their trustworthiness has become im..."
+        }
+      ]
+    },
+    {
+      "id": "src_042",
+      "title": "A Scalable Approach to Probabilistic Neuro-Symbolic Robustness Verification",
+      "url": "https://doi.org/10.48550/arxiv.2502.03274",
+      "source_type": "paper",
+      "citation": "Vasileios Manginas, Nikolaos Manginas, Edward Stevinson, Sherwin Varghese (2025). A Scalable Approach to Probabilistic Neuro-Symbolic Robustness Verification. ArXiv.org. https://doi.org/10.48550/arxiv.2502.03274",
+      "venue": "ArXiv.org",
+      "year": 2025,
+      "authors": [
+        "Vasileios Manginas",
+        "Nikolaos Manginas",
+        "Edward Stevinson",
+        "Sherwin Varghese",
+        "Nikos Katzouris",
+        "\u0393\u03b5\u03ce\u03c1\u03b3\u03b9\u03bf\u03c2 \u03a0\u03b1\u03bb\u03b9\u03bf\u03cd\u03c1\u03b1\u03c2"
+      ],
+      "summary": "Neuro-Symbolic Artificial Intelligence (NeSy AI) has emerged as a promising direction for integrating neural learning with symbolic reasoning. Typically, in the probabilistic variant of such systems, a neural network first extracts a set of symbols from sub-symbolic input, which are then used by a symbolic component to...",
+      "claims": [
+        "Neuro-Symbolic Artificial Intelligence (NeSy AI) has emerged as a promising direction for integrating neural learning with symbolic reasoning. Typically, in the probabilistic variant of such systems, a neural network first extracts a set of symbols from sub-symbolic input, which are then used by a symbolic component to..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Neuro-Symbolic Artificial Intelligence (NeSy AI) has emerged as a promising direction for integrating neural learning with symbolic reasoning. Typically, in the probabilistic variant of such systems, a neural network fir..."
+        }
+      ]
+    },
+    {
+      "id": "src_043",
+      "title": "AI Reasoning in Deep Learning Era: From Symbolic AI to Neural\u2013Symbolic AI",
+      "url": "https://doi.org/10.3390/math13111707",
+      "source_type": "paper",
+      "citation": "Baoyu Liang, Yuchen Wang, Chao Tong (2025). AI Reasoning in Deep Learning Era: From Symbolic AI to Neural\u2013Symbolic AI. Mathematics. https://doi.org/10.3390/math13111707",
+      "venue": "Mathematics",
+      "year": 2025,
+      "authors": [
+        "Baoyu Liang",
+        "Yuchen Wang",
+        "Chao Tong"
+      ],
+      "summary": "The pursuit of Artificial General Intelligence (AGI) demands AI systems that not only perceive but also reason in a human-like manner. While symbolic systems pioneered early breakthroughs in logic-based reasoning, such as MYCIN and DENDRAL, they suffered from brittleness and poor scalability. Conversely, modern deep le...",
+      "claims": [
+        "The pursuit of Artificial General Intelligence (AGI) demands AI systems that not only perceive but also reason in a human-like manner. While symbolic systems pioneered early breakthroughs in logic-based reasoning, such as MYCIN and DENDRAL, they suffered from brittleness and poor scalability. Conversely, modern deep le..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "The pursuit of Artificial General Intelligence (AGI) demands AI systems that not only perceive but also reason in a human-like manner. While symbolic systems pioneered early breakthroughs in logic-based reasoning, such a..."
+        }
+      ]
+    },
+    {
+      "id": "src_044",
+      "title": "Neuro-Symbolic AI in 2024: A Systematic Review",
+      "url": "https://doi.org/10.48550/arxiv.2501.05435",
+      "source_type": "paper",
+      "citation": "Brandon Curtis Colelough, William C. Regli (2025). Neuro-Symbolic AI in 2024: A Systematic Review. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2501.05435",
+      "venue": "arXiv (Cornell University)",
+      "year": 2025,
+      "authors": [
+        "Brandon Curtis Colelough",
+        "William C. Regli"
+      ],
+      "summary": "Background: The field of Artificial Intelligence has undergone cyclical periods of growth and decline, known as AI summers and winters. Currently, we are in the third AI summer, characterized by significant advancements and commercialization, particularly in the integration of Symbolic AI and Sub-Symbolic AI, leading t...",
+      "claims": [
+        "Background: The field of Artificial Intelligence has undergone cyclical periods of growth and decline, known as AI summers and winters. Currently, we are in the third AI summer, characterized by significant advancements and commercialization, particularly in the integration of Symbolic AI and Sub-Symbolic AI, leading t..."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Background: The field of Artificial Intelligence has undergone cyclical periods of growth and decline, known as AI summers and winters. Currently, we are in the third AI summer, characterized by significant advancements..."
+        }
+      ]
+    },
+    {
+      "id": "src_049",
+      "title": "Treewidth-Aware Neurosymbolic ASP via Algebraic Model Counting (user-provided manuscript)",
+      "url": "workspace/resources/Treewidth_Aware_Neurosymbolic_ASPvia_Algebraic_Model_Counting__2_.pdf",
+      "source_type": "other",
+      "citation": "User Upload (2026). Treewidth-Aware Neurosymbolic ASP via Algebraic Model Counting. Local reference resource: workspace/resources/Treewidth_Aware_Neurosymbolic_ASPvia_Algebraic_Model_Counting__2_.pdf.",
+      "venue": "User-provided reference resource",
+      "year": 2026,
+      "authors": [
+        "User Upload"
+      ],
+      "summary": "Defines a dual-backend neurosymbolic ASP framing (enumeration and compilation), motivating treewidth-aware routing and benchmark families relevant to AutoTW-ASP.",
+      "assumptions": [
+        "Stable-model semantics must be preserved by any optimization or rewrite."
+      ],
+      "contributions": [
+        "Frames exact neurosymbolic ASP training with backend crossover analysis."
+      ],
+      "claims": [
+        "Structure-aware backend routing can reduce runtime while preserving correctness."
+      ],
+      "conclusions": [
+        "Automated rewrite and routing are a natural extension over manual encoding redesign."
+      ],
+      "limitations": [
+        "Uploaded manuscript metadata is anonymized for formal bibliography attribution."
+      ],
+      "future_work": [
+        "Automated semantics-preserving rewrites and calibrated backend routers."
+      ],
+      "notation_seeds": [
+        "treewidth",
+        "circuit reuse ratio"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "uploaded manuscript extraction",
+          "content": "Backend selection should depend on structural width and reuse behavior."
+        }
+      ]
+    },
+    {
+      "id": "src_050",
+      "title": "DeepProbLog: Neural Probabilistic Logic Programming",
+      "url": "https://doi.org/10.48550/arXiv.1805.10872",
+      "source_type": "paper",
+      "citation": "Robin Manhaeve, Sebastijan Duman\u010di\u0107, Ashwin K. C. Natarajan, Gunter Van den Broeck, Luc De Raedt (2018). DeepProbLog: Neural Probabilistic Logic Programming. https://doi.org/10.48550/arXiv.1805.10872",
+      "year": 2018,
+      "authors": [
+        "Robin Manhaeve",
+        "Sebastijan Dumancic",
+        "Ashwin K. C. Natarajan",
+        "Gunter Van den Broeck",
+        "Luc De Raedt"
+      ],
+      "summary": "Combines probabilistic logic programming with neural predicates, providing a key baseline in neurosymbolic reasoning.",
+      "assumptions": [
+        "Probabilistic logic and differentiable neural predicates can be jointly optimized."
+      ],
+      "contributions": [
+        "A probabilistic neurosymbolic framework with neural predicates."
+      ],
+      "claims": [
+        "Neural-symbolic integration improves data efficiency and interpretability in constrained tasks."
+      ],
+      "conclusions": [
+        "Probabilistic logic with neural components is practical for structured reasoning."
+      ],
+      "limitations": [
+        "Exact inference can be expensive for complex symbolic structure."
+      ],
+      "future_work": [
+        "Scalability and richer symbolic constraints."
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "content": "Neural-symbolic integration improves data efficiency and interpretability in constrained tasks."
+        }
+      ]
+    },
+    {
+      "title": "Treewidth-Aware Neurosymbolic ASP via Algebraic Model Counting (user-provided manuscript)",
+      "url": "/api/files/916b9a92-1d9f-4142-9fcf-294a8d55db91?name=Treewidth_Aware_Neurosymbolic_ASPvia_Algebraic_Model_Counting__2_.pdf",
+      "source_type": "report",
+      "citation": "User-provided manuscript submission (2026). Treewidth-Aware Neurosymbolic ASP via Algebraic Model Counting. User-uploaded reference resource.",
+      "year": 2026,
+      "summary": "Defines a dual-backend neurosymbolic ASP framing (enumeration and compilation), motivating treewidth-aware routing and benchmark families relevant to AutoTW-ASP.",
+      "assumptions": [
+        "Stable-model semantics must be preserved by any optimization or rewrite."
+      ],
+      "contributions": [
+        "Frames exact neurosymbolic ASP training with backend crossover analysis."
+      ],
+      "claims": [
+        "Structure-aware backend routing can reduce runtime while preserving correctness."
+      ],
+      "conclusions": [
+        "Automated rewrite and routing are a natural extension over manual encoding redesign."
+      ],
+      "limitations": [
+        "Uploaded manuscript metadata is anonymized for formal bibliography attribution."
+      ],
+      "future_work": [
+        "Automated semantics-preserving rewrites and calibrated backend routers."
+      ],
+      "notation_seeds": [
+        "treewidth",
+        "circuit reuse ratio"
+      ],
+      "evidence_atoms": [
+        {
+          "atom_type": "claim",
+          "locator": "uploaded manuscript extraction",
+          "content": "Backend selection should depend on structural width and reuse behavior."
+        }
+      ]
+    }
+  ]
+}

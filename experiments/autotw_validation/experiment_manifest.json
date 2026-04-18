@@ -1,0 +1,66 @@
+{
+  "acquisition_budget_used_sec": 26,
+  "acquisition_status": "resolved",
+  "code_paths": [
+    "experiments/autotw_validation/run_experiments.py",
+    "experiments/autotw_validation/src/autotw_validation/acquisition.py",
+    "experiments/autotw_validation/src/autotw_validation/simulation.py",
+    "experiments/autotw_validation/src/autotw_validation/analysis.py",
+    "experiments/autotw_validation/src/autotw_validation/plots.py",
+    "experiments/autotw_validation/src/autotw_validation/sympy_checks.py",
+    "experiments/autotw_validation/src/autotw_validation/real_checks.py",
+    "experiments/autotw_validation/src/autotw_validation/reporting.py"
+  ],
+  "config_paths": [
+    "experiments/autotw_validation/configs/smoke.yaml",
+    "experiments/autotw_validation/configs/full.yaml",
+    "experiments/autotw_validation/configs/iter_3.yaml",
+    "experiments/autotw_validation/experiment_manifest.json"
+  ],
+  "dataset_resolution_log_path": "experiments/autotw_validation/iter_3/outputs/logs/dataset_resolution_log.json",
+  "entrypoint_path": "experiments/autotw_validation/run_experiments.py",
+  "excluded_roots": [
+    ".codex",
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "node_modules"
+  ],
+  "experiment_manifest_path": "experiments/autotw_validation/experiment_manifest.json",
+  "lint_commands": [
+    "experiments/.venv/bin/ruff check experiments/autotw_validation/src experiments/autotw_validation/tests experiments/autotw_validation/run_experiments.py",
+    "experiments/.venv/bin/mypy experiments/autotw_validation/src/autotw_validation"
+  ],
+  "output_dir": "experiments/autotw_validation/iter_3/outputs",
+  "package_root": "experiments/autotw_validation/src/autotw_validation",
+  "preflight_commands": [
+    "experiments/.venv/bin/python experiments/autotw_validation/run_experiments.py --stage smoke --config experiments/autotw_validation/configs/iter_3.yaml --workspace-root ."
+  ],
+  "preflight_report_path": "experiments/autotw_validation/iter_3/outputs/preflight_report.json",
+  "readme_path": "experiments/autotw_validation/README.md",
+  "report_paths": [
+    "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/iter_3/outputs/reports/sympy_validation_report.md",
+    "experiments/autotw_validation/experiment_manifest.json",
+    "experiments/autotw_validation/iter_3/outputs/logs/dataset_resolution_log.json",
+    "experiments/autotw_validation/iter_3/outputs/preflight_report.json",
+    "experiments/autotw_validation/iter_3/outputs/reports/sympy_validation_report.md",
+    "experiments/autotw_validation/iter_3/outputs/reports/theorem_assumption_audit_table.csv",
+    "experiments/autotw_validation/iter_3/outputs/results_summary_validation.json"
+  ],
+  "results_summary_path": "experiments/autotw_validation/iter_3/outputs/results_summary_validation.json",
+  "run_commands": [
+    "experiments/.venv/bin/python experiments/autotw_validation/run_experiments.py --stage smoke --config experiments/autotw_validation/configs/iter_3.yaml --workspace-root .",
+    "experiments/.venv/bin/python experiments/autotw_validation/run_experiments.py --stage full --config experiments/autotw_validation/configs/iter_3.yaml --workspace-root ."
+  ],
+  "support_artifact_paths": [],
+  "test_commands": [
+    "experiments/.venv/bin/pytest experiments/autotw_validation/tests -q"
+  ],
+  "test_paths": [
+    "experiments/autotw_validation/tests/test_smoke.py"
+  ]
+}

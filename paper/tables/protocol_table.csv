@@ -1,0 +1,8 @@
+item,value
+experiment_id,autotw_validation
+stage,smoke+full
+seeds_total,19
+datasets_total,6
+baselines_total,19 (union across exp01-exp04)
+uncertainty_method,Bootstrap 95% CI (tables) + folded bootstrap for router table
+entrypoint,experiments/autotw_validation/run_experiments.py

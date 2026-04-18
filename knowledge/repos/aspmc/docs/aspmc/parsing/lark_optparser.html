@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>aspmc.parsing.lark_optparser API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aspmc.parsing.lark_optparser</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from lark import Lark, Transformer
+import re
+
+from sympy import true
+
+from aspmc.parsing.lark_parser import Atom
+
+class NormalRule(object):
+    &#34;&#34;&#34;A class for normal rules.
+
+    If a rule has more than one atom in the head, the head must be an annotated disjunction.
+    Then each of the atoms must have a weight.
+
+    Implements a custom `__str__` method.
+
+    Args:        
+        head (:obj:`list`): The list of head atoms. May be empty.
+        body (:obj:`list`): The list of body atoms. May be empty.
+        choice (bool): Whether the rule is a choice rule.
+
+    Attributes:
+        head (:obj:`list`): The list of head atoms. May be empty.
+        body (:obj:`list`): The list of body atoms. May be empty.
+        choice (bool): Whether the rule is a choice rule.
+    &#34;&#34;&#34;
+    def __init__(self, head, body, choice):
+        self.head = head
+        self.body = body if body is not None else []
+        self.choice = choice
+
+    def __str__(self):
+        res = &#34;&#34;
+        if self.head is not None:
+            if self.choice:
+                res += f&#34;{{{str(self.head[0])}}}&#34;
+            else:
+                res += f&#34;{str(self.head[0])}&#34;
+        if len(self.body) &gt; 0:
+            res +=f&#34;:-{&#39;,&#39;.join([str(x) for x in self.body])}.&#34;
+        else:
+            res += &#34;.&#34;
+        return res
+
+    def __repr__(self):
+        return str(self)
+    
+    def asp_string(self):
+        &#34;&#34;&#34;Generates an ASP representation of the rule.
+
+        Implements a custom `__str__` method.
+        
+        Returns:
+            :obj:`string`: The representation of this rule as an ASP rule.
+        &#34;&#34;&#34;
+        return str(self)
+    
+class WeakConstraint(object):
+    &#34;&#34;&#34;A class for weak constraints.
+    
+    Weak constraints are constraints whose satisfaction is (un)desirable. 
+    This means they have a weight and an empty head.
+    Furthermore, every weak constraint may have a list of terms associated with it. 
+    The penalty `weight` will be triggered exactly once if any weak constraint with this list of terms
+    is not satisfied.
+
+    Implements a custom `__str__` method.
+
+    Args:        
+        body (:obj:`list`): The list of body atoms. May be empty.
+        weight (int): Whether the rule is a choice rule.
+        terms (:obj:`list`): The list of terms that associated with this constraint. May be empty.
+
+    Attributes:
+        body (:obj:`list`): The list of body atoms. May be empty.
+        weight (int): Whether the rule is a choice rule.
+        terms (:obj:`list`): The list of terms that associated with this constraint. May be empty.
+    &#34;&#34;&#34;
+    def __init__(self, body, weight, terms):
+        self.body = body
+        self.weight = weight
+        self.terms = terms if terms is not None else []
+
+    def __str__(self):
+        res = &#34;:~&#34;
+        if len(self.body) &gt; 0:
+            res +=f&#34;{&#39;,&#39;.join([str(x) for x in self.body])}.&#34;
+        else:
+            res += &#34;.&#34;
+        res += f&#34;[{self.weight}{&#39;&#39; if len(self.terms) == 0 else &#39;,&#39;}{&#39;,&#39;.join([str(x) for x in self.terms])}]&#34;
+        return res
+
+    def __repr__(self):
+        return str(self)
+    
+    def asp_string(self):
+        &#34;&#34;&#34;Generates an ASP representation of the rule.
+
+        Implements a custom `__str__` method.
+        
+        Returns:
+            :obj:`string`: The representation of this rule as an ASP rule.
+        &#34;&#34;&#34;
+        return str(self)
+
+
+class Atom(object):
+    &#34;&#34;&#34;A class for atoms.
+
+    Implements a custom `__str__` method.
+    
+    Args:
+        predicate (:obj:`string`): The predicate of the atom.
+        inputs (:obj:`list`, optional): The inputs of the atom. 
+        These may be strings or other atoms. 
+        Defaults to `None`.
+        negated (:obj:`bool`, optional): Whether the atom is negated.
+        Defaults to `False`.
+
+    Attributes:
+        predicate (:obj:`string`): The predicate of the atom.
+        inputs (:obj:`list`, optional): The inputs of the atom. 
+        These may be strings or other atoms. 
+        negated (:obj:`bool`, optional): Whether the atom is negated.
+    &#34;&#34;&#34;
+    def __init__(self, predicate, inputs = None, negated=False):
+        self.predicate = predicate
+        self.inputs = inputs if inputs is not None else []
+        def replace_quotes(term):
+            if type(term) != Atom:
+                return term.replace(&#34;&#39;&#34;, &#39;&#34;&#39;)
+            return term
+        self.inputs = [ replace_quotes(term) for term in self.inputs ]
+        self.negated = negated
+
+    def __str__(self):
+        res = &#34;&#34;
+        if self.negated:
+            res += &#34;not &#34;
+        res += f&#34;{self.predicate}&#34;
+        if len(self.inputs) &gt; 0:
+            res += f&#34;({&#39;,&#39;.join([ str(term) for term in self.inputs ])})&#34;
+        return res
+
+    def __repr__(self):
+        return str(self)
+
+    def get_variables(self):
+        &#34;&#34;&#34;Rcursively finds all the variables used in the atom.
+
+        Returns:
+            :obj:`list`: The list of variables as strings.
+        &#34;&#34;&#34;
+        vars = set()
+        for term in self.inputs:
+            if type(term) == Atom:
+                vars.update(term.get_variables())
+            elif re.match(r&#34;[A-Z][a-zA-Z0-9]*&#34;, term):
+                vars.add(term)
+        return vars
+
+
+class OptProgramTransformer(Transformer):
+    &#34;&#34;&#34;The corresponding OptProgram semantics class for the OPTGRAMMAR grammar.
+    
+    See the lark documentation for how this works.
+    &#34;&#34;&#34;
+    def program(self, ast):  # noqa
+        return ast # sort out the comments
+
+    def rule(self, ast):  # noqa
+        return ast[0]
+
+    def fact(self, ast): #noqa
+        ast = ast[0]
+        return NormalRule([ast[&#39;atom&#39;]], [], ast[&#39;choice&#39;])
+
+    def normal_rule(self, ast):  # noqa
+        return NormalRule([ast[0][&#39;atom&#39;]], ast[1], ast[0][&#39;choice&#39;])
+    
+    def constraint(self, ast): #noqa
+        return NormalRule(None, ast[0], False)
+    
+    def weakconstraint(self, ast): #noqa
+        return WeakConstraint(ast[0], ast[1], ast[2])
+    
+    def head(self, ast):
+        if len(ast) == 3:
+            return { &#39;atom&#39; : ast[1], &#39;choice&#39; : True }
+        else:
+            return { &#39;atom&#39; : ast[0], &#39;choice&#39; : False }
+    
+    def body(self, ast):  # noqa
+        if len(ast) == 1 and ast[0] == None:
+            return None
+        return ast
+
+    def atom(self, ast):  # noqa
+        negated = str(ast[0]) == &#39;not&#39;
+        if len(ast) == 3:
+            return Atom(str(ast[1]), inputs = ast[2], negated = negated)
+        else:
+            return Atom(str(ast[1]), negated = negated)
+
+    def input(self, ast):  # noqa
+        return ast
+
+    def term(self, ast):  # noqa
+        ast = ast[0]
+        if type(ast) == Atom:
+            return ast
+    
+        if &#34;.&#34; in ast and (ast[0] != &#39;&#34;&#39; or ast[-1] != &#39;&#34;&#39;):
+            return &#39;&#34;&#39; + ast + &#39;&#34;&#39;
+        return str(ast)
+
+    def variable(self, ast): # noqa
+        return str(ast[0])
+
+    def weight(self, ast):  # noqa
+        return str(ast[0])
+
+
+GRAMMAR = r&#39;&#39;&#39;
+    program : rule*
+
+    rule : normal_rule | fact | constraint | weakconstraint
+
+    fact : head &#34;.&#34;
+
+    normal_rule : head &#34;:-&#34; body  &#34;.&#34;
+
+    constraint : &#34;:-&#34; body  &#34;.&#34;
+    
+    weakconstraint : &#34;:~&#34; body  &#34;.&#34; &#34;[&#34; weight [&#34;,&#34; input] &#34;]&#34;
+
+    head : ( atom | (OPEN_ANGLE atom CLOSED_ANGLE) )
+
+    body : [ atom ( &#34;,&#34; atom )* ]
+
+    OPEN_ANGLE : &#34;{&#34;
+    
+    CLOSED_ANGLE : &#34;}&#34;
+    
+    NEGATION : &#34;not&#34;
+
+    atom : [NEGATION] ( /[a-z]([a-zA-Z0-9_])*/ [ &#34;(&#34; input &#34;)&#34; ]  |  &#34;(&#34; /[a-z]([a-zA-Z0-9_])*/ [ &#34;(&#34; input &#34;)&#34; ] &#34;)&#34; )
+
+    input : term ( &#34;,&#34; term )*
+
+    term : atom | /[0-9_\/&lt;&gt;=+&#34;-]([a-zA-Z0-9_\/&lt;&gt;=+&#34;.-]*)/ | variable 
+
+    variable : /[A-Z][a-zA-Z0-9]*/
+
+    weight :  /[+-]?[1-9]+[0-9]*/ | variable
+
+    COMMENT : &#34;%&#34; /[^\n]+/
+    %ignore COMMENT
+    %import common.WS
+    %ignore WS
+    
+&#39;&#39;&#39;
+
+
+if __name__ == &#39;__main__&#39;:
+    import sys
+    parser = Lark(GRAMMAR, start=&#39;program&#39;, parser=&#39;lalr&#39;, transformer=OptProgramTransformer())
+
+    with open(sys.argv[1]) as infile:
+        tree = parser.parse(infile.read())
+        for r in tree:
+            print(r)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="aspmc.parsing.lark_optparser.Atom"><code class="flex name class">
+<span>class <span class="ident">Atom</span></span>
+<span>(</span><span>predicate, inputs=None, negated=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class for atoms.</p>
+<p>Implements a custom <code>__str__</code> method.</p>
+<h2 id="args">Args</h2>
+<p>predicate (:obj:<code>string</code>): The predicate of the atom.
+inputs (:obj:<code>list</code>, optional): The inputs of the atom.
+These may be strings or other atoms.
+Defaults to <code>None</code>.
+negated (:obj:<code>bool</code>, optional): Whether the atom is negated.
+Defaults to <code>False</code>.</p>
+<h2 id="attributes">Attributes</h2>
+<p>predicate (:obj:<code>string</code>): The predicate of the atom.
+inputs (:obj:<code>list</code>, optional): The inputs of the atom.
+These may be strings or other atoms.
+negated (:obj:<code>bool</code>, optional): Whether the atom is negated.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Atom(object):
+    &#34;&#34;&#34;A class for atoms.
+
+    Implements a custom `__str__` method.
+    
+    Args:
+        predicate (:obj:`string`): The predicate of the atom.
+        inputs (:obj:`list`, optional): The inputs of the atom. 
+        These may be strings or other atoms. 
+        Defaults to `None`.
+        negated (:obj:`bool`, optional): Whether the atom is negated.
+        Defaults to `False`.
+
+    Attributes:
+        predicate (:obj:`string`): The predicate of the atom.
+        inputs (:obj:`list`, optional): The inputs of the atom. 
+        These may be strings or other atoms. 
+        negated (:obj:`bool`, optional): Whether the atom is negated.
+    &#34;&#34;&#34;
+    def __init__(self, predicate, inputs = None, negated=False):
+        self.predicate = predicate
+        self.inputs = inputs if inputs is not None else []
+        def replace_quotes(term):
+            if type(term) != Atom:
+                return term.replace(&#34;&#39;&#34;, &#39;&#34;&#39;)
+            return term
+        self.inputs = [ replace_quotes(term) for term in self.inputs ]
+        self.negated = negated
+
+    def __str__(self):
+        res = &#34;&#34;
+        if self.negated:
+            res += &#34;not &#34;
+        res += f&#34;{self.predicate}&#34;
+        if len(self.inputs) &gt; 0:
+            res += f&#34;({&#39;,&#39;.join([ str(term) for term in self.inputs ])})&#34;
+        return res
+
+    def __repr__(self):
+        return str(self)
+
+    def get_variables(self):
+        &#34;&#34;&#34;Rcursively finds all the variables used in the atom.
+
+        Returns:
+            :obj:`list`: The list of variables as strings.
+        &#34;&#34;&#34;
+        vars = set()
+        for term in self.inputs:
+            if type(term) == Atom:
+                vars.update(term.get_variables())
+            elif re.match(r&#34;[A-Z][a-zA-Z0-9]*&#34;, term):
+                vars.add(term)
+        return vars</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.parsing.lark_optparser.Atom.get_variables"><code class="name flex">
+<span>def <span class="ident">get_variables</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rcursively finds all the variables used in the atom.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code>list</code>: The list of variables as strings.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_variables(self):
+    &#34;&#34;&#34;Rcursively finds all the variables used in the atom.
+
+    Returns:
+        :obj:`list`: The list of variables as strings.
+    &#34;&#34;&#34;
+    vars = set()
+    for term in self.inputs:
+        if type(term) == Atom:
+            vars.update(term.get_variables())
+        elif re.match(r&#34;[A-Z][a-zA-Z0-9]*&#34;, term):
+            vars.add(term)
+    return vars</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.NormalRule"><code class="flex name class">
+<span>class <span class="ident">NormalRule</span></span>
+<span>(</span><span>head, body, choice)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class for normal rules.</p>
+<p>If a rule has more than one atom in the head, the head must be an annotated disjunction.
+Then each of the atoms must have a weight.</p>
+<p>Implements a custom <code>__str__</code> method.</p>
+<p>Args:
+<br>
+head (:obj:<code>list</code>): The list of head atoms. May be empty.
+body (:obj:<code>list</code>): The list of body atoms. May be empty.
+choice (bool): Whether the rule is a choice rule.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt>head (:obj:<code>list</code>): The list of head atoms. May be empty.</dt>
+<dt>body (:obj:<code>list</code>): The list of body atoms. May be empty.</dt>
+<dt><strong><code>choice</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether the rule is a choice rule.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NormalRule(object):
+    &#34;&#34;&#34;A class for normal rules.
+
+    If a rule has more than one atom in the head, the head must be an annotated disjunction.
+    Then each of the atoms must have a weight.
+
+    Implements a custom `__str__` method.
+
+    Args:        
+        head (:obj:`list`): The list of head atoms. May be empty.
+        body (:obj:`list`): The list of body atoms. May be empty.
+        choice (bool): Whether the rule is a choice rule.
+
+    Attributes:
+        head (:obj:`list`): The list of head atoms. May be empty.
+        body (:obj:`list`): The list of body atoms. May be empty.
+        choice (bool): Whether the rule is a choice rule.
+    &#34;&#34;&#34;
+    def __init__(self, head, body, choice):
+        self.head = head
+        self.body = body if body is not None else []
+        self.choice = choice
+
+    def __str__(self):
+        res = &#34;&#34;
+        if self.head is not None:
+            if self.choice:
+                res += f&#34;{{{str(self.head[0])}}}&#34;
+            else:
+                res += f&#34;{str(self.head[0])}&#34;
+        if len(self.body) &gt; 0:
+            res +=f&#34;:-{&#39;,&#39;.join([str(x) for x in self.body])}.&#34;
+        else:
+            res += &#34;.&#34;
+        return res
+
+    def __repr__(self):
+        return str(self)
+    
+    def asp_string(self):
+        &#34;&#34;&#34;Generates an ASP representation of the rule.
+
+        Implements a custom `__str__` method.
+        
+        Returns:
+            :obj:`string`: The representation of this rule as an ASP rule.
+        &#34;&#34;&#34;
+        return str(self)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.parsing.lark_optparser.NormalRule.asp_string"><code class="name flex">
+<span>def <span class="ident">asp_string</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates an ASP representation of the rule.</p>
+<p>Implements a custom <code>__str__</code> method.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code>string</code>: The representation of this rule as an ASP rule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def asp_string(self):
+    &#34;&#34;&#34;Generates an ASP representation of the rule.
+
+    Implements a custom `__str__` method.
+    
+    Returns:
+        :obj:`string`: The representation of this rule as an ASP rule.
+    &#34;&#34;&#34;
+    return str(self)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer"><code class="flex name class">
+<span>class <span class="ident">OptProgramTransformer</span></span>
+<span>(</span><span>visit_tokens: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The corresponding OptProgram semantics class for the OPTGRAMMAR grammar.</p>
+<p>See the lark documentation for how this works.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OptProgramTransformer(Transformer):
+    &#34;&#34;&#34;The corresponding OptProgram semantics class for the OPTGRAMMAR grammar.
+    
+    See the lark documentation for how this works.
+    &#34;&#34;&#34;
+    def program(self, ast):  # noqa
+        return ast # sort out the comments
+
+    def rule(self, ast):  # noqa
+        return ast[0]
+
+    def fact(self, ast): #noqa
+        ast = ast[0]
+        return NormalRule([ast[&#39;atom&#39;]], [], ast[&#39;choice&#39;])
+
+    def normal_rule(self, ast):  # noqa
+        return NormalRule([ast[0][&#39;atom&#39;]], ast[1], ast[0][&#39;choice&#39;])
+    
+    def constraint(self, ast): #noqa
+        return NormalRule(None, ast[0], False)
+    
+    def weakconstraint(self, ast): #noqa
+        return WeakConstraint(ast[0], ast[1], ast[2])
+    
+    def head(self, ast):
+        if len(ast) == 3:
+            return { &#39;atom&#39; : ast[1], &#39;choice&#39; : True }
+        else:
+            return { &#39;atom&#39; : ast[0], &#39;choice&#39; : False }
+    
+    def body(self, ast):  # noqa
+        if len(ast) == 1 and ast[0] == None:
+            return None
+        return ast
+
+    def atom(self, ast):  # noqa
+        negated = str(ast[0]) == &#39;not&#39;
+        if len(ast) == 3:
+            return Atom(str(ast[1]), inputs = ast[2], negated = negated)
+        else:
+            return Atom(str(ast[1]), negated = negated)
+
+    def input(self, ast):  # noqa
+        return ast
+
+    def term(self, ast):  # noqa
+        ast = ast[0]
+        if type(ast) == Atom:
+            return ast
+    
+        if &#34;.&#34; in ast and (ast[0] != &#39;&#34;&#39; or ast[-1] != &#39;&#34;&#39;):
+            return &#39;&#34;&#39; + ast + &#39;&#34;&#39;
+        return str(ast)
+
+    def variable(self, ast): # noqa
+        return str(ast[0])
+
+    def weight(self, ast):  # noqa
+        return str(ast[0])</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>lark.visitors.Transformer</li>
+<li>lark.visitors._Decoratable</li>
+<li>abc.ABC</li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.atom"><code class="name flex">
+<span>def <span class="ident">atom</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def atom(self, ast):  # noqa
+    negated = str(ast[0]) == &#39;not&#39;
+    if len(ast) == 3:
+        return Atom(str(ast[1]), inputs = ast[2], negated = negated)
+    else:
+        return Atom(str(ast[1]), negated = negated)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.body"><code class="name flex">
+<span>def <span class="ident">body</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def body(self, ast):  # noqa
+    if len(ast) == 1 and ast[0] == None:
+        return None
+    return ast</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.constraint"><code class="name flex">
+<span>def <span class="ident">constraint</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def constraint(self, ast): #noqa
+    return NormalRule(None, ast[0], False)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.fact"><code class="name flex">
+<span>def <span class="ident">fact</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fact(self, ast): #noqa
+    ast = ast[0]
+    return NormalRule([ast[&#39;atom&#39;]], [], ast[&#39;choice&#39;])</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.head"><code class="name flex">
+<span>def <span class="ident">head</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def head(self, ast):
+    if len(ast) == 3:
+        return { &#39;atom&#39; : ast[1], &#39;choice&#39; : True }
+    else:
+        return { &#39;atom&#39; : ast[0], &#39;choice&#39; : False }</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.input"><code class="name flex">
+<span>def <span class="ident">input</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def input(self, ast):  # noqa
+    return ast</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.normal_rule"><code class="name flex">
+<span>def <span class="ident">normal_rule</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_rule(self, ast):  # noqa
+    return NormalRule([ast[0][&#39;atom&#39;]], ast[1], ast[0][&#39;choice&#39;])</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.program"><code class="name flex">
+<span>def <span class="ident">program</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def program(self, ast):  # noqa
+    return ast # sort out the comments</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.rule"><code class="name flex">
+<span>def <span class="ident">rule</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rule(self, ast):  # noqa
+    return ast[0]</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.term"><code class="name flex">
+<span>def <span class="ident">term</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def term(self, ast):  # noqa
+    ast = ast[0]
+    if type(ast) == Atom:
+        return ast
+
+    if &#34;.&#34; in ast and (ast[0] != &#39;&#34;&#39; or ast[-1] != &#39;&#34;&#39;):
+        return &#39;&#34;&#39; + ast + &#39;&#34;&#39;
+    return str(ast)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.variable"><code class="name flex">
+<span>def <span class="ident">variable</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def variable(self, ast): # noqa
+    return str(ast[0])</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.weakconstraint"><code class="name flex">
+<span>def <span class="ident">weakconstraint</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def weakconstraint(self, ast): #noqa
+    return WeakConstraint(ast[0], ast[1], ast[2])</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.OptProgramTransformer.weight"><code class="name flex">
+<span>def <span class="ident">weight</span></span>(<span>self, ast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def weight(self, ast):  # noqa
+    return str(ast[0])</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.lark_optparser.WeakConstraint"><code class="flex name class">
+<span>class <span class="ident">WeakConstraint</span></span>
+<span>(</span><span>body, weight, terms)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class for weak constraints.</p>
+<p>Weak constraints are constraints whose satisfaction is (un)desirable.
+This means they have a weight and an empty head.
+Furthermore, every weak constraint may have a list of terms associated with it.
+The penalty <code>weight</code> will be triggered exactly once if any weak constraint with this list of terms
+is not satisfied.</p>
+<p>Implements a custom <code>__str__</code> method.</p>
+<p>Args:
+<br>
+body (:obj:<code>list</code>): The list of body atoms. May be empty.
+weight (int): Whether the rule is a choice rule.
+terms (:obj:<code>list</code>): The list of terms that associated with this constraint. May be empty.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt>body (:obj:<code>list</code>): The list of body atoms. May be empty.</dt>
+<dt><strong><code>weight</code></strong> :&ensp;<code>int</code></dt>
+<dd>Whether the rule is a choice rule.</dd>
+</dl>
+<p>terms (:obj:<code>list</code>): The list of terms that associated with this constraint. May be empty.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WeakConstraint(object):
+    &#34;&#34;&#34;A class for weak constraints.
+    
+    Weak constraints are constraints whose satisfaction is (un)desirable. 
+    This means they have a weight and an empty head.
+    Furthermore, every weak constraint may have a list of terms associated with it. 
+    The penalty `weight` will be triggered exactly once if any weak constraint with this list of terms
+    is not satisfied.
+
+    Implements a custom `__str__` method.
+
+    Args:        
+        body (:obj:`list`): The list of body atoms. May be empty.
+        weight (int): Whether the rule is a choice rule.
+        terms (:obj:`list`): The list of terms that associated with this constraint. May be empty.
+
+    Attributes:
+        body (:obj:`list`): The list of body atoms. May be empty.
+        weight (int): Whether the rule is a choice rule.
+        terms (:obj:`list`): The list of terms that associated with this constraint. May be empty.
+    &#34;&#34;&#34;
+    def __init__(self, body, weight, terms):
+        self.body = body
+        self.weight = weight
+        self.terms = terms if terms is not None else []
+
+    def __str__(self):
+        res = &#34;:~&#34;
+        if len(self.body) &gt; 0:
+            res +=f&#34;{&#39;,&#39;.join([str(x) for x in self.body])}.&#34;
+        else:
+            res += &#34;.&#34;
+        res += f&#34;[{self.weight}{&#39;&#39; if len(self.terms) == 0 else &#39;,&#39;}{&#39;,&#39;.join([str(x) for x in self.terms])}]&#34;
+        return res
+
+    def __repr__(self):
+        return str(self)
+    
+    def asp_string(self):
+        &#34;&#34;&#34;Generates an ASP representation of the rule.
+
+        Implements a custom `__str__` method.
+        
+        Returns:
+            :obj:`string`: The representation of this rule as an ASP rule.
+        &#34;&#34;&#34;
+        return str(self)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.parsing.lark_optparser.WeakConstraint.asp_string"><code class="name flex">
+<span>def <span class="ident">asp_string</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates an ASP representation of the rule.</p>
+<p>Implements a custom <code>__str__</code> method.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code>string</code>: The representation of this rule as an ASP rule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def asp_string(self):
+    &#34;&#34;&#34;Generates an ASP representation of the rule.
+
+    Implements a custom `__str__` method.
+    
+    Returns:
+        :obj:`string`: The representation of this rule as an ASP rule.
+    &#34;&#34;&#34;
+    return str(self)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aspmc.parsing" href="index.html">aspmc.parsing</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="aspmc.parsing.lark_optparser.Atom" href="#aspmc.parsing.lark_optparser.Atom">Atom</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.lark_optparser.Atom.get_variables" href="#aspmc.parsing.lark_optparser.Atom.get_variables">get_variables</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.lark_optparser.NormalRule" href="#aspmc.parsing.lark_optparser.NormalRule">NormalRule</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.lark_optparser.NormalRule.asp_string" href="#aspmc.parsing.lark_optparser.NormalRule.asp_string">asp_string</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer" href="#aspmc.parsing.lark_optparser.OptProgramTransformer">OptProgramTransformer</a></code></h4>
+<ul class="two-column">
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.atom" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.atom">atom</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.body" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.body">body</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.constraint" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.constraint">constraint</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.fact" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.fact">fact</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.head" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.head">head</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.input" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.input">input</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.normal_rule" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.normal_rule">normal_rule</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.program" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.program">program</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.rule" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.rule">rule</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.term" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.term">term</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.variable" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.variable">variable</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.weakconstraint" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.weakconstraint">weakconstraint</a></code></li>
+<li><code><a title="aspmc.parsing.lark_optparser.OptProgramTransformer.weight" href="#aspmc.parsing.lark_optparser.OptProgramTransformer.weight">weight</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.lark_optparser.WeakConstraint" href="#aspmc.parsing.lark_optparser.WeakConstraint">WeakConstraint</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.lark_optparser.WeakConstraint.asp_string" href="#aspmc.parsing.lark_optparser.WeakConstraint.asp_string">asp_string</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

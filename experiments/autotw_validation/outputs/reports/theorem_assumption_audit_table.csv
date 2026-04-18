@@ -1,0 +1,4 @@
+obligation_id,check,status,notes
+DMC1.C1,Objective algebra decomposition,pass,Linear weighted decomposition verified by symbolic simplification
+DMC2.C1,Regret envelope symbolic skeleton,pass,Envelope term algebraically well formed under bounded predictor error assumption
+DMC3.C1,Regime score difference equivalence,pass,Delta S simplification preserves exact-vs-approx sign condition

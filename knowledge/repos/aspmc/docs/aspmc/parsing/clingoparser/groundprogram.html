@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>aspmc.parsing.clingoparser.groundprogram API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aspmc.parsing.clingoparser.groundprogram</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from dataclasses  import dataclass
+from collections import namedtuple
+from typing import List, Iterable, Union, Dict
+from clingo import Symbol, TruthValue, Function # pylint: disable=import-error, unused-import, no-name-in-module
+from aspmc.parsing.clingoparser.literals import Literal
+
+class ClingoObject(object):
+    pass
+
+
+@dataclass
+class ClingoOutputAtom(ClingoObject):
+    symbol: Symbol
+    atom: int
+    order: int = 0
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return (self.symbol, self.atom) &lt; (other.symbol, other.atom)
+        elif isinstance(other, ClingoObject):
+            return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)
+
+
+class ClingoRuleABC(ClingoObject):
+    pass
+
+
+@dataclass
+class ClingoRule(ClingoRuleABC):
+    choice: bool
+    head: List[int]
+    body: List[int]
+    order: int = 1
+    
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return (self.choice, self.head, self.body) &lt; (other.choice, other.head, other.body)
+        elif isinstance(other, ClingoObject):
+            return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)
+
+
+@dataclass
+class ClingoProject(ClingoObject):
+    atoms: List[int]
+    order: int = 3
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return self.atoms &lt; other.atoms
+        elif isinstance(other, ClingoObject):
+            return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)
+
+
+ClingoExternal   = namedtuple(&#39;ClingoExternal&#39;, [&#39;atom&#39;, &#39;value&#39;])
+ClingoHeuristic  = namedtuple(&#39;ClingoHeuristic&#39;, [&#39;atom&#39;, &#39;type&#39;, &#39;bias&#39;, &#39;priority&#39;, &#39;condition&#39;])
+ClingoMinimize   = namedtuple(&#39;ClingoMinimize&#39;, [&#39;priority&#39;, &#39;literals&#39;])
+ClingoWeightRule = namedtuple(&#39;ClingoWeightRule&#39;, [&#39;choice&#39;, &#39;head&#39;, &#39;body&#39;, &#39;lower&#39;])
+ClingoAssume     = namedtuple(&#39;ClingoAssume&#39;, [&#39;literals&#39;])
+
+@dataclass
+class GroundProgram():
+    objects : List[ClingoObject]
+
+    def __init__(self, objects: Iterable[ClingoObject] = []):  # pylint: disable=dangerous-default-value
+        self.objects = list(objects)
+
+    def add_rule(self, choice: bool = False, head: Iterable[int] = [], body: Iterable[int] = []) -&gt; None: # pylint: disable=dangerous-default-value
+        self.objects.append(ClingoRule(choice=choice, head=list(head), body=list(body)))
+
+    def add_rules(self, rules: Iterable[ClingoRule]) -&gt; None:
+        self.objects.extend(rules)
+
+    def add_project(self, atoms: List[int] = []) -&gt; None: # pylint: disable=dangerous-default-value
+        self.objects.append(ClingoProject(list(atoms)))
+
+
+    def add(self, obj: Union[ClingoObject, Iterable[ClingoObject]]) -&gt; None:
+        if isinstance(obj, ClingoObject):
+            self.objects.append(obj)
+        elif isinstance(obj, Iterable): # pylint: disable=isinstance-second-argument-not-valid-type
+            self.objects.extend(obj)
+
+    def __str__(self):
+        return str(PrettyGroundProgram(self.objects))
+
+    def __iter__(self):
+        return iter(self.objects)
+
+    # def add_external(self, external: Union[External, ClingoExternal]) -&gt; None:
+    #     if isinstance(external, ClingoExternal):
+    #         external = self._rewrite_external(external)
+    #     self.externals.append(external)
+
+    # def add_assume(self, literals: List[int]) -&gt; None:
+    #     self.assumtions.append(ClingoAssume(literals))
+
+    # def add_external(self, atom: int, value: TruthValue = TruthValue.False_) -&gt; None:
+    #     self.externals.append(ClingoExternal(atom, value))
+
+    # def add_heuristic(self, atom: int, type: HeuristicType, bias: int, priority: int, condition: List[int]) -&gt; None:
+    #     self.externals.append(ClingoHeuristic(atom, type, bias, condition))
+
+    # def add_minimize(self, priority: int, literals: List[Tuple[int, int]]) -&gt; None:
+    #     self.externals.append(ClingoMinimize(priority, literals))
+
+    # def add_project(self, atoms: List[int]) -&gt; None:
+    #     self.externals.append(ClingoProject(atoms))
+
+    # def add_weight_rule(self, head: List[int], lower: int, body: List[Tuple[int, int]], choice: bool = False) -&gt; None:
+    #     self.externals.append(ClingoWeightRule(choice, head, body, lower))
+
+
+    # def as_list(self):
+    #     return self.facts + self.rules + self.output_atoms
+
+    # def __repr__(self):
+    #     facts = &#39;.\n&#39;.join(repr(x) for x in self.facts)
+    #     if facts:
+    #         result = facts + &#39;.&#39;
+    #     else:
+    #         result = &#39;&#39;
+    #     if self.cfacts:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.cfacts)
+    #     if self.dfacts:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.dfacts)
+    #     if self.rules:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.rules)
+    #     # if self.output_atoms:
+    #     #     if result:
+    #     #         result += &#39;\n\n&#39;
+    #     #     result += &#39;\n&#39;.join(repr(x) for x in self.output_atoms)
+    #     if self.assumtions:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.assumtions)
+    #     if self.externals:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.externals)
+    #     if self.heuristics:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.heuristics)
+    #     if self.minimizes:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.minimizes)
+    #     if self.projections:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.projections)
+    #     if self.weight_rules:
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.weight_rules)
+    #     return result
+
+class PrettyClingoOject:
+    pass
+
+
+class PrettyRule(PrettyClingoOject):
+
+    def __init__(self, choice: bool = False, head: Iterable[&#39;Literal&#39;] = [], body: Iterable[&#39;Literal&#39;] = []): # pylint: disable=dangerous-default-value
+        head = list(head)
+        body = list(body)
+        self.choice = choice
+        self.head   = head
+        self.body   = body
+
+    def __repr__(self):
+        if self.head:
+            head = &#39;, &#39;.join(str(x) for x in self.head)
+            if self.choice:
+                head = &#39;{ &#39; + head + &#39; }&#39;
+        else:
+            head = &#39;&#39;
+        if self.body:
+            body = &#39;:- &#39; + &#39;, &#39;.join(str(x) for x in self.body)
+        else:
+            body = &#39;&#39;
+        if head and body:
+            return head + &#39; &#39; + body + &#39;.&#39;
+        else:
+            return head + body + &#39;.&#39;
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return (self.choice, self.head, self.body) &lt; (other.choice, other.head, other.body)
+        # elif isinstance(other, ClingoObject):
+        #     return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)
+
+
+class PrettyProjection(PrettyClingoOject):
+
+    def __init__(self, atoms: Iterable[Symbol]):
+        if not isinstance(atoms, set):
+            atoms = set(atoms)
+        self.atoms = atoms
+
+    def __repr__(self):
+        atoms = &#39;,&#39;.join(repr(atom) for atom in self.atoms)
+        if atoms:
+            return &#39;#project &#39; + atoms  + &#39;.&#39;
+        else:
+            return &#39;#project.&#39;
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return self.atoms &lt; other.atoms
+        # elif isinstance(other, ClingoObject):
+        #     return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)
+
+
+class PrettyExternal(PrettyClingoOject):
+
+    def __init__(self, atom: Symbol, value: TruthValue):
+        self.atom  = atom
+        self.value = value
+
+    def __repr__(self):
+        return &#39;#external &#39; + repr(self.atom) + &#39; [&#39; + (&#39;True&#39; if self.value else &#39;False&#39;) + &#39;].&#39;
+
+class PrettyGroundProgram():
+
+    def __init__(self, program: Iterable[&#39;ClingoObject&#39;]):
+        self.symbols = set()
+        self.atom_to_symbol: Dict[int, Symbol] = dict()
+        self.facts:  List[Symbol]  = list()
+        self.cfacts: List[Symbol]  = list()
+        self.dfacts: List[Symbol]  = list()
+        self.rules : List[PrettyRule]  = list()
+        self.projections  : List[PrettyProjection] = list()
+        self.assumtions   : List[ClingoAssume]     = list()
+        self.externals    : List[&#39;ClingoExternal&#39;]         = list()
+        self.heuristics   : List[ClingoHeuristic]  = list()
+        self.minimizes    : List[ClingoMinimize]   = list()
+        self.weight_rules : List[ClingoWeightRule] = list()
+        self.add(program)
+
+    def add(self, program: Iterable[&#39;ClingoObject&#39;]) -&gt; None:
+        output_atoms: Iterable[ClingoOutputAtom] = []
+        others: Iterable[&#39;ClingoObject&#39;] = []
+
+        for obj in program:
+            if isinstance(obj, ClingoOutputAtom):
+                output_atoms.append(obj)
+            else:
+                others.append(obj)
+
+        for output_atom in output_atoms:
+            self.symbols.add(output_atom.symbol)
+            if output_atom.atom != 0:
+                self.atom_to_symbol.update({output_atom.atom : output_atom.symbol})
+            else:
+                self.facts.append(output_atom.symbol)
+
+        self._add(others)
+        # discard anonymous facts
+        self.facts = list(fact for fact in self.facts if fact in self.symbols)
+
+
+    def _rewrite_rule(self, rule: &#39;ClingoRule&#39;) -&gt; PrettyRule:
+        return self._rewrite_rule2(rule.choice, rule.head, rule.body)
+
+    def _rewrite_rule2(self, choice: bool, head, body) -&gt; PrettyRule:
+        head = [self._rewrite_literal(literal) for literal in head]
+        body = [self._rewrite_literal(literal) for literal in body]
+        return PrettyRule(choice, head, body)
+
+    def _rewrite_literal(self, literal) -&gt; Literal:
+        if abs(literal) in self.atom_to_symbol:
+            lit = self.atom_to_symbol[abs(literal)]
+        else:
+            i = abs(literal)
+            while True:
+                lit = Function(&#39;x_&#39; + str(i))
+                if lit not in self.symbols:
+                    break
+                i += 1
+
+        return Literal(lit, literal &gt;= 0)
+
+    def __add_rule(self, rule: PrettyRule) -&gt; None:
+        if not rule.body and len(rule.head) == 1:
+            if rule.choice:
+                self.cfacts.append(rule)
+            else:
+                self.facts.append(next(iter(rule.head)).atom)
+        elif not rule.body:
+            self.dfacts.append(rule)
+        else:
+            self.rules.append(rule)
+
+    def add_rule(self, rule: &#39;ClingoRule&#39;) -&gt; PrettyRule:
+        rule = self._rewrite_rule(rule)
+        self.__add_rule(rule)
+        return rule
+
+    def add_rules(self, rules: Iterable[&#39;ClingoRule&#39;]) -&gt; None:
+        for rule in rules:
+            self.add_rule(rule)
+
+    def _rewrite_projection(self, projection: &#39;ClingoProject&#39;) -&gt; PrettyProjection:
+        return PrettyProjection(self._rewrite_literal(atom) for atom in projection.atoms)
+
+    def add_projection(self, projection: Union[PrettyProjection, &#39;ClingoProject&#39;]) -&gt; None:
+        projection = self._rewrite_projection(projection)
+        self.projections.append(projection)
+
+    def _rewrite_external(self, external: &#39;ClingoExternal&#39;) -&gt; PrettyExternal:
+        return PrettyExternal(self._rewrite_literal(external.atom), external.value)
+
+    def add_external(self, external: &#39;ClingoExternal&#39;) -&gt; None:
+        external = self._rewrite_external(external)
+        self.externals.append(external)
+
+    def add_project(self, atoms: List[int]) -&gt; None:
+        self.add_projection(PrettyProjection(self.atom_to_symbol[atom] for atom in atoms))
+
+    def _add(self, obj: Union[&#39;ClingoObject&#39;, Iterable[&#39;ClingoObject&#39;]]) -&gt; None:
+        if isinstance(obj, ClingoRule):
+            self.add_rule(obj)
+        if isinstance(obj, ClingoProject):
+            self.add_projection(obj)
+        elif isinstance(obj, ClingoAssume):
+            self.assumtions.append(obj)
+        elif isinstance(obj, ClingoExternal):
+            self.add_external(obj)
+        elif isinstance(obj, ClingoHeuristic):
+            self.heuristics.append(obj)
+        elif isinstance(obj, ClingoMinimize):
+            self.minimizes.append(obj)
+        elif isinstance(obj, ClingoWeightRule):
+            self.weight_rules.append(obj)
+        elif isinstance(obj, Iterable):
+            for o in obj:
+                self._add(o)
+
+    def sort(self) -&gt; None:
+        self.facts.sort()
+        self.cfacts.sort()
+        self.dfacts.sort()
+        self.rules.sort()
+        self.projections.sort()
+        self.assumtions.sort()
+        self.externals.sort()
+        self.heuristics.sort()
+        self.minimizes.sort()
+        self.weight_rules.sort()
+
+    def __repr__(self):
+        self.sort()
+        facts = &#39;.\n&#39;.join(repr(x) for x in self.facts)
+        if facts:
+            result = facts + &#39;.&#39;
+        else:
+            result = &#39;&#39;
+        if self.cfacts:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.cfacts)
+        if self.dfacts:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.dfacts)
+        if self.rules:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.rules)
+        # if self.output_atoms:
+        #     if result:
+        #         result += &#39;\n\n&#39;
+        #     result += &#39;\n&#39;.join(repr(x) for x in self.output_atoms)
+        if self.assumtions:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.assumtions)
+        if self.externals:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.externals)
+        if self.heuristics:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.heuristics)
+        if self.minimizes:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.minimizes)
+        if self.projections:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.projections)
+        if self.weight_rules:
+            result += &#39;\n&#39;.join(repr(x) for x in self.weight_rules)
+        return result</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoAssume"><code class="flex name class">
+<span>class <span class="ident">ClingoAssume</span></span>
+<span>(</span><span>literals)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ClingoAssume(literals,)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoAssume.literals"><code class="name">var <span class="ident">literals</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoExternal"><code class="flex name class">
+<span>class <span class="ident">ClingoExternal</span></span>
+<span>(</span><span>atom, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ClingoExternal(atom, value)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoExternal.atom"><code class="name">var <span class="ident">atom</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoExternal.value"><code class="name">var <span class="ident">value</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic"><code class="flex name class">
+<span>class <span class="ident">ClingoHeuristic</span></span>
+<span>(</span><span>atom, type, bias, priority, condition)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ClingoHeuristic(atom, type, bias, priority, condition)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.atom"><code class="name">var <span class="ident">atom</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.bias"><code class="name">var <span class="ident">bias</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.condition"><code class="name">var <span class="ident">condition</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.priority"><code class="name">var <span class="ident">priority</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.type"><code class="name">var <span class="ident">type</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoMinimize"><code class="flex name class">
+<span>class <span class="ident">ClingoMinimize</span></span>
+<span>(</span><span>priority, literals)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ClingoMinimize(priority, literals)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoMinimize.literals"><code class="name">var <span class="ident">literals</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoMinimize.priority"><code class="name">var <span class="ident">priority</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoObject"><code class="flex name class">
+<span>class <span class="ident">ClingoObject</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClingoObject(object):
+    pass</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom" href="#aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom">ClingoOutputAtom</a></li>
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoProject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoProject">ClingoProject</a></li>
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRuleABC" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRuleABC">ClingoRuleABC</a></li>
+</ul>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom"><code class="flex name class">
+<span>class <span class="ident">ClingoOutputAtom</span></span>
+<span>(</span><span>symbol: clingo.symbol.Symbol, atom: int, order: int = 0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ClingoOutputAtom(symbol: clingo.symbol.Symbol, atom: int, order: int = 0)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class ClingoOutputAtom(ClingoObject):
+    symbol: Symbol
+    atom: int
+    order: int = 0
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return (self.symbol, self.atom) &lt; (other.symbol, other.atom)
+        elif isinstance(other, ClingoObject):
+            return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.atom"><code class="name">var <span class="ident">atom</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.order"><code class="name">var <span class="ident">order</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.symbol"><code class="name">var <span class="ident">symbol</span> : clingo.symbol.Symbol</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoProject"><code class="flex name class">
+<span>class <span class="ident">ClingoProject</span></span>
+<span>(</span><span>atoms: List[int], order: int = 3)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ClingoProject(atoms: List[int], order: int = 3)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class ClingoProject(ClingoObject):
+    atoms: List[int]
+    order: int = 3
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return self.atoms &lt; other.atoms
+        elif isinstance(other, ClingoObject):
+            return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoProject.atoms"><code class="name">var <span class="ident">atoms</span> : List[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoProject.order"><code class="name">var <span class="ident">order</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoRule"><code class="flex name class">
+<span>class <span class="ident">ClingoRule</span></span>
+<span>(</span><span>choice: bool, head: List[int], body: List[int], order: int = 1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ClingoRule(choice: bool, head: List[int], body: List[int], order: int = 1)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class ClingoRule(ClingoRuleABC):
+    choice: bool
+    head: List[int]
+    body: List[int]
+    order: int = 1
+    
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return (self.choice, self.head, self.body) &lt; (other.choice, other.head, other.body)
+        elif isinstance(other, ClingoObject):
+            return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRuleABC" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRuleABC">ClingoRuleABC</a></li>
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoRule.body"><code class="name">var <span class="ident">body</span> : List[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoRule.choice"><code class="name">var <span class="ident">choice</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoRule.head"><code class="name">var <span class="ident">head</span> : List[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoRule.order"><code class="name">var <span class="ident">order</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoRuleABC"><code class="flex name class">
+<span>class <span class="ident">ClingoRuleABC</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClingoRuleABC(ClingoObject):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule">ClingoRule</a></li>
+</ul>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule"><code class="flex name class">
+<span>class <span class="ident">ClingoWeightRule</span></span>
+<span>(</span><span>choice, head, body, lower)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ClingoWeightRule(choice, head, body, lower)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.body"><code class="name">var <span class="ident">body</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.choice"><code class="name">var <span class="ident">choice</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.head"><code class="name">var <span class="ident">head</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.lower"><code class="name">var <span class="ident">lower</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.GroundProgram"><code class="flex name class">
+<span>class <span class="ident">GroundProgram</span></span>
+<span>(</span><span>objects: Iterable[<a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a>] = [])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>GroundProgram(objects: Iterable[aspmc.parsing.clingoparser.groundprogram.ClingoObject] = [])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class GroundProgram():
+    objects : List[ClingoObject]
+
+    def __init__(self, objects: Iterable[ClingoObject] = []):  # pylint: disable=dangerous-default-value
+        self.objects = list(objects)
+
+    def add_rule(self, choice: bool = False, head: Iterable[int] = [], body: Iterable[int] = []) -&gt; None: # pylint: disable=dangerous-default-value
+        self.objects.append(ClingoRule(choice=choice, head=list(head), body=list(body)))
+
+    def add_rules(self, rules: Iterable[ClingoRule]) -&gt; None:
+        self.objects.extend(rules)
+
+    def add_project(self, atoms: List[int] = []) -&gt; None: # pylint: disable=dangerous-default-value
+        self.objects.append(ClingoProject(list(atoms)))
+
+
+    def add(self, obj: Union[ClingoObject, Iterable[ClingoObject]]) -&gt; None:
+        if isinstance(obj, ClingoObject):
+            self.objects.append(obj)
+        elif isinstance(obj, Iterable): # pylint: disable=isinstance-second-argument-not-valid-type
+            self.objects.extend(obj)
+
+    def __str__(self):
+        return str(PrettyGroundProgram(self.objects))
+
+    def __iter__(self):
+        return iter(self.objects)
+
+    # def add_external(self, external: Union[External, ClingoExternal]) -&gt; None:
+    #     if isinstance(external, ClingoExternal):
+    #         external = self._rewrite_external(external)
+    #     self.externals.append(external)
+
+    # def add_assume(self, literals: List[int]) -&gt; None:
+    #     self.assumtions.append(ClingoAssume(literals))
+
+    # def add_external(self, atom: int, value: TruthValue = TruthValue.False_) -&gt; None:
+    #     self.externals.append(ClingoExternal(atom, value))
+
+    # def add_heuristic(self, atom: int, type: HeuristicType, bias: int, priority: int, condition: List[int]) -&gt; None:
+    #     self.externals.append(ClingoHeuristic(atom, type, bias, condition))
+
+    # def add_minimize(self, priority: int, literals: List[Tuple[int, int]]) -&gt; None:
+    #     self.externals.append(ClingoMinimize(priority, literals))
+
+    # def add_project(self, atoms: List[int]) -&gt; None:
+    #     self.externals.append(ClingoProject(atoms))
+
+    # def add_weight_rule(self, head: List[int], lower: int, body: List[Tuple[int, int]], choice: bool = False) -&gt; None:
+    #     self.externals.append(ClingoWeightRule(choice, head, body, lower))
+
+
+    # def as_list(self):
+    #     return self.facts + self.rules + self.output_atoms
+
+    # def __repr__(self):
+    #     facts = &#39;.\n&#39;.join(repr(x) for x in self.facts)
+    #     if facts:
+    #         result = facts + &#39;.&#39;
+    #     else:
+    #         result = &#39;&#39;
+    #     if self.cfacts:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.cfacts)
+    #     if self.dfacts:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.dfacts)
+    #     if self.rules:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.rules)
+    #     # if self.output_atoms:
+    #     #     if result:
+    #     #         result += &#39;\n\n&#39;
+    #     #     result += &#39;\n&#39;.join(repr(x) for x in self.output_atoms)
+    #     if self.assumtions:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.assumtions)
+    #     if self.externals:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.externals)
+    #     if self.heuristics:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.heuristics)
+    #     if self.minimizes:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.minimizes)
+    #     if self.projections:
+    #         if result:
+    #             result += &#39;\n\n&#39;
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.projections)
+    #     if self.weight_rules:
+    #         result += &#39;\n&#39;.join(repr(x) for x in self.weight_rules)
+    #     return result</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.GroundProgram.objects"><code class="name">var <span class="ident">objects</span> : List[<a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a>]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.GroundProgram.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, obj: Union[<a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a>, Iterable[<a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a>]]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, obj: Union[ClingoObject, Iterable[ClingoObject]]) -&gt; None:
+    if isinstance(obj, ClingoObject):
+        self.objects.append(obj)
+    elif isinstance(obj, Iterable): # pylint: disable=isinstance-second-argument-not-valid-type
+        self.objects.extend(obj)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_project"><code class="name flex">
+<span>def <span class="ident">add_project</span></span>(<span>self, atoms: List[int] = []) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_project(self, atoms: List[int] = []) -&gt; None: # pylint: disable=dangerous-default-value
+    self.objects.append(ClingoProject(list(atoms)))</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_rule"><code class="name flex">
+<span>def <span class="ident">add_rule</span></span>(<span>self, choice: bool = False, head: Iterable[int] = [], body: Iterable[int] = []) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_rule(self, choice: bool = False, head: Iterable[int] = [], body: Iterable[int] = []) -&gt; None: # pylint: disable=dangerous-default-value
+    self.objects.append(ClingoRule(choice=choice, head=list(head), body=list(body)))</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_rules"><code class="name flex">
+<span>def <span class="ident">add_rules</span></span>(<span>self, rules: Iterable[<a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule">ClingoRule</a>]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_rules(self, rules: Iterable[ClingoRule]) -&gt; None:
+    self.objects.extend(rules)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject"><code class="flex name class">
+<span>class <span class="ident">PrettyClingoOject</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PrettyClingoOject:
+    pass</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.PrettyExternal" href="#aspmc.parsing.clingoparser.groundprogram.PrettyExternal">PrettyExternal</a></li>
+<li><a title="aspmc.parsing.clingoparser.groundprogram.PrettyProjection" href="#aspmc.parsing.clingoparser.groundprogram.PrettyProjection">PrettyProjection</a></li>
+<li><a title="aspmc.parsing.clingoparser.groundprogram.PrettyRule" href="#aspmc.parsing.clingoparser.groundprogram.PrettyRule">PrettyRule</a></li>
+</ul>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyExternal"><code class="flex name class">
+<span>class <span class="ident">PrettyExternal</span></span>
+<span>(</span><span>atom: clingo.symbol.Symbol, value: clingo.core.TruthValue)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PrettyExternal(PrettyClingoOject):
+
+    def __init__(self, atom: Symbol, value: TruthValue):
+        self.atom  = atom
+        self.value = value
+
+    def __repr__(self):
+        return &#39;#external &#39; + repr(self.atom) + &#39; [&#39; + (&#39;True&#39; if self.value else &#39;False&#39;) + &#39;].&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject" href="#aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject">PrettyClingoOject</a></li>
+</ul>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram"><code class="flex name class">
+<span>class <span class="ident">PrettyGroundProgram</span></span>
+<span>(</span><span>program: Iterable[ForwardRef('<a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PrettyGroundProgram():
+
+    def __init__(self, program: Iterable[&#39;ClingoObject&#39;]):
+        self.symbols = set()
+        self.atom_to_symbol: Dict[int, Symbol] = dict()
+        self.facts:  List[Symbol]  = list()
+        self.cfacts: List[Symbol]  = list()
+        self.dfacts: List[Symbol]  = list()
+        self.rules : List[PrettyRule]  = list()
+        self.projections  : List[PrettyProjection] = list()
+        self.assumtions   : List[ClingoAssume]     = list()
+        self.externals    : List[&#39;ClingoExternal&#39;]         = list()
+        self.heuristics   : List[ClingoHeuristic]  = list()
+        self.minimizes    : List[ClingoMinimize]   = list()
+        self.weight_rules : List[ClingoWeightRule] = list()
+        self.add(program)
+
+    def add(self, program: Iterable[&#39;ClingoObject&#39;]) -&gt; None:
+        output_atoms: Iterable[ClingoOutputAtom] = []
+        others: Iterable[&#39;ClingoObject&#39;] = []
+
+        for obj in program:
+            if isinstance(obj, ClingoOutputAtom):
+                output_atoms.append(obj)
+            else:
+                others.append(obj)
+
+        for output_atom in output_atoms:
+            self.symbols.add(output_atom.symbol)
+            if output_atom.atom != 0:
+                self.atom_to_symbol.update({output_atom.atom : output_atom.symbol})
+            else:
+                self.facts.append(output_atom.symbol)
+
+        self._add(others)
+        # discard anonymous facts
+        self.facts = list(fact for fact in self.facts if fact in self.symbols)
+
+
+    def _rewrite_rule(self, rule: &#39;ClingoRule&#39;) -&gt; PrettyRule:
+        return self._rewrite_rule2(rule.choice, rule.head, rule.body)
+
+    def _rewrite_rule2(self, choice: bool, head, body) -&gt; PrettyRule:
+        head = [self._rewrite_literal(literal) for literal in head]
+        body = [self._rewrite_literal(literal) for literal in body]
+        return PrettyRule(choice, head, body)
+
+    def _rewrite_literal(self, literal) -&gt; Literal:
+        if abs(literal) in self.atom_to_symbol:
+            lit = self.atom_to_symbol[abs(literal)]
+        else:
+            i = abs(literal)
+            while True:
+                lit = Function(&#39;x_&#39; + str(i))
+                if lit not in self.symbols:
+                    break
+                i += 1
+
+        return Literal(lit, literal &gt;= 0)
+
+    def __add_rule(self, rule: PrettyRule) -&gt; None:
+        if not rule.body and len(rule.head) == 1:
+            if rule.choice:
+                self.cfacts.append(rule)
+            else:
+                self.facts.append(next(iter(rule.head)).atom)
+        elif not rule.body:
+            self.dfacts.append(rule)
+        else:
+            self.rules.append(rule)
+
+    def add_rule(self, rule: &#39;ClingoRule&#39;) -&gt; PrettyRule:
+        rule = self._rewrite_rule(rule)
+        self.__add_rule(rule)
+        return rule
+
+    def add_rules(self, rules: Iterable[&#39;ClingoRule&#39;]) -&gt; None:
+        for rule in rules:
+            self.add_rule(rule)
+
+    def _rewrite_projection(self, projection: &#39;ClingoProject&#39;) -&gt; PrettyProjection:
+        return PrettyProjection(self._rewrite_literal(atom) for atom in projection.atoms)
+
+    def add_projection(self, projection: Union[PrettyProjection, &#39;ClingoProject&#39;]) -&gt; None:
+        projection = self._rewrite_projection(projection)
+        self.projections.append(projection)
+
+    def _rewrite_external(self, external: &#39;ClingoExternal&#39;) -&gt; PrettyExternal:
+        return PrettyExternal(self._rewrite_literal(external.atom), external.value)
+
+    def add_external(self, external: &#39;ClingoExternal&#39;) -&gt; None:
+        external = self._rewrite_external(external)
+        self.externals.append(external)
+
+    def add_project(self, atoms: List[int]) -&gt; None:
+        self.add_projection(PrettyProjection(self.atom_to_symbol[atom] for atom in atoms))
+
+    def _add(self, obj: Union[&#39;ClingoObject&#39;, Iterable[&#39;ClingoObject&#39;]]) -&gt; None:
+        if isinstance(obj, ClingoRule):
+            self.add_rule(obj)
+        if isinstance(obj, ClingoProject):
+            self.add_projection(obj)
+        elif isinstance(obj, ClingoAssume):
+            self.assumtions.append(obj)
+        elif isinstance(obj, ClingoExternal):
+            self.add_external(obj)
+        elif isinstance(obj, ClingoHeuristic):
+            self.heuristics.append(obj)
+        elif isinstance(obj, ClingoMinimize):
+            self.minimizes.append(obj)
+        elif isinstance(obj, ClingoWeightRule):
+            self.weight_rules.append(obj)
+        elif isinstance(obj, Iterable):
+            for o in obj:
+                self._add(o)
+
+    def sort(self) -&gt; None:
+        self.facts.sort()
+        self.cfacts.sort()
+        self.dfacts.sort()
+        self.rules.sort()
+        self.projections.sort()
+        self.assumtions.sort()
+        self.externals.sort()
+        self.heuristics.sort()
+        self.minimizes.sort()
+        self.weight_rules.sort()
+
+    def __repr__(self):
+        self.sort()
+        facts = &#39;.\n&#39;.join(repr(x) for x in self.facts)
+        if facts:
+            result = facts + &#39;.&#39;
+        else:
+            result = &#39;&#39;
+        if self.cfacts:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.cfacts)
+        if self.dfacts:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.dfacts)
+        if self.rules:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.rules)
+        # if self.output_atoms:
+        #     if result:
+        #         result += &#39;\n\n&#39;
+        #     result += &#39;\n&#39;.join(repr(x) for x in self.output_atoms)
+        if self.assumtions:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.assumtions)
+        if self.externals:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.externals)
+        if self.heuristics:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.heuristics)
+        if self.minimizes:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.minimizes)
+        if self.projections:
+            if result:
+                result += &#39;\n\n&#39;
+            result += &#39;\n&#39;.join(repr(x) for x in self.projections)
+        if self.weight_rules:
+            result += &#39;\n&#39;.join(repr(x) for x in self.weight_rules)
+        return result</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, program: Iterable[ForwardRef('<a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a>')]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, program: Iterable[&#39;ClingoObject&#39;]) -&gt; None:
+    output_atoms: Iterable[ClingoOutputAtom] = []
+    others: Iterable[&#39;ClingoObject&#39;] = []
+
+    for obj in program:
+        if isinstance(obj, ClingoOutputAtom):
+            output_atoms.append(obj)
+        else:
+            others.append(obj)
+
+    for output_atom in output_atoms:
+        self.symbols.add(output_atom.symbol)
+        if output_atom.atom != 0:
+            self.atom_to_symbol.update({output_atom.atom : output_atom.symbol})
+        else:
+            self.facts.append(output_atom.symbol)
+
+    self._add(others)
+    # discard anonymous facts
+    self.facts = list(fact for fact in self.facts if fact in self.symbols)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_external"><code class="name flex">
+<span>def <span class="ident">add_external</span></span>(<span>self, external: <a title="aspmc.parsing.clingoparser.groundprogram.ClingoExternal" href="#aspmc.parsing.clingoparser.groundprogram.ClingoExternal">ClingoExternal</a>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_external(self, external: &#39;ClingoExternal&#39;) -&gt; None:
+    external = self._rewrite_external(external)
+    self.externals.append(external)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_project"><code class="name flex">
+<span>def <span class="ident">add_project</span></span>(<span>self, atoms: List[int]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_project(self, atoms: List[int]) -&gt; None:
+    self.add_projection(PrettyProjection(self.atom_to_symbol[atom] for atom in atoms))</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_projection"><code class="name flex">
+<span>def <span class="ident">add_projection</span></span>(<span>self, projection: Union[<a title="aspmc.parsing.clingoparser.groundprogram.PrettyProjection" href="#aspmc.parsing.clingoparser.groundprogram.PrettyProjection">PrettyProjection</a>, ForwardRef('<a title="aspmc.parsing.clingoparser.groundprogram.ClingoProject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoProject">ClingoProject</a>')]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_projection(self, projection: Union[PrettyProjection, &#39;ClingoProject&#39;]) -&gt; None:
+    projection = self._rewrite_projection(projection)
+    self.projections.append(projection)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_rule"><code class="name flex">
+<span>def <span class="ident">add_rule</span></span>(<span>self, rule: <a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule">ClingoRule</a>) ‑> <a title="aspmc.parsing.clingoparser.groundprogram.PrettyRule" href="#aspmc.parsing.clingoparser.groundprogram.PrettyRule">PrettyRule</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_rule(self, rule: &#39;ClingoRule&#39;) -&gt; PrettyRule:
+    rule = self._rewrite_rule(rule)
+    self.__add_rule(rule)
+    return rule</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_rules"><code class="name flex">
+<span>def <span class="ident">add_rules</span></span>(<span>self, rules: Iterable[ForwardRef('<a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule">ClingoRule</a>')]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_rules(self, rules: Iterable[&#39;ClingoRule&#39;]) -&gt; None:
+    for rule in rules:
+        self.add_rule(rule)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.sort"><code class="name flex">
+<span>def <span class="ident">sort</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sort(self) -&gt; None:
+    self.facts.sort()
+    self.cfacts.sort()
+    self.dfacts.sort()
+    self.rules.sort()
+    self.projections.sort()
+    self.assumtions.sort()
+    self.externals.sort()
+    self.heuristics.sort()
+    self.minimizes.sort()
+    self.weight_rules.sort()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyProjection"><code class="flex name class">
+<span>class <span class="ident">PrettyProjection</span></span>
+<span>(</span><span>atoms: Iterable[clingo.symbol.Symbol])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PrettyProjection(PrettyClingoOject):
+
+    def __init__(self, atoms: Iterable[Symbol]):
+        if not isinstance(atoms, set):
+            atoms = set(atoms)
+        self.atoms = atoms
+
+    def __repr__(self):
+        atoms = &#39;,&#39;.join(repr(atom) for atom in self.atoms)
+        if atoms:
+            return &#39;#project &#39; + atoms  + &#39;.&#39;
+        else:
+            return &#39;#project.&#39;
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return self.atoms &lt; other.atoms
+        # elif isinstance(other, ClingoObject):
+        #     return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject" href="#aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject">PrettyClingoOject</a></li>
+</ul>
+</dd>
+<dt id="aspmc.parsing.clingoparser.groundprogram.PrettyRule"><code class="flex name class">
+<span>class <span class="ident">PrettyRule</span></span>
+<span>(</span><span>choice: bool = False, head: Iterable[ForwardRef('Literal')] = [], body: Iterable[ForwardRef('Literal')] = [])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PrettyRule(PrettyClingoOject):
+
+    def __init__(self, choice: bool = False, head: Iterable[&#39;Literal&#39;] = [], body: Iterable[&#39;Literal&#39;] = []): # pylint: disable=dangerous-default-value
+        head = list(head)
+        body = list(body)
+        self.choice = choice
+        self.head   = head
+        self.body   = body
+
+    def __repr__(self):
+        if self.head:
+            head = &#39;, &#39;.join(str(x) for x in self.head)
+            if self.choice:
+                head = &#39;{ &#39; + head + &#39; }&#39;
+        else:
+            head = &#39;&#39;
+        if self.body:
+            body = &#39;:- &#39; + &#39;, &#39;.join(str(x) for x in self.body)
+        else:
+            body = &#39;&#39;
+        if head and body:
+            return head + &#39; &#39; + body + &#39;.&#39;
+        else:
+            return head + body + &#39;.&#39;
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return (self.choice, self.head, self.body) &lt; (other.choice, other.head, other.body)
+        # elif isinstance(other, ClingoObject):
+        #     return self.order &lt; other.order
+        raise Exception(&#34;Incomparable type&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject" href="#aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject">PrettyClingoOject</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aspmc.parsing.clingoparser" href="index.html">aspmc.parsing.clingoparser</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoAssume" href="#aspmc.parsing.clingoparser.groundprogram.ClingoAssume">ClingoAssume</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoAssume.literals" href="#aspmc.parsing.clingoparser.groundprogram.ClingoAssume.literals">literals</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoExternal" href="#aspmc.parsing.clingoparser.groundprogram.ClingoExternal">ClingoExternal</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoExternal.atom" href="#aspmc.parsing.clingoparser.groundprogram.ClingoExternal.atom">atom</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoExternal.value" href="#aspmc.parsing.clingoparser.groundprogram.ClingoExternal.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic" href="#aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic">ClingoHeuristic</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.atom" href="#aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.atom">atom</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.bias" href="#aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.bias">bias</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.condition" href="#aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.condition">condition</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.priority" href="#aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.priority">priority</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.type" href="#aspmc.parsing.clingoparser.groundprogram.ClingoHeuristic.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoMinimize" href="#aspmc.parsing.clingoparser.groundprogram.ClingoMinimize">ClingoMinimize</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoMinimize.literals" href="#aspmc.parsing.clingoparser.groundprogram.ClingoMinimize.literals">literals</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoMinimize.priority" href="#aspmc.parsing.clingoparser.groundprogram.ClingoMinimize.priority">priority</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoObject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoObject">ClingoObject</a></code></h4>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom" href="#aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom">ClingoOutputAtom</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.atom" href="#aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.atom">atom</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.order" href="#aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.order">order</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.symbol" href="#aspmc.parsing.clingoparser.groundprogram.ClingoOutputAtom.symbol">symbol</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoProject" href="#aspmc.parsing.clingoparser.groundprogram.ClingoProject">ClingoProject</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoProject.atoms" href="#aspmc.parsing.clingoparser.groundprogram.ClingoProject.atoms">atoms</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoProject.order" href="#aspmc.parsing.clingoparser.groundprogram.ClingoProject.order">order</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule">ClingoRule</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule.body" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule.body">body</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule.choice" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule.choice">choice</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule.head" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule.head">head</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRule.order" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRule.order">order</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoRuleABC" href="#aspmc.parsing.clingoparser.groundprogram.ClingoRuleABC">ClingoRuleABC</a></code></h4>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule" href="#aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule">ClingoWeightRule</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.body" href="#aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.body">body</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.choice" href="#aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.choice">choice</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.head" href="#aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.head">head</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.lower" href="#aspmc.parsing.clingoparser.groundprogram.ClingoWeightRule.lower">lower</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.GroundProgram" href="#aspmc.parsing.clingoparser.groundprogram.GroundProgram">GroundProgram</a></code></h4>
+<ul class="">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.GroundProgram.add" href="#aspmc.parsing.clingoparser.groundprogram.GroundProgram.add">add</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_project" href="#aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_project">add_project</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_rule" href="#aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_rule">add_rule</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_rules" href="#aspmc.parsing.clingoparser.groundprogram.GroundProgram.add_rules">add_rules</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.GroundProgram.objects" href="#aspmc.parsing.clingoparser.groundprogram.GroundProgram.objects">objects</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject" href="#aspmc.parsing.clingoparser.groundprogram.PrettyClingoOject">PrettyClingoOject</a></code></h4>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyExternal" href="#aspmc.parsing.clingoparser.groundprogram.PrettyExternal">PrettyExternal</a></code></h4>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram" href="#aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram">PrettyGroundProgram</a></code></h4>
+<ul class="two-column">
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add" href="#aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add">add</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_external" href="#aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_external">add_external</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_project" href="#aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_project">add_project</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_projection" href="#aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_projection">add_projection</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_rule" href="#aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_rule">add_rule</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_rules" href="#aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.add_rules">add_rules</a></code></li>
+<li><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.sort" href="#aspmc.parsing.clingoparser.groundprogram.PrettyGroundProgram.sort">sort</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyProjection" href="#aspmc.parsing.clingoparser.groundprogram.PrettyProjection">PrettyProjection</a></code></h4>
+</li>
+<li>
+<h4><code><a title="aspmc.parsing.clingoparser.groundprogram.PrettyRule" href="#aspmc.parsing.clingoparser.groundprogram.PrettyRule">PrettyRule</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

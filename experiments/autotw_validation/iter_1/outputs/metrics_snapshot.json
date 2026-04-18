@@ -1,0 +1,110 @@
+{
+  "exp01_guarded_sem_pass": 1.0,
+  "exp01_guarded_speedup": 0.0909156995935256,
+  "exp01_guarded_drift": 0,
+  "exp01_baseline_table": [
+    {
+      "baseline": "auto_guarded_static",
+      "semantic_pass": 1.0,
+      "runtime": 1.0142521825249866,
+      "speedup": 0.0909156995935256,
+      "drift": 0
+    },
+    {
+      "baseline": "auto_unguarded",
+      "semantic_pass": 0.9044096728307255,
+      "runtime": 1.051358969690535,
+      "speedup": 0.05765651787133749,
+      "drift": 672
+    },
+    {
+      "baseline": "fixed_comp",
+      "semantic_pass": 1.0,
+      "runtime": 1.2368929055182765,
+      "speedup": -0.11126353208751918,
+      "drift": 0
+    },
+    {
+      "baseline": "fixed_enum",
+      "semantic_pass": 1.0,
+      "runtime": 1.806,
+      "speedup": -0.6212569808041991,
+      "drift": 0
+    },
+    {
+      "baseline": "manual_carry",
+      "semantic_pass": 1.0,
+      "runtime": 1.1132036149664488,
+      "speedup": 0.0022245483343572964,
+      "drift": 0
+    }
+  ],
+  "exp02_best": {
+    "feature_set": "tw_only",
+    "fallback_policy": "none",
+    "uncertainty_tau": 0.05,
+    "regret": 0.06187239081033421,
+    "viol": 0.20099573257467995,
+    "tail": 1.7457027997745893
+  },
+  "exp02_fixed_enum_regret": NaN,
+  "exp02_fixed_comp_regret": NaN,
+  "exp02_best_violation": 0.20099573257467995,
+  "exp03_policy_table": [
+    {
+      "policy": "approx_first",
+      "latency": 1527.6696791387074,
+      "violation_rate": 0.6415362731152205,
+      "gap": 0.03629611190137502,
+      "p95": 1904.315861514044
+    },
+    {
+      "policy": "calibrated_router",
+      "latency": 1846.0,
+      "violation_rate": 0.0,
+      "gap": 0.0060401137980085,
+      "p95": 2842.0
+    },
+    {
+      "policy": "exact_first",
+      "latency": 1356.8929055182766,
+      "violation_rate": 0.0,
+      "gap": 0.0,
+      "p95": 1859.0878153520587
+    },
+    {
+      "policy": "static_tw_threshold",
+      "latency": 1562.0589294229153,
+      "violation_rate": 0.0,
+      "gap": 0.009560170697012788,
+      "p95": 2852.0
+    }
+  ],
+  "exp04_cache_table": [
+    {
+      "strategy": "normalized_ast_hash",
+      "hit": 0.5702702702702702,
+      "false_hit": 0,
+      "detect": 0.0
+    },
+    {
+      "strategy": "normalized_ast_plus_guard_signature",
+      "hit": 0.6502702702702702,
+      "false_hit": 0,
+      "detect": 0.0
+    },
+    {
+      "strategy": "raw_text_hash",
+      "hit": 0.42027027027027025,
+      "false_hit": 292,
+      "detect": 0.041536273115220484
+    }
+  ],
+  "exp04_false_hits_min": 0,
+  "real_semantic_pass_rate": 1.0,
+  "real_semantic_failures": 0,
+  "real_regret_mean": 0.0030847190245468373,
+  "real_regret_p95": 0.01336125178495415,
+  "real_violation_rate": 0.011111111111111112,
+  "real_instances": 90
+}

@@ -1,0 +1,9 @@
+{
+  "status": "ok",
+  "imports": "ok",
+  "config_parsing": "ok",
+  "write_permissions": "ok",
+  "dataset_init": "ok",
+  "forward_step": "ok",
+  "summary_artifact": "experiments/autotw_validation/outputs/results_summary.json"
+}

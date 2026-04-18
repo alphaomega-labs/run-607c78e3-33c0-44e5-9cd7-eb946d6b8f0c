@@ -1,0 +1,10 @@
+item,value
+experiment_id,autotw_validation
+stage,iter_1 full
+seed_count,19
+datasets,mnist_sum_k_v1;sudoku_4x4_v1;formula_eval_v1;ordering_v1;counting_v1;shortest_path_v1
+smoke_stage,passed
+full_stage,passed
+lint,ruff+mypy passed
+tests,pytest passed
+real_solver_instances,90

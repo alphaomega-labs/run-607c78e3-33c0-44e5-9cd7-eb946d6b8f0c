@@ -1,0 +1,2129 @@
+                                         Treewidth-aware Reductions of Normal ASP to
+                                         SAT– Is Normal ASP Harder than SAT after
+                                                             All?
+arXiv:2210.03553v1 [cs.AI] 7 Oct 2022
+
+
+
+
+                                                                      Markus Hecher
+                                                                 TU Wien, Vienna, Austria
+                                                                 hecher@dbai.tuwien.ac.at
+                                                                       October 10, 2022
+
+                                                                             Abstract
+                                                 Answer Set Programming (ASP) is a paradigm for modeling and solv-
+                                             ing problems for knowledge representation and reasoning. There are
+                                             plenty of results dedicated to studying the hardness of (fragments of)
+                                             ASP. So far, these studies resulted in characterizations in terms of com-
+                                             putational complexity as well as in fine-grained insights presented in form
+                                             of dichotomy-style results, lower bounds when translating to other for-
+                                             malisms like propositional satisfiability (SAT), and even detailed param-
+                                             eterized complexity landscapes. A generic parameter in parameterized
+                                             complexity originating from graph theory is the so-called treewidth, which
+                                             in a sense captures structural density of a program. Recently, there was an
+                                             increase in the number of treewidth-based solvers related to SAT. While
+                                             there are translations from (normal) ASP to SAT, no reduction that pre-
+                                             serves treewidth or at least keeps track of the treewidth increase is known.
+                                             In this paper we propose a novel reduction from normal ASP to SAT
+                                             that is aware of the treewidth, and guarantees that a slight increase of
+                                             treewidth is indeed sufficient. Further, we show a new result establishing
+                                             that, when considering treewidth, already the fragment of normal ASP is
+                                             slightly harder than SAT (under reasonable assumptions in computational
+                                             complexity). This also confirms that our reduction probably cannot be
+                                             significantly improved and that the slight increase of treewidth is unavoid-
+                                             able. Finally, we present an empirical study of our novel reduction from
+                                             normal ASP to SAT, where we compare treewidth upper bounds that
+                                             are obtained via known decomposition heuristics. Overall, our reduction
+                                             works better with these heuristics than existing translations.
+
+
+                                        1    Introduction
+                                        Answer Set Programming (ASP) [20] is an active research area of knowledge
+                                        representation and reasoning. ASP provides a declarative modeling language
+
+
+                                                                                  1
+and problem solving framework [54] for hard computational problems, which
+has been widely applied [7, 81, 82, 59, 86, 1]. There are very efficient ASP
+solvers [54, 3, 21] as well as several recent (language) extensions [21, 22, 24, 23].
+In ASP, questions are encoded into rules and constraints that form a program
+(over atoms), whose solutions are called answer sets.
+    In terms of computational complexity, the consistency problem of decid-
+ing the existence of an answer set is well-studied, i.e., the problem is ΣP       2-
+complete [35]. Some fragments of ASP have lower complexity though. A
+prominent example is the class of head-cycle-free (HCF) programs [9], which
+is a generalization of the class of normal programs and requires the absence of
+cycles in a dependency graph representation of the program. Deciding whether
+such a program has an answer set is NP-complete.
+    There is also a wide range of more fine-grained studies [88] for ASP, also
+in parameterized complexity [27, 80, 31, 52], where certain (combinations of)
+parameters [50, 71] are taken into account. In parameterized complexity, the
+“hardness” of a problem is classified according to the impact of a parameter for
+solving the problem. There, one often distinguishes the runtime dependency
+of the parameter, e.g., levels of exponentiality [76, 79] in the parameter, re-
+quired for problem solving. Concretely, under the reasonable Exponential Time
+Hypothesis (ETH) [63], propositional satisfiability ( SAT) is single exponential
+in the structural parameter treewidth, whereas evaluating Quantified Boolean
+formulas (QBFs) of quantifier depth two is [72] double exponential1 in the
+treewidth k.
+    For ASP there is growing research on treewidth [64, 44, 41], which even
+involves grounding [11, 14]. Algorithms of these works exploit structural re-
+strictions (in form of treewidth) of a given program, and often run in polyno-
+mial time in the program size, while being exponential only in the treewidth.
+Intuitively, treewidth gives rise to a tree decomposition, which allows solving nu-
+merous NP-hard problems in parts (via dynamic programming) and indicates
+the maximum number of variables one has to investigate in such parts during
+evaluation. There were also dedicated competitions [28] and notable progresses
+in SAT [49, 25] and other areas [8].
+    Naturally, there are numerous reductions of ASP [26, 9, 74, 65, 4] and ex-
+tensions thereof [19, 17] to SAT. These reductions have been investigated in the
+context of resulting formula size and number of auxiliary variables. However,
+structural dependency in form of, e.g., treewidth, has not been considered yet.
+Notably, there are existing reductions causing a sub-quadratic blow-up in the
+number of variables (auxiliary variables), which is unavoidable [73] if the answer
+sets should be preserved (bijectively). However, if one considers the structural
+dependency in form of treewidth, existing reductions could cause quadratic or
+even unbounded overhead in the treewidth.
+    On the contrary, we present a novel reduction for HCF programs that in-
+creases the treewidth k at most sub-quadratically (k·log(k)). This is indeed inter-
+esting as there is a close connection [6] between resolution-width and treewidth,
+  1 Double exponentiality refers to runtimes of the form 22O(k) · n.
+
+
+
+
+                                             2
+resulting in efficient SAT solver runs on instances of small treewidth. As a
+result, our reduction could be of use for solving approaches based on SAT
+solvers [75, 65]. Then, we establish lower bounds, under ETH, for exploit-
+ing treewidth for consistency of normal programs. This renders normal ASP
+“harder” than SAT. At the same time we prove that one cannot significantly
+improve the reduction, i.e., avoid the sub-quadratic increase of treewidth.
+Contributions. Concretely, we provide the following.
+
+  1. First, we present a novel reduction from HCF programs to SAT, which
+     only requires linearly many auxiliary variables plus a number of auxiliary
+     variables that is linear in the instance size and slightly superexponential in
+     the treewidth of the SAT instance. This is achieved by guiding the whole
+     reduction along a tree decomposition of the program. Thereby the re-
+     duction only increases the treewidth sub-quadratically, i.e., the treewidth
+     of the resulting SAT formula is slightly larger than the treewidth of the
+     given program.
+
+  2. Then, we develop and discuss a slightly different reduction from HCF pro-
+     grams to SAT, where we show a bijective correspondence between answer
+     sets of the program and models of the propositional formula for a certain
+     sub-class of programs. This reduction, while preserving bijectivity for
+     certain programs, comes at the cost of a quadratic increase of treewidth.
+
+  3. We show that avoiding a sub-quadratic increase in the treewidth is very
+     unlikely. Concretely, we establish that under the widely believed Exponen-
+     tial Time Hypothesis (ETH), one cannot decide ASP in time 2o(k·log(k)) ·n,
+     with treewidth k and program size n. This is in contrast to the runtime
+     for deciding SAT: 2O(k) · n with treewidth k and size n of the formula.
+     As a result, this establishes that the consistency of normal ASP programs
+     is already harder than SAT using treewidth. Note that this is surprising
+     as both problems are of similar hardness according to classical complexity
+     (NP-complete).
+  4. Finally, we present an empirical study of the first contribution, where we
+     compare treewidth upper bounds that are obtained via existing decom-
+     position heuristics. Interestingly, compared with existing translations, in
+     both acyclic and cyclic scenarios, our reduction overall works better with
+     these heuristics than existing translations.
+
+This is an extended version of a paper [60] at the 17th International Conference
+on Principles of Knowledge Representation and Reasoning (KR 2020). In addi-
+tion to the conference version, this work contains additional examples and more
+detailed explanations. Further, we added the second contribution and worked
+out details in terms of bijective preservation of answer sets. We were also able
+to simplify the reduction of the third contribution and discuss relations to other
+works in detail. Further, we added an empirical study of treewidth, where we
+
+
+
+                                        3
+compare treewidth upper bounds of our reduction and an exisiting translation
+via an efficient decomposer based on heuristics.
+Related Work. For disjunctive ASP and extensions thereof, algorithms have
+been proposed [64, 83, 44] running in time linear in the instance size, but double
+exponential in the treewidth. Under ETH, one cannot significantly improve this
+runtime, using a result [72] for QBFs with quantifier depth two and a standard
+reduction [35] from this QBF fragment to disjunctive ASP. Unsurprisingly, SAT
+only requires single exponential runtime [85] in the treewidth. However, for
+normal and HCF programs only a slightly superexponential algorithm [41] for
+solving consistency is known so far. Still, the question whether the slightly
+superexponentiality can be avoided was left open. The proposed algorithm was
+used for counting answer sets involving projection [57], which is at least double
+exponential [45] in the treewidth.
+There are also further studies on certain classes of programs and their rela-
+tionships in the form of whether there exist certain reductions between these
+classes, thereby bijectively preserving the answer sets. These studies result in
+an expressive power hierarchy among program classes [65]. Note that while
+existing results [73] and the expressive power hierarchy weakly indicate that
+normal ASP might be slightly harder than SAT, these results mostly deal with
+bijectively preserving all answer sets. However, our work considers the plain
+consistency problem, where ASP and SAT are both NP-complete.
+
+
+2     Preliminaries
+Before we discuss our reductions, we briefly recall some basics.
+Answer Set Programming (ASP). We assume familiarity with propositional
+satisfiability (SAT) [13, 67], and follow standard definitions of propositional
+ASP [20, 66]. Let `, m, n be non-negative integers such that ` ≤ m ≤ n,
+a1 , . . ., an be distinct propositional atoms. Moreover, we refer by literal to a
+propositional variable (atom) or the negation thereof. A program Π is a set of
+rules of the form
+
+                   a1 ∨ · · · ∨ a` ← a`+1 , . . . , am , ¬am+1 , . . . , ¬an .
+
+For a rule r, we let Hr := {a1 , . . . , a` }, Br+ := {a`+1 , . . . , am }, and Br− :=
+{am+1 , . . . , an }. We denote the sets of atoms occurring   S in a rule r or in a
+program Π by at(r) := Hr ∪ Br+ ∪ Br− and at(Π) := r∈Π at(r). A rule r
+is normal if |Hr | ≤ 1 and unary if |Br+ | ≤ 1. Then, a program Π is normal
+or unary if all its rules r ∈ Π are normal or unary, respectively. The positive
+dependency       digraph DΠ of Π is the directed graph defined on the set of atoms
+from r∈Π Hr ∪ Br+ , where for every rule r ∈ Π two atoms a ∈ Br+ and b ∈ Hr
+      S
+are joined by an edge (a, b). A head-cycle of DΠ is an {a, b}-cycle2 for two
+distinct atoms a, b ∈ Hr for some rule r ∈ Π. Program Π is head-cycle-free
+   2 Let G = (V, E) be a digraph and W ⊆ V . Then, a (directed) cycle in G is a W -cycle if it
+
+contains all vertices from W .
+
+
+                                               4
+                                        e           a
+                                   c            d       b
+               Figure 1: Dependency graph DΠ of Π (cf., Example 1).
+
+(HCF) if DΠ contains no head-cycle [9] and we say Π is tight if there is no
+directed cycle in DΠ [38].
+     An interpretation I is a set of atoms. I satisfies a rule r if (Hr ∪ Br− ) ∩ I 6= ∅
+or Br+ \ I 6= ∅. I is a model of Π if it satisfies all rules of Π, in symbols I |= Π.
+For brevity, we view propositional formulas as sets of formulas (e.g., clauses)
+that need to be satisfied, and use the notion of interpretations, models, and
+satisfiability analogously. The Gelfond-Lifschitz (GL) reduct of Π under I is
+the program ΠI obtained from Π by first removing all rules r with Br− ∩ I 6= ∅
+and then removing all ¬z where z ∈ Br− from the remaining rules r [58]. I is an
+answer set of a program Π if I is a minimal model of ΠI . The problem of decid-
+ing whether an ASP program has an answer set is called consistency, which is
+ΣP2 -complete [35]. If the input is restricted to normal programs, the complexity
+drops to NP-complete [12, 78]. A head-cycle-free program Π can be translated
+into a normal program in polynomial time [9]. Further, the answer sets of a tight
+program can be represented by means of the models of a propositional formula,
+obtainable in linear time via, e.g., Clark’s completion [26]. The following charac-
+terization of answer sets is often applied when considering normal programs [74].
+For a given set A ⊆ at(Π) of atoms, a function ϕ : A → {0, . . . , |A| − 1} is an
+ordering over A. Let I be a model of a normal program Π, and ϕ be an order-
+ing over I. We say a rule r ∈ Π is suitable for proving a ∈ I if (i) a ∈ Hr , (ii)
+Br+ ⊆ I, (iii) I ∩ Br− = ∅, as well as (iv) I ∩ (Hr \ {a}]) = ∅. An atom a ∈ I
+is proven if there is a rule r ∈ Π proving a, which is the case if r is suitable for
+proving a and ϕ(b) < ϕ(a) for every b ∈ Br+ . Then, I is an answer set of Π
+if (i) I is a model of Π, and (ii) I is proven, i.e., every a ∈ I is proven. This
+characterization vacuously holds also for head-cycle-free programs [9], since in
+HCF programs, vaguely speaking, all but one atom of the head of any rule can
+be “shifted” to the negative body [30].
+                                                            r       r           r
+                                                    z }|1 { z }|2 { z }|3 {
+Example 1. Consider the given program Π := {a ∨ b ← ; c ∨ e ← d; d ← b, ¬e;
+     r           r         r
+z }|4 { z }|5 { z }|6 {
+e ← b, ¬d; b ← e, ¬d; d ← ¬b}. Observe that Π is not tight, since the depen-
+dency graph DΠ of Figure 1 contains the cycle b, d, e. However, the program Π
+is head-cycle-free since there is neither an {a, b}-cycle, nor a {c, e}-cycle in DΠ .
+Therefore, rule r1 allows shifting [30] and actually corresponds to the two rules
+a ← ¬b and b ← ¬a. Analogously, rule r2 can be seen as the rules c ← d, ¬e
+and e ← d, ¬c. Then, I := {b, c, d} is an answer set of Π, since I |= Π, and we
+can prove with ordering ϕ := {b 7→ 0, d 7→ 1, c 7→ 2} atom b by rule r1 , atom d
+by rule r3 , and atom c by rule r2 . Further answer sets of Π are {b, e}, {a, c, d},
+and {a, d, e}.
+    The characterization above already fails for simple programs that are not
+HCF. Consider for example program Π0 := {a ∨ b ←; a ← b; b ← a}, which
+
+
+                                            5
+has only one answer set I 0 = {a, b}. However, I 0 cannot be proven. If the
+first rule a ∨ b ← shall prove a, we require b ∈/ I 0 (and vice versa). Then, the
+remaining two rules of Π can only prove either a or b, but fail to prove I 0 ,
+                           0
+
+since both rules proving I 0 (together) prohibit every ordering due to the cyclic
+dependency.
+
+Tree Decompositions (TDs). We assume familiarity with graph terminol-
+ogy, cf., [29]. A tree decomposition (TD) [84] of a given graph G=(V, E) is
+a pair T =(T, χ) where T is a tree rooted at root(T ) and χ S           assigns to each
+node t of T a set χ(t) ⊆ V , called bag, such that (i) V = t of T χ(t), (ii)
+E ⊆ {{u, v} | t in T, {u, v} ⊆ χ(t)}, and (iii) for each r, s, t of T , such that s
+lies on the path from r to t, we have χ(r) ∩ χ(t) ⊆ χ(s). For every node t
+of T , we denote by chldr(t) the set of child nodes of t in T . The bags χ≤t be-
+low t consists of the union of all bags of nodes below t in T , including t. We
+let width(T ) := maxt of T |χ(t)| − 1. The treewidth tw (G) of G is the minimum
+width(T ) over all TDs T of G. For a graph G, one can compute a TD of G, whose
+width is at most 5 · tw (G), in single exponential time [16] in the treewidth (5-
+approximation). The so-called pathwidth of G refers to the minimum width(T )
+over all TDs T of G, whose trees are just paths. For a node t of T , we say that
+type(t) is leaf if t has no children and χ(t) = ∅; join if t has children t0 and t00
+with t0 6= t00 and χ(t) = χ(t0 ) = χ(t00 ); int (“introduce”) if t has a single child t0 ,
+χ(t0 ) ⊆ χ(t) and |χ(t)| = |χ(t0 )| + 1; forget if t has a single child t0 , χ(t0 ) ⊇ χ(t)
+and |χ(t0 )| = |χ(t)| + 1. If for every node t of T , type(t) ∈ {leaf, join, int, forget},
+the TD is called nice. A TD can be turned into a nice TD [68][Lem. 13.1.3]
+without increasing the width in linear time.
+Example 2. Figure 2 illustrates a graph G and a TD T of G of width 2, which
+is also the treewidth of G, since G contains a complete graph on vertices e,b,d. In
+general, if a graph contains a complete graph among k + 1 vertices, the treewith
+of the graph is at least k, cf., [68].
+
+Dynamic Programming on TDs. Solvers based on dynamic programming
+(DP) evaluate a given input instance I in parts along a TD of a graph repre-
+sentation G of the instance. Thereby, for each node t of the TD, intermediate
+results are stored in a table τt . This is achieved by running a table algorithm,
+which is designed for G, and stores in τt results of problem parts of I, thereby
+considering tables τt0 for child nodes t0 of t. DP works for many problems as
+follows.
+   1. Construct a graph representation G of I.
+   2. Compute a TD T = (T, χ) of G, which is obtainable via heuristics, e.g., [2].
+
+   3. Traverse the nodes of T in post-order (bottom-up tree traversal of T ). At
+      every node t of T during post-order traversal, execute a table algorithm
+      that takes as input a bag χ(t), a certain bag instance It depending on
+      the problem, as well as previously computed child tables of t. Then, the
+      results of this execution is stored in table τt .
+
+                                            6
+                                                      t3 {b, d, e}
+                              e        a
+                        c          d       b   t1 {c, d, e}    {a, b} t2
+
+           Figure 2: Graph G (left) and a tree decomposition T of G (right).
+
+    4. Finally, interpret table τn for the root node n of T in order to output the
+       solution to the problem for instance I.
+In order to use TDs for ASP, we need dedicated graph representations of pro-
+grams [64]. The primal graph3 GΠ of program Π has the atoms of Π as ver-
+tices and an edge {a, b} if there exists a rule r ∈ Π and a, b ∈ at(r).  Let
+T = (T, χ) be a TD of primal graph GΠ of a program Π, and let t be a node
+of T . The bag program Πt contains rules entirely covered by the bag χ(t).
+Formally, Πt := {r | r ∈ Π, at(r) ⊆ χ(t)}.
+Example 3. Recall program Π from Example 1. Observe that graph G of Fig-
+ure 2 is the primal graph of Π. Further, we have Πt1 = {r2 }, Πt2 = {r1 }, and
+Πt3 = {r3 , r4 , r5 , r6 }. Note that in general a rule might appear in several bag
+programs.
+    Now, the missing ingredient for solving problems via dynamic programming
+along a given TD, is a suitable table algorithm. Such table algorithms have been
+already presented for SAT [85] and ASP [64, 44, 41]. We only briefly sketch
+the ideas of a table algorithm using the primal graph that computes models of
+a given program Π. Each table τt consists of rows storing interpretations over
+atoms in the bag χ(t). Then, the table τt for a leaf node t consists of the empty
+interpretation. For a node t with introduced variable a ∈ χ(t), we store in τt
+interpretations of the child table, but for each such interpretation we decide
+whether a is in the interpretation or not, and ensure that Πt is satisfied. When
+an atom b is forgotten in a forget node t, we store interpretations of the child
+table, but projected to χ(t). By the properties of a TD, it is then guaranteed
+that all rules containing b have been processed so far. For a join node t, we
+store in τt interpretations that are in both child tables of t.
+
+
+3      Treewidth-Aware Reductions to SAT
+Having the basic concept of dynamic programming in mind, we use this idea
+to design a reduction of an HCF program Π to a SAT formula F , which is
+treewidth-aware. The reduction is inspired by ideas of a DP algorithm for
+consistency of HCF programs [41] and the idea of level mappings [65]. Intu-
+itively, global orderings can cause already huge blow-up in the treewidth, e.g.,
+reductions, where all atoms are ordered at once, often cause long rules, whose
+number of atoms vastly exceeds treewidth. This is indeed not surprising, since
+   3 Analogously, the primal graph G
+                                       F of a propositional Formula F (in CNF) uses variables
+of F as vertices and adjoins two vertices a, b by an edge, if there is a clause in F containing a, b.
+
+
+
+                                                  7
+        T : t5 χ(t5 )               T 0:             f (t5 , χ(t5 ), {χ0 (t3 ), χ0 (t4 )})
+                         t4
+          t3 χ(t3 )   χ(t4 )     f (t3 , χ(t3 ), {χ0 (t1 ), χ0 (t2 )})    f (t4 , χ(t4 ), ∅)
+
+    t1 χ(t1 )    χ(t2 ) t2          f (t1 , χ(t1 ), ∅)     f (t2 , χ(t2 ), ∅)
+
+
+
+
+Figure 3: High-level illustration of the treewidth-awareness of our reduction from ASP
+to SAT. We assume a given program Π and a tree decomposition T = (T, χ) of GΠ .
+Then, our reduction is constructed for each node t of T and it immediately gives rise
+to a tree decomposition T 0 = (T, χ0 ) of the resulting SAT formula. Thereby, each
+resulting bag χ0 (t) functionally depends on χ(t) (as well as on child or parent bags).
+
+for a given program with n many atoms, we have that global level mappings
+use O(log(n)) additional auxiliary atoms. Consequently, already one rule that
+actually utilizes these mappings causes a treewidth blow-up factor O(log(n)),
+which obviously is unbounded by the treewidth of the given program.
+    As a result, we apply these orderings only locally within the bags of a TD.
+Note that while this approach might look similar to existing techniques that
+are applied on a component-by-component basis [65, 53, 18], the approach is
+slightly different, as different components of the positive dependency graph DΠ
+might be spread among different bags of a TD and a bag might only contain
+parts of components. If components are required to be spread across any TD
+of primal graph GΠ whose width coincides with the treewidth, only parts of
+cycles of DΠ can be analyzed by a table algorithm in a bag. This is the reason
+why already the consistency problem of ASP remains slightly harder than the
+decision problem SAT (under ETH). Consequently, instead of global orderings
+or orderings per component, we use local orderings, which only order within
+bags. However, these orderings need to be “synchronized” between bags and
+come at the price of loosing bijective preservation of answer sets in general. The
+reason for that will be discussed in Section B.
+    More concretely, our reduction is guided by a TD T = (T, χ) of primal
+graph GΠ and uses core ideas of dynamic programming along TD T to en-
+sure only a slight increase in treewidth of the resulting SAT formula. This
+increase of treewidth is by construction, since our reduction essentially yields
+a tree decomposition of the primal graph of the resulting SAT formula, which
+functionally depends on T , as sketched in Figure 3. Intuitively, thereby the
+aforementioned reduction takes care to keep the increase of width local, i.e.,
+the increase of width happens within the bags of T . Concretely, if width(T )
+is bounded by some value O(k), the treewidth of the resulting formula F is at
+most O(k · log(k)).
+    For encoding orderings along a TD, we need the following notation. Let us
+
+
+                                            8
+consider a TD T = (T, χ) of GΠ , and a node t of T . We refer to an ordering
+over χ(t) by t-local ordering.
+Definition 1. A T -local ordering is a set containing one t-local ordering ϕt for
+every t of T such that there is an interpretation I with (1) satisfiability: I |= Πt
+for every node t of T , (2) provability: for every a ∈ I, there is a node t of T
+and a rule r ∈ Πt proving a, and (3) compatibility: for every nodes t, t0 of T
+and every a, b ∈ χ(t) ∩ χ(t0 ), whenever ϕt (a) < ϕt (b) then ϕt0 (a) < ϕt0 (b).
+    For an ordering ϕ, we use the canonical t-local ordering ϕ̂t for each t of T
+as follows. Intuitively, atoms a ∈ χ(t) with smallest ordering position ϕ(a)
+among all atoms in χ(t) get ϕ̂t (a) = 0, second-smallest get value 1, and so on.
+Formally, we define ϕ̂t (a) := ordt (a, ϕ) − 1 for each a ∈ χ(t), where ordt (a, ϕ)
+is the ordinal number (rank) of a according to smallest ordering position ϕ(a)
+among χ(t).
+Example 4. Consider program Π, answer set I = {b, c, d}, and ordering ϕ =
+{b 7→ 0, d 7→ 1, c 7→ 2} of Example 1. Ordering ϕ can easily be extended to
+ordering ϕ0 := {a 7→ 0, e 7→ 0, b 7→ 0, d 7→ 1, c 7→ 2} over at(Π). Then,
+using TD T of GΠ , we can construct T -local ordering M := {ϕ̂t1 , ϕ̂t2 , ϕ̂t3 }
+of ϕ0 , where ϕ̂t1 = {e 7→ 0, d 7→ 1, c 7→ 2}, ϕ̂t2 = {a 7→ 0, b 7→ 0}, and
+ϕ̂t3 = {e 7→ 0, b 7→ 0, d 7→ 1}. Consider a TD T 0 of GΠ , which is similar
+to T , but t1 has a child node t0 , whose bag is {c, e}. Then, M ∪ {ϕ̂t0 } with
+ϕ̂t0 = {e 7→ 0, c 7→ 1} is a T 0 -local ordering.
+    In our reduction, we use the following propositional variables. For each
+atom x ∈ at(Π), we use x also as propositional variable. For each atom x ∈ χ(t)
+of each node t of T , we use dlog(|χ(t)|)e many variables of the form bixt forming
+the i-th bit of the t-local ordering position (in binary) of x. By the shortcut
+notation [[x]]t,j , we refer to the conjunction of literals over bits bixt for 1 ≤ i ≤
+dlog(|χ(t)|)e according to the representation of the number j in binary. For
+atoms x, x0 ∈ χ(t) of node t of T , we use the following notation to indicate that
+atom x is ordered before atom x0 :
+                            _                         ^
+            x ≺t x0 :=            (bix0t ∧ ¬bixt ∧          (bjxt −→ bjx0 )).
+                                                                       t
+                    1≤i≤dlog(|χ(t)|)e           i<j≤dlog(|χ(t)|)e
+
+Example 5. Consider Example 4 and the T -local ordering M = {ϕt1 , ϕt2 , ϕt3 }.
+One could encode ordering position ϕt1 (e) = 0 using two bit variables b1et1 , b2et1
+and forcing it to false. This results in formula [[e]]t1 ,0 = ¬b1et1 ∧ ¬b0et1 . Then,
+we formulate ϕt1 (d) = 1 by [[d]]t1 ,1 = ¬b1dt ∧ b0dt , and ϕt1 (c) = 2 by [[c]]t1 ,2 =
+                                              1      1
+b1ct1 ∧ ¬b0ct1 . For the whole resulting formula, (e ≺t1 d), (d ≺t1 c) as well as
+(e ≺t1 c) hold.
+
+3.1    TD-guided Reduction to SAT
+For solving consistency, we require to construct the following Formulas (1)–
+(6) below for each TD node t of T having child nodes chldr(t) = {t1 , . . . , t` }.
+
+
+                                          9
+Thereby, these formulas aim at constructing T -local orderings along the TD T ,
+where Formulas (1) ensure satisfiability, Formulas (2) take care of compatibility
+along the TD, and Formulas (6) enforce provability within a node, which is then
+guided along the TD by Formulas (3)–(5).
+Concretely, Formulas (1) ensure that the variables of the constructed SAT for-
+mula F are such that all (bag) rules are satisfied. Then, whenever in node t an
+atom x has a smaller ordering position than an atom y (using ≺t ), this must
+hold also for the parent node of t and vice versa, cf., Formulas (2). Formulas (3)
+guarantee, for nodes t removing bag atom x, i.e., x ∈ χ(t) \ χ(t0 ), that x is
+proven if x is set to true. Similarly, this is required for atoms x ∈ χ(n) that are
+in the root node n = root(T ) and therefore never forgotten, cf., Formulas (4).
+At the same time we ensure by Formulas (5) that an atom x is proven up to
+node t if and only if it is proven up to some child node of t or freshly proven
+in node t. Finally, Formulas (6) make sure that an atom x is freshly proven in
+node t if and only if there is at least one rule r ∈ Πt proving x.
+  _            _
+      ¬b ∨            a              for each r ∈ Πt                            (1)
+b∈Br+        a∈Br− ∪Hr
+
+(x ≺t0 y) ←→ (x ≺t y)                   for each t0 ∈ chldr(t) and x, y ∈ χ(t) ∩ χ(t0 )
+                                        with x 6= y                                 (2)
+x −→ px<t0                              for each t0 ∈ chldr(t) and x ∈ χ(t0 ) \ χ(t) (3)
+x −→ px<n                               for each x ∈ χ(n) with n = root(T )         (4)
+                        _
+px<t ←→ pxt ∨ (              px<t0 )    for each x ∈ χ(t)                           (5)
+              t0 ∈chldr(t),x∈χ(t0 )
+             _          ^
+pxt ←→              (       b ∧ x∧      for each x ∈ χ(t)                           (6)
+         r∈Πt ,x∈Hr b∈Br+
+                            ^
+          (b ≺t x) ∧              ¬a)
+                   a∈Br− ∪(Hr \{x})
+
+
+
+Example 6. Recall program Π from Example 1, and TD T of GΠ given in
+Figure 2. We briefly show Formula F for node t3 .
+Formulas Formula F
+(1)       ¬b ∨ e ∨ d; ¬b ∨ d ∨ e; ¬e ∨ d ∨ b; b ∨ d
+(2)       (d ≺t1 e) ↔ (d ≺t3 e); (e ≺t1 d) ↔ (e ≺t3 d)
+(3)       c → pc<t1 ; a → pa<t2
+(4)       b → pb<t3 ; d → pd<t3 ; e → pe<t3
+(5)       pb<t3 ↔ (pbt3 ∨ pb<t2 ); pd<t3 ↔ (pdt3 ∨ pd<t1 ); pe<t3 ↔ (pet3 ∨ pe<t1 )
+(6)       pbt3 ↔ [e ∧ b ∧ (e ≺t3 b) ∧ ¬d]; pet3 ↔ [b ∧ e ∧ (b ≺t3 e) ∧ ¬d];
+          pdt3 ↔ [(b ∧ d ∧ (b ≺t3 d) ∧ ¬e) ∨ (d ∧ ¬b)]
+   Next, we show that the reduction is indeed aware of the treewidth and that
+the treewidth is slightly increased.
+
+
+
+                                            10
+Theorem 1 (Treewidth-awareness). The reduction from an HCF program Π
+and a nice TD T = (T, χ) of GΠ to SAT formula F consisting of Formulas (1)–
+(6) ensures that if k is the width of T , then the treewidth of GF is at most O(k ·
+log(k)).
+Proof. We construct a TD T 0 = (T, χ0 ) of GF to show that the width of T 0 in-
+creases from k to O(k · log(k)). To this end, let t be a node of T with chldr(t) =
+ht1 , . . . , t` i and let t̂ be the parent of t (if exists). We define B(t, x) := {bjxt |
+xS∈ χ(t), 1 ≤ j ≤ dlog(|χ(t)|)e}. We inductively define χ0 (t) := χ(t) ∪
+( x∈χ(t) B(t, x) ∪ B(t̂, x)) ∪ {py<t0 , pxt | t0 ∈ {t, t1 , . . . , t` }, x ∈ χ(t), y ∈ χ(t0 )}.
+Observe that indeed T 0 is a TD of GF . Further, |χ0 (t)| ≤ k + k · dlog(k)e · 2 +
+k · (` + 2). Thus, the width of TD T 0 is in O(k · log(k)), since for nice TDs we
+have ` = 2.
+   Note that the result above can be also lifted to non-nice TDs, as long as the
+number of child nodes is limited by O(log(k)).
+   Later we will see the lower bound for consistency of normal ASP, which indi-
+cates that one cannot expect to significantly improve this increase of treewidth.
+Next, we present consequences for auxiliary variables and runtime.
+Corollary 1 (Runtime). The reduction from an HCF program Π and a nice
+TD T of GΠ to SAT formula F consisting of Formulas (1)–(6) uses at most O(k·
+log(k) · h) many variables and runs in time O(k 2 · log(k) · h + |Π|), where k and
+h are the width and the number of nodes of T , respectively.
+
+Proof. The result follows from Theorem 1. Linear time in the size of Π can be
+obtained by slightly modifying Formulas (1) and (6) such that each rule r ∈ Π is
+used in only one node t, where r ∈ Πt0 , but r ∈/ Πt , for some t0 ∈ chldr(t). Run-
+         2
+time O(k log(k)) in k is due to the definition of (x ≺t y) as used in Formulas (2)
+and (6).
+
+   Note that a nice TD of GΠ of width k = tw (GΠ ), having only h = O(|at(Π)|)
+many nodes [68][Lem. 13.1.2] always exists. Further, since k · log(k) might
+be much smaller than log(|at(Π)|), for some programs this reduction could be
+a benefit compared to global or component-based orderings used in tools like
+lp2sat [65, 53, 18]. An empirical study addressing this is given in Section 5.
+Correctness of the Reduction.           Now, we discuss the correctness of our
+reduction, which establishes that T -local orderings encoded by Formulas (1)–
+(6) follow ideas of the characterization of answer sets for HCF programs.
+Theorem 2 (Correctness). The reduction from an HCF program Π and a
+TD T = (T, χ) of GΠ to SAT formula F consisting of Formulas (1)–(6) is
+correct. Precisely, for each answer set of Π there is a model of F and vice
+versa.
+Proof. The proof is given in A.
+
+
+
+
+                                              11
+   The statement above can be strengthened to derive the following corollary,
+which concludes that the reduction above only weakly preserves answer sets
+(and not bijectively).
+Corollary 2 (Preservation of Answer Sets). The reduction from an HCF pro-
+gram Π and a TD T = (T, χ) of GΠ to SAT formula F consisting of Formu-
+las (1)–(6) preserves answer sets with respect to at(Π). Concretely, for each
+answer set M of Π there is exactly one model of F that when restricted to the
+variables in at(Π), coincides with M . Conversely, for each model of F there is
+exactly one answer set of Π.
+    However, in general we have that for an answer set of Π, there might be
+several models of the propositional formula obtained by the reduction above.
+Overall, one can strenghten the reduction in order to remove some models, which
+is presented in B.
+    In the next subsection, we present another reduction from HCF ASP to
+SAT that bijectively preserves all the answer sets at least for uniquely provable
+programs, at the cost of a higher increase of the treewidth from k to k 2 . The
+difference to the reduction above is that the increase from k to k 2 explicitly
+allows us to verify whether the (up to k 2 many) relations per tree decomposition
+node in terms of provability are applicable when proving an answer set.
+
+3.2    Bijective and Treewidth-Aware Reduction to SAT
+This section deals with a different approach that is inspired by an early at-
+tempt [74], combined with the ideas of Clark’s completion [26] that is guided
+along a tree decomposition. To this end, consider an HCF program Π and a
+TD T = (T, χ) of GΠ . Then, instead of orderings, we use fresh auxiliary vari-
+ables of the form (x ≺ y) (and (y ≺ x)) to indicate that an atom x has to
+precede an other atom y (and vice versa). This is done locally for each tree de-
+composition bag and consequently results in a quadratic number of additional
+auxiliary variables per bag and causes a quadratic increase of the treewidth in
+the worst-case. Further, we also require auxiliary variables pxt , px≺y
+                                                                    t   , and py≺x
+                                                                               t
+for a node t of T and x, y ∈ χ(t) in order to indicate whether there is a rule
+proving atom x, auxiliary variable (x ≺ y), and auxiliary variable (y ≺ x),
+respectively. Finally, this approach also uses auxiliary variable pxt,r to indicate
+that an atom x ∈ χ(t) is proven by a rule r ∈ Πt in a node t of T .
+    The reduction constructs a formula F 0 that consists of Formulas (1), (3)–(5)
+as well as Formulas (7)–(15), as given below, for each node t of T . As before,
+Formulas (1) ensure that each rule r ∈ Π is satisfied. Then, Formulas (7)
+guarantee that we have provability pxt,r for an atom x ∈ χ(t) using a rule r ∈ Πt ,
+if r proves x with any ordering, i.e., if x does not precede any atom of positive
+body Br+ . Formulas (8) make sure that if we have pxt,r , indeed all positive body
+atoms b ∈ Br+ precede x, i.e., whenever a rule is suitable for proving an atom, it
+actually has to be applied (greedy application). We also ensure by Formulas (9)
+that the precedence is transitive. Formulas (10) take care of not allowing cycles
+over ≺, i.e., we cannot have both (x ≺ y) and (y ≺ x) at the same time.
+
+
+                                        12
+ _                 _
+        ¬b ∨                   a                     for each r ∈ Πt                             (1)
+b∈Br+          a∈Br− ∪Hr
+               ^
+pxt,r ←→ (         b ∧ x ∧ ¬(x ≺ b)                  for each r ∈ Πt and x ∈ Hr                  (7)
+           b∈Br+^
+           ∧               ¬a)
+          a∈Br− ∪(Hr \{x})
+
+pxt,r −→ (b ≺ x)                                     for each r ∈ Πt , x ∈ Hr , and b ∈ Br+ (8)
+
+(x ≺ y) ∧ (y ≺ z) −→ (x ≺ z)                        for each x, y, z ∈ χ(t) with
+                                                    x 6= y, x 6= z, and y 6= z                   (9)
+¬(x ≺ y) ∨ ¬(y ≺ x)                                 for each x, y ∈ χ(t) with x 6= y            (10)
+           _
+pxt ←→          pxt,r                               for each x ∈ χ(t)                           (11)
+         r∈Πt ,x∈Hr
+               _
+py≺x
+ t   ←→                pxt,r       ∨                for each x, y ∈ χ(t) with x 6= y
+     r∈Πt ,x∈Hr ,y∈Br+
+               _
+                     [(y ≺ z) ∧ (z ≺ x)]                                                        (12)
+     z∈χ(t),z6=x,z6=y
+
+x −→ px<t0                                          for each t0 ∈ chldr(t), x ∈ χ(t0 ) \ χ(t)    (3)
+x −→ px<n                                           for each x ∈ χ(n) with n = root(T )          (4)
+                          _
+px<t ←→ pxt ∨ (                        px<t0 )      for each x ∈ χ(t)                            (5)
+                t0 ∈chldr(t),x∈χ(t0 )
+
+(x ≺ y) −→ px≺y
+            <t0                                     for each t0 ∈ chldr(t) and  x, y ∈ χ(t0 ) with
+                                                    x 6= y and {x, y} ∩ (χ(t0 ) \ χ(t)) 6= ∅ (13)
+(x ≺ y) −→ px≺y
+            <n                                      for each x, y ∈ χ(n) with x 6= y and
+                                                    n = root(T )                                (14)
+                                   _
+px≺y    x≺y
+ <t ←→ pt   ∨(                              x≺y
+                                           p<t0 )   for each x, y ∈ χ(t) with x 6= y            (15)
+                   t0 ∈chldr(t),x,y∈χ(t0 )
+
+
+We define pxt by Formulas (11), similarly to Formulas (6), but here we are
+able to use auxiliary variables pxt,r for every r ∈ Πt . Further, we also define
+provability py≺x
+             t   for auxiliary variables (y ≺ x) in node t, which is the case if
+we either derive (y ≺ x) due to Formulas (8), where we also need pxt,r , or we
+obtain (y ≺ x) due to Formulas (9), where we require (y ≺ z) and (z ≺ x)
+for some z ∈ χ(t). For ensuring provability for an atom x ∈ χ(t) and guiding
+it along the TD, we use Formulas (3), (4), and (5) as before. Analogously,
+we require Formulas (13), (14), and (15) for guiding provability of an auxiliary
+variable (x ≺ y) along the TD.
+Example 7. Recall program Π from Example 1, TD T = (T, χ) of GΠ given in
+Figure 2, as well as Formulas (1) and (3)–(5) from Example 6. Next, we briefly
+show Formulas (7)–(15) for node t3 of T .
+
+
+                                                     13
+ Formulas Formula F 0
+ (7)      pdt3 ,r3 ↔ b ∧ ¬(d ≺ b) ∧ ¬e; pet3 ,r4 ↔ b ∧ ¬(e ≺ b) ∧ ¬d;
+          pbt3 ,r5 ↔ e ∧ ¬(b ≺ e) ∧ ¬d; pdt3 ,r6 ↔ ¬b
+ (8)      pdt3 ,r3 → (b ≺ d); pet3 ,r4 → (b ≺ e); pbt3 ,r5 → (e ≺ b)
+ (9)      (e ≺ b) ∧ (b ≺ d) → (e ≺ d); (d ≺ b) ∧ (b ≺ e) → (d ≺ e);
+          (d ≺ e) ∧ (e ≺ b) → (d ≺ b); (b ≺ d) ∧ (d ≺ e) → (b ≺ e)
+ (10)     ¬(b ≺ d) ∨ ¬(d ≺ b); ¬(b ≺ e) ∨ ¬(e ≺ b); ¬(d ≺ e) ∨ ¬(e ≺ d)
+ (11)     pdt3 ↔ pdt3 ,r3 ∨ pdt3 ,r6 ; pet3 ↔ pet3 ,r4 ; pbt3 ↔ pbt3 ,r5
+ (12)     pb≺d
+            t3    ↔ pdt3 ,r3 ; pd≺b
+                                t3    ↔ pbt3 ,r5 ∨ [(d ≺ e) ∧ (e ≺ b)];
+            e≺b                 b≺e
+          pt3 ↔ pt3 ,r5 ; pt3 ↔ pet3 ,r4 ∨ [(b ≺ d) ∧ (d ≺ e)];
+                     b
+
+          pd≺e
+            t3    ↔ pet3 ,r4 ∨ [(d ≺ b) ∧ (b ≺ e)]; pte≺d    3
+                                                                 ↔ pdt3 ,r3 ∨ [(e ≺ b) ∧ (b ≺ d)]
+ (13)     (c ≺ d) → p<t1 ; (d ≺ c) → p<t1 ; (c ≺ e) → pc≺e
+                           c≺d                   d≺c                                     e≺c
+                                                                       <t1 ; (e ≺ c) → p<t1 ;
+                           a≺b                   b≺a
+          (a ≺ b) → p<t2 ; (b ≺ a) → p<t2
+ (14)     (b ≺ d) → pb≺d                         d≺b                   b≺e
+                          <t3 ; (d ≺ b) → p<t3 ; (b ≺ e) → p<t3 ; (e ≺ b) → p<t3 ;
+                                                                                         e≺b
+                           d≺e                   e≺d
+          (d ≺ e) → p<t3 ; (e ≺ d) → p<t3
+ (15)     pb≺d        b≺d      d≺b         d≺b    b≺e
+            <t3 ↔ pt3 ; p<t3 ↔ pt3 ; p<t3 ↔ pt3 ; p<t3 ↔ pt3
+                                                              b≺e    e≺b      e≺b
+            d≺e       d≺e        d≺e      e≺d       e≺d        e≺d
+          p<t3 ↔ pt3 ∨ p<t1 ; p<t3 ↔ pt3 ∨ p<t1
+Note that for practical implementations there is, of course, potential for opti-
+mizations. To demonstrate this, the table above does not contain every useless
+instance of Formulas (9). As an example, (b ≺ e) ∧ (e ≺ d) → (b ≺ d) is
+not needed since the only way to prove (e ≺ d) is via the first instance of For-
+mulas (9) in the table, which requires (e ≺ b). However, having both (b ≺ e)
+and (e ≺ b) is not possible anyway due to Formulas (10).
+
+Treewidth-Awareness and Runtime. Next, we discuss consequences of the
+reduction consisting of Formulas (1), (3)–(5) as well as Formulas (7)–(15) for
+each node t of T . Thereby, we show results for treewidth-awareness and runtime.
+Theorem 3 (Treewidth-awareness). The reduction from an HCF program Π
+and a nice TD T = (T, χ) of GΠ to SAT formula F 0 consisting of Formulas (1),
+(3)–(5) as well as Formulas (7)–(15) ensure that if k is the width of T , then
+the treewidth of GF 0 is at most O(k 2 ).
+
+Proof. We construct a TD T 0 = (T, χ0 ) of GF 0 to show that the width of T 0
+increases from k to O(k 2 ). To this end, let t be a node of T with chldr(t) =
+ht1 , . . . , t` i and let t̂ be the parent node of t (if it exists). Note that the num-
+ber |Πt | of rules might be larger than O(k 2 ). However, one can easily modify
+TD T by adding intermediate nodes t1 , . . . , to between t and t̂, where for each
+node ti with 1 ≤ i ≤ o, we have χ(ti ) = χ(t). Then, instead of the actual
+bag program          Πti = Πt we only apply a small subset Π0ti ⊆ Πt of ti such
+that 1≤i≤o Π0ti = Πt . So, intuitively instead of applying Πt in one node t,
+         S
+this allows us to partition Πt and apply the parts separately by using inter-
+mediate nodes. Therefore, in the following we assume for the ease of notation
+and without loss of generality that |Πt | is bounded by a constant c, i.e., we
+sloppily refer to Π0t by Πt . We inductively define χ0 (t) := χ(t) ∪ {(x ≺ y) |
+{x, y} ⊆ χ(t), x 6= y} ∪ {py<t0 , pxt | t0 ∈ {t, t1 , . . . , t` }, x ∈ χ(t), y ∈ χ(t0 )} ∪ {pxt,r |
+
+
+                                                14
+                               0      0
+x ∈ χ(t), r ∈ Πt } ∪ {py≺y     x≺x
+                        <t0 , pt   | t0 ∈ {t, t1 , . . . , t` }, {x, x0 } ⊆ χ(t), {y, y 0 } ⊆
+χ(t ), x 6= x , y 6= y }. Observe that indeed T 0 is a TD of GF 0 . Further,
+    0        0        0
+
+|χ0 (t)| ≤ k + k 2 + 2k · (` + 1) + ck + 2k 2 · (` + 1). Thus, since ` ≤ 2 for
+nice TDs, the width of T 0 is in O(k 2 ).
+    This increase of treewidth is also reflected in the runtime of the reduction.
+
+Corollary 3 (Runtime). The reduction from an HCF program Π and a nice
+TD T of GΠ to SAT formula F 0 consisting of Formulas (1), (3)–(5) as well
+as Formulas (7)–(15) uses at most O(k 2 · h + |Π|) many variables and runs in
+time O(k 3 · h + |Π|), where k and h are the width and the number of nodes of T ,
+respectively.
+
+Proof. The result follows from Theorem 3. Linear time in the size of Π can
+be obtained by slightly modifying Formulas (1), (7), (8), (11), and (12) such
+that each rule r ∈ Π is used in only one node t, where r ∈ Πt0 , but r ∈/ Πt , for
+some t0 ∈ chldr(t). The cubic runtime in k is due to transitivity by Formulas (9)
+and (12).
+   For detailed discussions on correctness and further consequences, we refer
+to C.
+    Compared to the reduction of Section 3.1, the worst-case increase of treewidth
+from k to k 2 explicitly allows us to verify whether every single ≺-relation per
+tree decomposition node is indeed applicable when proving an answer set. How-
+ever, this reduction does not bijectively preserve answer sets for HCF programs
+in general, and we believe that a different approach is needed in order to design
+a reduction that is both treewidth-aware and bijective at the same time.
+    Next, we show that indeed already deciding the consistency of a normal
+(uniquely provable) program is expected to be slightly harder than deciding the
+satisfiability of a propositional formula.
+
+
+4     Why ASP Consistency is Harder than SAT
+This section concerns the hardness of ASP consistency when considering treewidth.
+The high-level reason for ASP being harder than SAT when assuming bounded
+treewidth, lies in the issue that a TD, while capturing the structural depen-
+dencies of a program, might force an evaluation that is completely different
+from the orderings proving answer sets. Consequently, during dynamic pro-
+gramming for ASP, one needs to store in each table τt for each node t during
+post-order traversal, in addition to an interpretation (candidate answer set),
+also an ordering among the atoms in those interpretations. We show that under
+reasonable assumptions in complexity theory, this worst-case cannot be avoided.
+Then, the resulting runtime consequences cause ASP to be slightly harder than
+SAT, where in contrast to ASP storing a table τt of only assignments for each
+node t suffices.
+
+
+
+                                             15
+                                             t6 {x, y, d1 }
+                                                                    t5
+              d1     d2       d3
+                          y        t1   {s1 , x} {s2 , x, y} {y, d3 , z}
+                x              z                            t3
+              s1     s2       s3               t2 {d2 , y}     {s3 , z} t4
+
+Figure 4: An instance I = (G, P ) (left) of the Disjoint Paths Problem and a TD
+of G (right).
+
+    We show our novel hardness result by reducing from the (directed) Dis-
+joint Paths Problem, which is a graph problem defined as follows. Let us
+consider a directed graph G = (V, E), and a set P ⊆ V × V of disjoint pairs
+of the form (si , di ) consisting of source si and destination di , where si , di ∈ V
+                                                        S
+such that each vertex occurs at most once in P , i.e., (si ,di )∈P {si , di } = 2·|P |.
+Then, (G, P ) is an instance of the Disjoint Paths Problem, asking whether
+there exist |P | many (vertex-disjoint) paths from si to di for 1 ≤ i ≤ |P |. Con-
+cretely, each vertex of G is allowed to appear in at most one of these paths. For
+the ease of presentation, we assume without loss of generality [76] that sources si
+have no incoming edge (x, si ), and destinations di have no outgoing edge (di , x).
+Example 8. Figure 4 (left) shows an instance I = (G, P ) of the Disjoint
+Paths Problem, where P consists of pairs of the form (si , di ). The only
+solution to I is both emphasized and colored in red. Figure 4 (right) depicts a
+TD of G.
+    While under ETH, SAT cannot be solved in time 2o(k) ·poly(|at(F )|), where k
+is the treewidth of the primal graph of a given propositional formula F , the Dis-
+joint Paths Problem is considered to be even harder. Concretely, the prob-
+lem has been shown to be slightly superexponential as stated in the following
+proposition.
+Proposition 1 ([76]). Under ETH, there is no algorithm solving the Disjoint
+Paths Problem in time 2o(k·log(k)) · poly(|V |), where (G, P ) is any instance
+with k = tw (G).
+   It turns out that the Disjoint Paths Problem is a suitable problem can-
+didate for showing the hardness of ASP. In our reduction, we use the following
+notation of open pairs, which leads to the result below. Let (G, P ) be an in-
+stance of the Disjoint Paths Problem, T = (T, χ) be a TD of G, and t be
+a node of T . Then, a pair (s, d) ∈ P is open in node t, if either s ∈ χ≤t (“open
+due to source s’ ’) or d ∈ χ≤t (“open due to destination d”), but not both.
+Proposition 2 ([87]). An instance (G, P ) of the Disjoint Paths Problem
+does not have a solution if there is a TD T = (T, χ) of G and a bag χ(t) with
+more than |χ(t)| many pairs in P that are open in a node t of T .
+Proof. The result, cf., [87], boils down to the fact that each bag χ(t), when
+removed from G, results in a disconnected graph consisting of two components.
+Between these components can be at most |χ(t)| different paths.
+
+
+                                            16
+                     t5 {s1 , d1 , x, y}
+                                         t4 {s1 , d1 , s2 , d2 , s3 , d3 , x, y}
+                t2   {s2 , x, y} {y, d3 , z} t3        {s3 , d3 , y} t2
+
+               t1 {s2 , d2 , y} {s3 , d3 , z} t3        {s3 , d3 , y, z} t1
+Figure 5: A pair-respecting TD (left), and a pair-connected TD T (right) of (G, P ) of
+Figure 4.
+
+Preparing pair-connected TDs. Before we present the actual reduction,
+we need to define a pair-respecting tree decomposition of an instance (G, P )
+of the Disjoint Paths Problem. Intuitively, such a TD of G additionally
+ensures that each pair in P is encountered together in some TD bag.
+Definition 2. A TD T = (T, χ) of G is a pair-respecting TD of (G, P ) if for
+every pair p = (s, d) with p ∈ P , (1) whenever p is open in a node t due to s,
+or due to d, then s ∈ χ(t), or d ∈ χ(t), respectively. Further, (2) whenever
+p is open in a node t, but not open in the parent t0 of t (“p is closed in t0 ”),
+both s, d ∈ χ(t0 ).
+    We observe that such a pair-respecting TD can be computed with only a
+linear increase in the (tree)width in the worst-case. Concretely, we can turn
+any TD T = (T, χ) of G into a pair-respecting TD T 0 = (T, χ0 ) of (G, P ).
+Thereby, the tree T is traversed for each t of T in post-order, and vertices of P
+are added to χ(t) accordingly, resulting in χ0 (t), such that conditions (1) and
+(2) of pair-respecting TDs are met. Observe that this doubles the sizes of the
+bags in the worst-case, since by Proposition 2 there can be at most bag-size
+many open pairs.
+Example 9. Figure 5 (left) shows a pair-respecting TD of (G, P ) of Figure 4,
+which can be obtained by transforming the TD of Figure 4 (right), followed by
+simplifications.
+
+    For a given sequence σ of pairs of P in the order of closure with respect
+to the post-order of T , we refer to σ by the closure sequence of T . We denote
+by p ∈i σ that pair p is the pair closed i-th in the order of σ. Intuitively, e.g.,
+the first pair p ∈1 σ indicates that pair p ∈ P is the first to be closed when
+traversing T in post-order.
+Definition 3. A pair-connected TD T =(T, χ) of (G, P ) is a pair-respecting TD
+of (G, P ), if, whenever a pair p ∈i σ with i>1 is closed in a node t of T , also
+for the pair (s, d) ∈i−1 σ closed directly before p in σ, both s, d ∈ χ(t).
+    We can turn any pair-respecting, nice TD T 0 =(T, χ0 ) of width k into a pair-
+connected TD T 00 =(T, χ00 ) with constant increase in the width. Let therefore
+pair p ∈i σ be closed (i>1) in a node t, and pair (s, d) ∈i−1 be closed before p
+in node t0 . Intuitively, we need to add s, d to all bags χ0 (t0 ), . . . , χ0 (t) of nodes
+encountered after node t0 and before node t of the post-order tree traversal,
+resulting in χ00 . However, the width of T 00 is at most k + 3 · |{s, d}| = k + 6,
+
+
+                                               17
+since in the tree traversal each node of T is passed at most 3 times, namely
+when traversing down, when going from the left branch to the right branch, and
+then also when going upwards. Indeed, to ensure T 00 is a TD (connectedness
+condition), we add at most 6 additional atoms to every bag.
+Example 10. Figure 5 (right) depicts a pair-connected TD of (G, P ) of Fig-
+ure 4, obtainable by transforming the pair-respecting TD of Figure 5 (left), fol-
+lowed by simplifications.
+
+Reducing from Disjoint Paths to ASP
+In this section, we show the main reduction R of this work, assuming any
+instance I = (G, P ) of the Disjoint Paths Problem. Before we construct our
+program Π, we require a nice, pair-connected TD T = (T, χ) of G, whose width
+is k and a corresponding closure sequence σ. By Proposition 2, for each node t
+of T , there can be at most k many open pairs of P , which we assume in the
+following. If this was not the case, we can immediately output, e.g., {a ← ¬a}.
+    Then, we use the following atoms in our reduction. Atoms eu,v , or neu,v
+indicate that edge (u, v) ∈ E is used, or unused, respectively. Further, atom ru
+for any vertex u ∈ V indicates that u is reached via used edges. Finally, we also
+need atom ftu for a node t of T , and vertex u ∈ χ(t), to indicate that vertex u is
+already finished in node t, i.e., u has one used, outgoing edge. The presence of
+this atom ftu in an answer set prohibits to take additional edges of u in parent
+nodes of t, which is needed due to the need of disjoint paths of the Disjoint
+Paths Problem.
+    The instance Π = R(I, T ) constructed by reduction R consists of three
+program parts, namely reachability ΠR , linking ΠL of two pairs in P , as well
+as checking ΠC of disjointness of constructed paths. Consequently, Π = ΠR ∪
+ΠL ∪ ΠC . All three programs ΠR , ΠL , and ΠC are guided along TD T , which
+ensures that the width of Π is only linearly increased. Note that this has to
+be carried out carefully, since, e.g., the number of atoms of the form eu,v using
+only vertices u, v that appear in one bag, can be already quadratic in the bag
+size. The goal of this reduction, however, admits only a linear overhead in the
+bag size. Consequently, we are, e.g., not allowed to construct rules in Π that
+require more than O(k) edges in one bag of a TD of GΠ .
+    To this end, let the ready edges Etre in node t be the set of edges (u, v) ∈ E
+not present in t anymore, i.e., {u, v} ⊆ χ(t0 )\χ(t) for any child node t0 ∈ chldr(t).
+Further, let Enre for the root node n = root(T ) additionally contain also all edges
+of n, i.e., E ∩ (χ(n) × χ(n)). Intuitively, ready edges for t will be processed in
+node t. Note that each edge occurs in exactly one set of ready edges. Further,
+for nice TDs T , we always have |Etre | ≤ k, i.e., ready edges are linear in k.
+Example 11. Recall instance I=(G, P ) with G=(V, E) of Figure 4, and pair-
+connected TD T =(T, χ) of I of Figure 5 (right). Then, Etre1 =∅, Etre2 ={(y, z), (z,
+                                 / χ(t2 ), and Etre3 =E \ Etre2 for root t3 of T .
+y), (z, d3 ), (s3 , z)}, since z ∈
+
+Reachability ΠR . Program ΠR is constructed as follows.
+
+                                         18
+                 eu,v ← ru , ¬neu,v                  for each (u, v) ∈ Etre              (16)
+                 neu,v ← ¬eu,v                       for each (u, v) ∈ Etre              (17)
+                 rv ← eu,v                           for each (u, v) ∈ Etre              (18)
+
+Rules (16) and (17) ensure that there is a partition of edges in used edges eu,v
+and unused edges neu,v . Additionally, Rules (16) make sure that only edges of
+adjacent, reachable vertices are used. Naturally, this requires that initially at
+least one vertex is reachable (constructed below). Rules (18) ensure reachabil-
+ity rv over used edges eu,v for a vertex v.
+Linking of pairs ΠL . Program ΠL is constructed as follows.
+          ← ¬rd                          for each (s, d) ∈ P                             (19)
+         rs1 ←                           for (s1 , d) ∈1 σ                               (20)
+         rsi ← rsi−1 , rdi−1             for each (si , d) ∈i σ, (s, di−1 ) ∈i−1 σ       (21)
+
+Rules (19) make sure that, ultimately, destination vertices of all pairs are
+reached. As an initial, reachable vertex, Rule (20) sets the source vertex s
+reachable, whose pair is closed first. Then, the linking of pairs is carried out
+along the TD in the order of closure, as given by σ. Thereby, Rules (21) con-
+ceptually construct auxiliary links (similar to edges) between different pairs, in
+the order of σ, which is guided along the TD to ensure only a linear increase
+in treewidth of GΠ of the resulting program Π. Interestingly, these additional
+dependencies, since guided along the TD, do not increase the treewidth by much
+as we will see in the next subsection.
+    Then, it is crucial that we prevent a source vertex si of a pair (si , di ) ∈i σ
+from reaching a destination vertex dj of a pair (sj , dj ) ∈j σ preceding (si , di )
+in σ, i.e., j < i. To this end, we need to construct parts of cycles that prevent
+this. Concretely, if some source si reaches dj , i.e., dj is reachable via si , the
+goal is to have a cyclic reachability from dj to si , with no provability for cor-
+responding reachability atoms of the cycle. Actually, Rules (21) also have the
+purpose of aiding in the construction of these potential positive cycles. Thereby
+we achieve that if dj is reachable, this cannot be due to si , since reachability
+of dj , sj+1 , . . . , si (therefore si itself) is required for reachability of si . Conse-
+quently, assuming that there is no further rule proving any of these reachability
+atoms, which we will ensure in the construction of program ΠC below, we end
+up with cyclic reachability if si is reached by dj , such that none of the atoms
+of the cycle are proven. Figure 6 shows the positive dependency graph DRL of
+Rules (21), where pairs (si , di ) ∈i σ, as discussed in the following example.
+
+Example 12. Consider the dependency graph DRL of Rules (21), as depicted
+in Figure 6. Observe that whenever si reaches some dj with j < i, this causes a
+cycle C=rsi , . . . , rdj , rsj+1 , . . . , rsi−1 , rsi over reachability atoms in DRL (cyclic
+dependency).
+   If each vertex u of G can have at most one outgoing edge, i.e., only one
+atom eu,v in an answer set of Π = R(I, T ), no atom of C can be proven (no
+
+
+                                             19
+                         rd1    rd2    rd3         . . . rd|P |−1 rd|P |
+                         rs1    rs2    rs3         . . . rs|P |−1 rs|P |
+
+Figure 6: Positive dependency graph DRL (indicated by solid red edges) of Rules (21)
+constructed for any closure sequence σ such that (si , di ) ∈i σ. If a source si reaches a
+destination dj of a preceding pair, i.e., j < i, (depicted via the dashed red edge), this
+results in a cycle (consisting of all bold-faced edges) such that none of the atoms of
+the cycle can be proven.
+
+further rule allows provability). Note that C could also be constructed by causing
+                                         2
+in the positive dependency graph O(|P | ) many edges from rdj to rsi for j < i.
+This could be achieved, e.g., by constructing large rules, where reachability rdj
+of every preceding destination vertex is required in the positive body in order
+to reach a certain source vertex si , i.e., in order to obtain reachability rsi .
+However, this would cause an increase of structural dependency, and in fact,
+the treewidth increase would be beyond linear.
+
+Checking of disjointness ΠC . Finally, we create rules in Π that enforce
+at most one outgoing, used edge per vertex. This is required to ensure that
+we do not use a vertex twice, as required by the Disjoint Paths Problem.
+We do this by guiding the information, whether the corresponding outgoing
+edge was used, via atoms ftu along the TD to ensure that the treewidth is not
+increased significantly. Having at most one outgoing, used edge per vertex of G
+further ensures that when a source of a pair p reaches a destination of a pair
+preceding p in σ, then no atom of the resulting cycle as constructed in ΠL will be
+provable. Consequently, in the end every source of p has to reach the destination
+of p by the pigeon hole principle. Program ΠC is constructed for every node t
+with t0 , t00 ∈ chldr(t), if t has child nodes, as follows.
+ftu ← eu,v                                        for each (u, v) ∈ Etre , u ∈ χ(t)              (22)
+                                                                            0
+ftu ← ftu0                                        for each u ∈ χ(t) ∩ χ(t )                      (23)
+                                                                       0        00   0      00
+ ← ftu0 , ftu00                                   for each u ∈ χ(t ) ∩ χ(t ), t 6= t             (24)
+ ← ftu0 , eu,v                                    for each (u, v) ∈ Etre , u ∈ χ(t0 )            (25)
+← eu,v , eu,w                                     for each (u, v), (u, w) ∈ Etre,        v6=w (26)
+
+Rules (22) ensure that the finished flag ftu is set for used edges eu,v . Then,
+this information of ftu0 is guided along the TD from child node t0 to parent
+node t by Rules (23). If for a vertex u ∈ V we have ftu0 and ftu00 for two
+different child nodes t0 , t00 ∈ chldr(t), this indicates that two different edges
+were encountered both below t0 and below t00 . Consequently, this situation is
+avoided by Rules (24). Rules (25) make sure to disallow additional edges for
+vertex u in a TD node t, if the flag ftu0 of child node t0 is set. Finally, Rules (26)
+prohibit two different edges for the same vertex u within a TD node.
+
+
+                                             20
+Example 13. Recall instance I = (G, P ) with G = (V, E) of Figure 4, pair-
+connected TD T = (T, χ) of I of Figure 5 (right), and Etre2 = {(y, z), (z, y), (z, d3 ),
+(s3 , z)}. We briefly present the construction of ΠC for node t2 .
+Rules ΠL
+(22) fty2 ← ey,z ; fts23 ← es3 ,z
+(23) fts23 ← fts13 ; ftd23 ← ftd13 ; fty2 ← fty1
+(25) ← fty1 , ey,z ; ← ftz1 , ez,y ; ← ftz1 , ez,d3 ; ← fts13 , es3 ,z
+(26) ← ez,y , ez,d3
+
+Correctness and Runtime Analysis. First, we show that the reduction is
+correct, followed by a result stating that the treewidth of the reduction is at
+most linearly worsened, which is crucial for the runtime lower bound to hold.
+Then, we present the runtime and the (combined) main result of this work.
+Theorem 4 (Correctness). Reduction R as proposed in this section is correct.
+Let us consider an instance I = (G, P ) of the Disjoint Paths Problem, and
+a pair-connected TD T = (T, χ) of G. Then, I has a solution if and only if the
+program R(I, T ) admits an answer set.
+Proof. The proof is given in D.
+Lemma 1 (Treewidth-awareness). Let I = (G, P ) be any instance of the Dis-
+joint Paths Problem, and T be a nice, pair-connected TD of I of width k.
+Then, the treewidth of GΠ , where Π = R(I, T ) is obtained by R, is at most O(k).
+Proof. Assume any pair-connected, nice TD T = (T, χ) of I = (G, P ). Since T
+is nice, a node in T has at most ` = 2 many child nodes. From T we construct
+a TD T 0 = (T, χ0 ) of GΠ . Thereby we set for every node t of T , χ0 (t) :=
+{ru , ftu | u ∈ χ(t)} ∪ {eu,v , neu,v , ru , rv , ftu0 | (u, v) ∈ Etre , t0 ∈ chldr(t), u ∈
+χ(t0 )} ∪ {ftu0 , ftu | t0 ∈ chldr(t), u ∈ χ(t) ∩ χ(t0 )}. Observe that T 0 is a valid TD
+of GΠ . Further, by construction we have |χ0 (t)| ≤ 2·|χ(t)|+(4+`)·k+(`+1)·|χ(t)|,
+since |Etre | ≤ k. The claim sustains for nice TDs (` = 2).
+Corollary 4 (Runtime). Reduction R as proposed in this section runs for a
+given instance I = (G, P ) of the Disjoint Paths Problem with G = (V, E),
+and a pair-connected, nice TD T of I of width k and h many nodes, in time
+O(k · h).
+  Next, we are in the position of showing the main result, namely the normal
+ASP lower bound.
+Theorem 5 (Lower bound). Consider an arbitrary normal or HCF program Π,
+where k is the treewidth of the primal graph of Π. Then, unless ETH fails, the
+consistency problem for Π cannot be solved in time 2o(k·log(k)) · poly(|at(Π)|).
+Proof. Let (G, P ) be an instance of the Disjoint Paths Problem. First, we
+construct [16] a nice TD T of G = (V, E) of treewidth k in time ck · |V | for some
+constant c such that the width of T is at most 5k + 4. Then, we turn the result
+into a pair-connected TD T 0 = (T 0 , χ0 ), thereby having width at most k 0 =
+
+
+                                            21
+2 · (5k + 4) + 6. Then, we construct program Π = R(I, T 0 ). By Lemma 1, the
+treewidth of GΠ is in O(k 0 ), which is in O(k). Assume towards a contradiction
+that consistency of Π can be decided in time 2o(k·log(k)) · poly(|at(Π)|). By
+correctness of R (Theorem 4), this solves (G, P ), contradicting Proposition 1.
+
+
+   Our reduction works by construction for any pair-connected TD. Conse-
+quently, this immediately yields a lower bound for the larger parameter path-
+width, which is similar to treewidth, as defined in the preliminaries.
+Corollary 5 (Pathwidth lower bound). Consider any normal or HCF pro-
+gram Π, where k is the pathwidth of the primal graph of Π. Then, unless
+ETH fails, the consistency problem for Π cannot be solved in time 2o(k·log(k)) ·
+poly(|at(Π)|).
+   From Theorem 5, we infer that a general reduction from normal or HCF
+programs to SAT formulas cannot (uner ETH) avoid the treewidth (pathwidth)
+overhead, which renders our reduction from the previous section ETH-tight.
+
+Corollary 6 (ETH-tightness of the Reduction to SAT). Under ETH, the in-
+crease of treewidth of the reduction using Formulas (1)–(6) cannot be signifi-
+cantly improved.
+
+Proof. Assume towards a contradiction that one can reduce from an arbitrary
+normal ASP program Π, where k is the treewidth of GΠ to a SAT formula,
+whose treewidth is in o(k · log(k)). Then, this contradicts Theorem 5, as we
+can use an algorithm [85, 49] for SAT being single exponential in the treewidth,
+thereby deciding consistency of Π in time 2o(k·log(k)) · poly(|at(Π)|).
+    Further consequences of our construction are discussed in E.
+
+
+5     An Empirical Study of Treewidth-Aware Re-
+      ductions
+Despite the lower bound of the previous section, we show that the reductions
+of this work could still have practical impact. Recall the formalization of our
+treewidth-aware reduction of Section 3.1, which is guided along a tree decompo-
+sition. We implemented this translation in Python, resulting in the prototypical
+tool asp2sat4 , in order to compare and study the effect on the (tree)width in
+practice.
+    So the overall goal of this section is to provide a neutral comparison, without
+explicitly focusing on beating existing ASP solvers. The reason for this goal
+lies in two reasons. First of all, there is a recent observation that modern
+(SAT) solvers have been highly optimized for current hardware for many years,
+   4 Our   translator asp2sat    is    open   source   and   readily   available   at
+github.com/hmarkus/asp2sat translator.
+
+
+
+                                         22
+cf., [47], which also takes time for treewidth-based solvers. Further, finding
+ways to efficiently utilize treewidth seems to be still an ongoing process. While
+over the last couple of years, efficient solvers emerged, a clear set of techniques
+has not yet been fully settled. This can be witnessed by a couple of solvers
+that adhere to parameterized complexity and in particular to treewidth. Some
+techniques for solvers on Boolean formulas at least seem to be particular well-
+suited for counting problems, e.g., based on dynamic programming [49, 48],
+hybrid solving [62, 10], which also includes the winner [69, 70, 42] of two tracks of
+the most recent model counting competition [43], as well as compact knowledge
+compilation [32, 33]. However, treewidth also allows to improve solving hard
+decision problems with the help of knowledge compilation [25].
+    Despite this still incomplete picture on potential applications for treewidth,
+we present the usefulness and potential impact of our reduction in the form of
+a neutral comparison based on treewidth upper bounds. Note that computing
+treewidth itself is NP-complete in general [5], so in this section we only focus
+on approximating treewidth upper bounds. So, in order to show that the reduc-
+tion of Section 3.1 indeed bounds the treewidth, we compare treewidth upper
+bounds on our reduction with treewidth upper bounds on an established tool of
+the literature [65]. These upper bounds are obtained with an efficient decom-
+poser, called htd, which aims at obtaining decent tree decompositions fast [2].
+However, especially if the instances are of high (tree)widths, the obtained up-
+per bounds via the heuristics are oftentimes imprecise, cf. [28, 51]. Note that
+compared to treewidth, htd only provides upper bounds, where sometimes caus-
+ing additional edges in the graph representation might strangely yield smaller
+widths. Nevertheless, for initial estimations and for studying trends, such de-
+composers still proved valueable in many treewidth-based solvers.
+    Our implementation asp2sat works as follows:
+   1. First, we parse the input program Π, using the Python API of clingo [55].
+   2. Then, we compute an initial treewidth upper bound for the primal graph
+      of Π using htd [2], which heuristically provides us a tree decomposition.
+   3. Next, we perform our TD-guided reduction of Section 3.1 along the lines
+      of the TD of the previous step.
+   4. Finally, we use again htd in order to obtain a treewidth upper bound on
+      the result.
+
+Compared Translations In our experiments, we mainly compare treewidth
+upper bounds of the following translations.
+   • asp2sat: we use version 1.2 of htd as well as version 4.5 of clingo in order
+     to translate from ASP to SAT.
+   • lp2sat: instances are translated [17] to CNFs by lp2normal 2.18 in combi-
+     nation with lp2atomic 1.17 and lp2sat 1.24. This allows us to compare the
+     effect of global level mappings with the local level mappings of asp2sat.
+
+
+
+                                         23
+Benchmark Scenarios         In order to evaluate asp2sat, we considered the fol-
+lowing scenarios.
+S1   Acyclic Instances: Comparing treewidth overhead on instances, whose
+     positive dependency graph is acyclic. For asp2sat this still leaves the
+     guidance of proofs along a tree decomposition.
+
+S2   Cyclic Instances: Evaluating the treewidth overhead on instances with
+     cycles, which means for asp2sat that local level mappings are used.
+S2b Cyclic Instances: Studying the treewidth overhead on cyclic instances as
+    in S2, but here we use global level mappings for asp2sat and still guide
+    proofs along decompositions.
+   For Scenarios S1 and S2, asp2sat uses local level mappings as defined in
+Section 3.1, whereas for S2b the proofs are still guided along decompositions,
+which is then, however, mixed with global level mappings similar as in lp2sat.
+
+Benchmark Instances For Scenario S1, we used instances from recent appli-
+cations that where heavily trained in competitions. In fact there are still active
+competitions that utilize answer set programming, which is in contrast to the
+ASP competition (ASPCOMP), whose last edition dates back to 2017. One such
+active competitition is the international competition on computational models
+of argumentation [77], which has a long tradition of applying ASP. So, for Sce-
+nario S1 our instances stem from the abstract argumentation competition [77]
+from 2019, since at the time of writing the instances for 2021 were not avail-
+able. Then, on top we used ASP encodings for three canonical problems in that
+area [77]: Computing admissible, complete, and stable extensions, whose ASP
+encodings were taken from the ASPARTIX suite [34]. The obtained programs
+of those instances with the resulting encodings are acyclic.
+    For Scenario S2 (S2b) we use real-world graphs, more specifically, public
+transport networks of several transport agencies over the world [40] as instances.
+They also have been used in the so-called PACE challenge competitions 2016
+and 2017 [28]. In total these instances amount to 561 graph networks and
+2553 subgraphs with a focus on different transportation modes. On top of
+these networks, we encoded reachability, where for each instances we assume
+the station with the smallest and largest index to be the start and end stations,
+respectively.
+    Note that all our instances including the corresponding ASP encoding and
+raw data of our benchmark runs are open source and are publicly available on
+github at github.com/hmarkus/asp2sat translator/tree/benchmarks/results.
+
+Benchmark Hardware All our solvers ran on a cluster consisting of 12
+nodes. Each node of the cluster is equipped with two Intel Xeon E5-2650 CPUs,
+where each of these 12 physical cores runs at 2.2 GHz clock speed and has access
+to 256 GB shared RAM. Results are gathered on Ubuntu 16.04.1 LTS powered
+on kernel 4.4.0-139 with hyperthreading disabled using version 3.7.6 of Python3.
+
+
+                                       24
+                        80
+
+
+                        70
+
+
+                        60
+
+
+               lp2sat   50
+
+
+                        40
+
+
+                        30
+
+
+                        20
+
+
+                        10
+
+
+                        0
+                             0   10   20   30     40      50   60   70   80
+                                                asp2sat
+
+
+Figure 7: Scatter plot of asp2sat and lp2sat for Scenario S1, which compares the ob-
+tained treewidth upper bounds after translation. Observe that dots above the diagonal
+indicate instances, where asp2sat yields better treewidth upper bounds.
+
+Since we consider these translation to be used in a preprocessing step, we allow
+for each instance and translation up to 200 seconds (timeout) and 8 GB of main
+memory. We compare the quality of the obtained treewidth upper bounds in the
+range from 0 to 80, which is backed up by the maximal width that is reasonable
+for being utilized by state-of-the-art solvers, e.g., [8, 25, 49, 32, 33, 62].
+
+Benchmark Results First, we discuss Scenario S1, for which we present in
+Figure 7 a scatter plot of the treewidth upper bounds of asp2sat in comparison
+with lp2sat. It is easy to see that, despite the need for level mappings in S1, the
+usage of asp2sat yields better upper bounds in almost all the cases. Of course
+there are some outliers in Figure 7 below the diagonal, which could, however,
+also be due to the heuristical decomposer. Detailed statistical measures are given
+in Table 1, which confirms our observations that asp2sat slightly decreases also
+treewidth upper bounds on acyclic instances like the ones used in Scenario S1.
+Indeed, the overall increase compared to the initial treewidth upper bounds is
+not large for S1.
+    For Scenario S2, we first observe in Figure 8 that asp2sat yields significantly
+smaller treewidth upper bounds compared to lpsat in the range from 0 to 35.
+Then, up to values of 50, asp2sat still delivers good performance. Finally for
+larger bounds of asp2sat, the heuristics of htd probably suffer from larger primal
+graphs due to auxiliary variables, revealing that the treewidth approximation
+does not scale. Table 1 shows that compared to lp2sat, our translation asp2sat
+significantly decreases the mean and median among treewidth upper bounds for
+
+
+                                                25
+                              P                                    Treewidth upper bounds
+                 Scenario              Translation
+                                                       min        max      mean      median      stddev
+                                       -                    2       82        19.7         14      18.5
+                 S1           478      asp2sat              3       79        24.5         17      19.9
+                                       lp2sat               4       80        25.5         18      19.9
+                                       -                    1        8         3.7          4       1.5
+                 S2           861      asp2sat              3       80        25.6         19      19.2
+                                       lp2sat               3       79        32.4         29      17.6
+                                       -                    1       35         5.0          4       3.9
+                 S2b          1053     asp2sat              3       80        32.0         29      17.0
+                                       lp2sat               3       80        39.1         37      21.7
+
+Table 1: Detailed results over Scenarios S1, S2, and S2b, where we depict P   statistical
+data (min, max, mean, median, stddev) among the number of instances ( ) solved
+by both lp2sat and asp2sat such that the treewith upper bound is below 80. Note that
+translation “-” refers to initial treewidth upper bounds, i.e., bounds obtained by using
+no translation. Overall, asp2sat yields significantly lower bounds than lp2sat.
+
+                                                                Measures
+Translation
+               Number of Clauses       Number of Atoms           Treewidth            Program Size                 Runtime
+-                                m                     n                  k               s ∈ O(nm)                        -
+asp2sat       O(k 2 log(k) · (n+m))   O(k log(k) · (n+m))       O(k log(k))    O(k 2 log(k) · (n+m))   O(k 2 log(k) · (n+m))
+lp2sat [65]             O(s log(n))           O(n log(n))       O(k log(n))              O(s log(n))             O(s log(n))
+
+
+Table 2: Comparison of worst-case measures in terms of number of clauses (atoms),
+treewidth, program size, and runtime for both asp2sat and lp2sat. Note that transla-
+tion “-” refers to initial values of the given input program. Overall, there are cases,
+where asp2sat yields smaller values than lp2sat, which however is not true in general.
+
+a majority of the benchmark instances.
+    To mitigate this disadvantage of estimating treewidth in case of many aux-
+iliary variables, we slightly adapted asp2sat such that it uses global level map-
+pings as in lp2sat. Comparing the scatter plots of Figure 9 with Figure 8 reveals
+that for treewidth bounds up to about 30 local level mappings pay off. Con-
+sequently, in these cases the heuristics of htd still efficiently utilize local level
+mappings. However, these heuristics are still rather limited: Beyond treewidth
+upper bounds of 30, Figure 9 reveals that global level mappings work better
+with state-of-the-art decomposers. This still leaves room for improvement for
+future decomposition heuristics that improve on large instances. In any case,
+the treewidth upper bound improvement of asp2sat compared to lp2sat is still
+significat in Scenario S2b, as indicated by statistical measures of Table 1.
+    To provide some basic decision guideline, whether for some specific setting
+asp2sat or lp2sat might be more appropriate, we briefly summarize the hard
+facts of both approaches in Table 2. Note that there are also further flavors and
+extensions of both approaches, cf. , e.g., [53, 18, 39].
+
+
+
+
+                                                        26
+                         80
+
+
+                         70
+
+
+                         60
+
+
+                lp2sat   50
+
+
+                         40
+
+
+                         30
+
+
+                         20
+
+
+                         10
+
+
+                         0
+                              0   10   20   30     40      50   60   70   80
+                                                 asp2sat
+
+
+Figure 8: Scatter plot of asp2sat and lp2sat for Scenario S2, comparing treewidth upper
+bounds, similar to Figure 7. Observe that asp2sat performs best up to about 50.
+
+6     Discussion, Conclusion, and Future Work
+Understanding the hardness of ASP and the underlying reasons has attracted
+the attention of the KR community for a long time. This paper discusses this
+question from a different angle, which hopefully will provide new insights into
+the hardness of ASP and foster follow-up work. The results in this paper indi-
+cate that, at least from a structural point of view, deciding the consistency of
+ASP is already harder than SAT, since ASP programs might compactly repre-
+sent structural dependencies within the formalism. More concretely, compiling
+the hidden structural dependencies of a program to a SAT formula, measured in
+terms of the well-studied parameter treewidth, causes a blow-up of the treewidth
+of the resulting formula. In the light of a known result [6] on the correspon-
+dence of treewidth and the resolution width applied in SAT solving, this reveals
+that ASP consistency might be indeed harder than solving SAT. We further
+presented a reduction from ASP to SAT that is aware of the treewidth in
+the sense that the reduction causes not more than this inevitable blow-up of
+the treewidth in the worst-case. Finally, we present an empirical evaluation of
+treewidth upper bounds obtained via standard heuristics for treewidth, where
+we compare our reduction against existing translations. In both cyclic as well as
+acyclic scenarios, our reduction and adaptions thereof seems promising and one
+might consider treewidth-aware reductions as a preprocessing tool in a portfo-
+lio setting. Interestingly, the reduction developed in this work already lead to
+follow-up studies [39] and treewidth-aware cycle breaking [36].
+    Our paper raises several questions for future work. While in this work, we
+
+
+
+                                                 27
+                         80
+
+
+                         70
+
+
+                         60
+
+
+                lp2sat   50
+
+
+                         40
+
+
+                         30
+
+
+                         20
+
+
+                         10
+
+
+                         0
+                              0   10   20   30     40      50   60   70   80
+                                                 asp2sat
+
+
+Figure 9: Scatter plot of asp2sat and lp2sat for Scenario S2b, which is similar to S2, but
+without local level mappings. Observe that compared to Figure 8, asp2sat improves
+the result in almost all the cases.
+
+consider treewidth-aware reductions for head-cycle-free programs, the construc-
+tion can be also extended to cover the SModels intermediate format [37], which
+can be obtained via typical grounders that are capable of the ASP-Core-2 for-
+mat [24] including, e.g., aggregates and choice rules. Intuitively, the treatment
+of choice rules is rather similar to existing approaches for treewidth [44] and the
+SModels format does not allow aggregates (so it needs to be removed during
+grounding). Still, we think it is an interesting question for future work, how
+more advanced formats like aspif [56] that also considers hybrid solving can be
+treated for treewidth. However, for weight rules, treewidth alone is intractable,
+i.e., it is not expected that such a reduction exists [83]. Further, for disjunctive
+rules one might expect a double exponential runtime, cf. [64, 41]. In terms of
+lower bounds, our results naturally carry over for more expressive fragments
+of logic programs. It might be still interesting to generalize our results to ex-
+tended formalisms like epistemic logic programs, for which only certain lower
+bound results are known [46, 61].
+     Currently, we are working on different treewidth-aware reductions to SAT
+and further variants thereof, and how these variants perform in different settings
+(consistency vs. counting). Moreover, we are curious about treewidth-aware re-
+ductions to SAT, which preserve answer sets bijectively or are modular [65]. We
+hope this work might reopen the quest to study the correspondence of treewidth
+and ASP solving similarly to [6] for SAT. Also investigating further structural
+parameters “between” treewidth and directed variants of treewidth could lead
+to new insights, since for ASP, directed measures [15] often do not yield ef-
+
+
+
+                                                 28
+ficient algorithms. Given the fine-grained expressiveness results for different
+(sub-)classes of normal programs and the resulting expressive power hierar-
+chy [65], we are curious to see also studies in this direction and to which extent
+results might differ, when further restricting to treewidth-aware reductions. Of
+particular interest might be the question of whether one can devise a different
+hardness proof for normal ASP and treewidth (cf., Section 4), such that only
+unary rules are used.
+
+
+Acknowledgements
+We would like to thank the reviewers of the conference paper [60] as well as
+all involved reviewers of this work for their detailed, constructive and therefore
+extremely valuable feedback. Special appreciation goes to Andreas Pfandler for
+early discussions as well as to Jorge Fandinno for spotting a technical issue in
+an earlier version of the conference paper [60]. Finally, we acknowledge Rafael
+Kiesel for his contribution in an early version of asp2sat. This work has been
+supported by the Austrian Science Fund (FWF), Grants P32830 and Y698, as
+well as the Vienna Science and Technology Fund, Grant WWTF ICT19-065.
+
+
+References
+ [1] D. Abels, J. Jordi, M. Ostrowski, T. Schaub, A. Toletti, and P. Wanko.
+     Train scheduling with hybrid ASP. In LPNMR, volume 11481 of LNCS,
+     pages 3–17. Springer, 2019.
+ [2] M. Abseher, N. Musliu, and S. Woltran. htd - A free, open-source frame-
+     work for (customized) tree decompositions and beyond. In CPAIOR’17,
+     volume 10335 of LNCS, pages 376–386. Springer, 2017.
+
+ [3] M. Alviano, G. Amendola, C. Dodaro, N. Leone, M. Maratea, and F. Ricca.
+     Evaluation of disjunctive programs in WASP. In LPNMR’19, volume 11481
+     of LNCS, pages 241–255. Springer, 2019.
+ [4] M. Alviano and C. Dodaro. Completion of disjunctive logic programs. In
+     IJCAI’16, pages 886–892. IJCAI/AAAI Press, 2016.
+ [5] S. Arnborg, D. G. Corneil, and A. Proskurowski. Complexity of finding
+     embeddings in a k-tree. SIAM J. Alg. Disc. Meth., 8:277–284, 1987.
+ [6] A. Atserias, J. K. Fichte, and M. Thurley. Clause-learning algorithms with
+     many restarts and bounded-width resolution. J. Artif. Intell. Res., 40:353–
+     373, 2011.
+ [7] M. Balduccini, M. Gelfond, and M. Nogueira. Answer set based design of
+     knowledge systems. Ann. Math. Artif. Intell., 47(1-2):183–219, 2006.
+
+
+
+
+                                       29
+ [8] M. Bannach and S. Berndt. Practical access to dynamic programming on
+     tree decompositions. Algorithms, 12(8):172, 2019.
+ [9] R. Ben-Eliyahu and R. Dechter. Propositional semantics for disjunctive
+     logic programs. Ann. Math. Artif. Intell., 12(1):53–87, 1994.
+[10] V. Besin, M. Hecher, and S. Woltran. Utilizing Treewidth for Quantitative
+     Reasoning on Epistemic Logic Programs. Theory Pract. Log. Program.,
+     21(5):575–592, 2021. Winner of the Best Paper Award as well as the Best
+     Student Paper Award at ICLP’21.
+[11] M. Bichler, M. Morak, and S. Woltran. selp: A single-shot epistemic logic
+     program solver. Theory Pract. Log. Program., 20(4):435–455, 2020.
+[12] N. Bidoı́t and C. Froidevaux. Negation by default and unstratifiable logic
+     programs. Theo. Comput. Science, 78(1):85–112, 1991.
+[13] A. Biere, M. Heule, H. van Maaren, and T. Walsh, editors. Handbook of
+     Satisfiability, volume 185 of Frontiers in Artif. Intellig. and Applications.
+     IOS Press, Feb. 2009.
+[14] B. Bliem, M. Morak, M. Moldovan, and S. Woltran. The impact of
+     treewidth on grounding and solving of answer set programs. J. Artif. Intell.
+     Res., 67:35–80, 2020.
+[15] B. Bliem, S. Ordyniak, and S. Woltran. Clique-width and directed width
+     measures for answer-set programming. In ECAI’16, volume 285 of FAIA,
+     pages 1105–1113. IOS Press, 2016.
+[16] H. L. Bodlaender, P. G. Drange, M. S. Dregi, F. V. Fomin, D. Lokshtanov,
+     and M. Pilipczuk. A ck n 5-Approximation Algorithm for Treewidth. SIAM
+     J. Comput., 45(2):317–378, 2016.
+[17] J. Bomanson. lp2normal - A normalization tool for extended logic pro-
+     grams. In LPNMR’17, volume 10377 of LNCS, pages 222–228. Springer,
+     2017.
+[18] J. Bomanson, M. Gebser, T. Janhunen, B. Kaufmann, and T. Schaub.
+     Answer set programming modulo acyclicity. Fundam. Inform., 147(1):63–
+     91, 2016.
+[19] J. Bomanson and T. Janhunen. Normalizing cardinality rules using merging
+     and sorting constructions. In LPNMR’13, volume 8148 of LNCS, pages
+     187–199. Springer, 2013.
+[20] G. Brewka, T. Eiter, and M. Truszczyński. Answer set programming at a
+     glance. Comm. of the ACM, 54(12):92–103, 2011.
+[21] P. Cabalar, J. Fandinno, J. Garea, J. Romero, and T. Schaub. eclingo
+     : A solver for epistemic logic programs. Theory Pract. Log. Program.,
+     20(6):834–847, 2020.
+
+
+                                       30
+[22] P. Cabalar, J. Fandinno, T. Schaub, and P. Wanko. A Uniform Treatment
+     of Aggregates and Constraints in Hybrid ASP. In KR’20, pages 193–202,
+     9 2020.
+[23] P. Cabalar, J. Fandinno, T. Schaub, and P. Wanko. An ASP semantics
+     for constraints involving conditional aggregates. In ECAI’20, volume 325
+     of Frontiers in Artif. Intellig. and Applications, pages 664–671. IOS Press,
+     2020.
+[24] F. Calimeri, W. Faber, M. Gebser, G. Ianni, R. Kaminski, T. Krennwallner,
+     N. Leone, M. Maratea, F. Ricca, and T. Schaub. Asp-core-2 input language
+     format. Theory Pract. Log. Program., 20(2):294–309, 2020.
+
+[25] G. Charwat and S. Woltran. Expansion-based QBF solving on tree decom-
+     positions. Fundam. Inform., 167(1-2):59–92, 2019.
+[26] K. L. Clark. Negation as failure. In Logic and Data Bases, Advances in
+     Data Base Theory, pages 293–322. Plemum Press, 1977.
+
+[27] M. Cygan, F. V. Fomin, L. Kowalik, D. Lokshtanov, M. P. Dániel Marx,
+     M. Pilipczuk, and S. Saurabh. Parameterized Algorithms. Springer, 2015.
+[28] H. Dell, C. Komusiewicz, N. Talmon, and M. Weller. The pace 2017 param-
+     eterized algorithms and computational experiments challenge: The second
+     iteration. In IPEC’17, LIPIcs, pages 30:1—30:13. Dagstuhl Publishing,
+     2017.
+[29] R. Diestel. Graph Theory, 4th Edition, volume 173 of Graduate Texts in
+     Mathematics. Springer, 2012.
+[30] J. Dix, G. Gottlob, and V. W. Marek. Reducing disjunctive to non-
+     disjunctive semantics by shift-operations. Fundam. Inform., 28(1-2):87–
+     100, 1996.
+[31] R. G. Downey and M. R. Fellows. Fundamentals of Parameterized Com-
+     plexity. Texts in Computer Science. Springer, 2013.
+[32] J. M. Dudek, V. Phan, and M. Y. Vardi. ADDMC: weighted model counting
+     with algebraic decision diagrams. In AAAI’20, pages 1468–1476. AAAI
+     Press, 2020.
+[33] J. M. Dudek, V. H. N. Phan, and M. Y. Vardi. DPMC: weighted model
+     counting by dynamic programming on project-join trees. In CP’20, volume
+     12333 of LNCS, pages 211–230. Springer, 2020.
+
+[34] W. Dvorák, S. A. Gaggl, A. Rapberger, J. P. Wallner, and S. Woltran.
+     The ASPARTIX system suite. In H. Prakken, S. Bistarelli, F. Santini,
+     and C. Taticchi, editors, Computational Models of Argument (COMMA),
+     volume 326 of Frontiers in Artificial Intelligence and Applications, pages
+     461–462. IOS Press, 2020.
+
+
+                                       31
+[35] T. Eiter and G. Gottlob. On the computational cost of disjunctive logic
+     programming: Propositional case. Ann. Math. Artif. Intell., 15(3–4):289–
+     323, 1995.
+[36] T. Eiter, M. Hecher, and R. Kiesel. Treewidth-aware cycle breaking for
+     algebraic answer set counting. In KR’21, pages 269–279, 2021.
+
+[37] I. Elkabani, E. Pontelli, and T. C. Son. Smodelsa - A system for computing
+     answer sets of logic programs with aggregates. In LPNMR’05, volume 3662
+     of LNCS, pages 427–431. Springer, 2005.
+[38] F. Fages. Consistency of clark’s completion and existence of stable models.
+     Methods Log. Comput. Sci., 1(1):51–60, 1994.
+[39] J. Fandinno and M. Hecher. Treewidth-aware complexity in ASP: not all
+     positive cycles are equally hard. In AAAI’21, pages 6312–6320. AAAI
+     Press, 2021.
+[40] J. K. Fichte. daajoe/gtfs2graphs – a GTFS transit feed to graph
+     format converter.  https://github.com/daajoe/gtfs2graphs at commit
+     219944893f874b365de1ed87fc265fd5d19d5972, 2016.
+[41] J. K. Fichte and M. Hecher. Treewidth and counting projected answer sets.
+     In LPNMR’19, volume 11481 of LNCS, pages 105–119. Springer, 2019.
+
+[42] J. K. Fichte and M. Hecher. Model Counting Competition 2021 Awards,
+     2021. Available at: https://mccompetition.org/assets/files/2021/MC2021
+     awards.pdf.
+[43] J. K. Fichte, M. Hecher, and F. Hamiti. The Model Counting Competition
+     2020. ACM J. Exp. Algorithmics, 26, 2021.
+
+[44] J. K. Fichte, M. Hecher, M. Morak, and S. Woltran. Answer set solving
+     with bounded treewidth revisited. In LPNMR’17, volume 10377 of LNCS,
+     pages 132–145. Springer, July 2017.
+[45] J. K. Fichte, M. Hecher, M. Morak, and S. Woltran. Exploiting treewidth
+     for projected model counting and its limits. In SAT’18, volume 10929 of
+     LNCS, pages 165–184. Springer, July 2018.
+
+[46] J. K. Fichte, M. Hecher, and A. Pfandler. Lower Bounds for QBFs of
+     Bounded Treewidth. In LICS’20, pages 410–424. Assoc. Comput. Mach.,
+     2020.
+[47] J. K. Fichte, M. Hecher, and S. Szeider. A Time Leap Challenge for SAT-
+     Solving. In CP’20, volume 12333 of LNCS, pages 267–285. Springer, 2020.
+[48] J. K. Fichte, M. Hecher, P. Thier, and S. Woltran. Exploiting Database
+     Management Systems and Treewidth for Counting. Theory Pract. Log.
+     Program., pages 1––30, 2021.
+
+
+                                      32
+[49] J. K. Fichte, M. Hecher, and M. Zisser. An Improved GPU-Based SAT
+     Model Counter. In CP’19, volume 11802 of LNCS, pages 491–509. Springer,
+     2019.
+[50] J. K. Fichte, M. Kronegger, and S. Woltran. A multiparametric view on
+     answer set programming. Ann. Math. Artif. Intell., 86(1-3):121–147, 2019.
+
+[51] J. K. Fichte, N. Lodha, and S. Szeider. Sat-based local improvement for
+     finding tree decompositions of small width. In SAT, volume 10491 of LNCS,
+     pages 401–411. Springer, 2017.
+[52] J. Flum and M. Grohe. Parameterized Complexity Theory, volume XIV of
+     Theo. Comput. Science. Springer, 2006.
+[53] M. Gebser, T. Janhunen, and J. Rintanen. Answer set programming as SAT
+     modulo acyclicity. In ECAI’14, volume 263 of Frontiers in Artif. Intellig.
+     and Applications, pages 351–356. IOS Press, 2014.
+[54] M. Gebser, R. Kaminski, B. Kaufmann, and T. Schaub. Answer Set Solving
+     in Practice. Morgan & Claypool, 2012.
+[55] M. Gebser, R. Kaminski, B. Kaufmann, and T. Schaub. Clingo = ASP +
+     control: Preliminary report. CoRR, abs/1405.3694, 2014.
+[56] M. Gebser, R. Kaminski, B. Kaufmann, and T. Schaub. Multi-shot ASP
+     solving with clingo. Theory Pract. Log. Program., 19(1):27–82, 2019.
+[57] M. Gebser, B. Kaufmann, and T. Schaub. Solution enumeration for pro-
+     jected boolean search problems. In CPAIOR’09, volume 5547 of LNCS,
+     pages 71–86. Springer, 2009.
+[58] M. Gelfond and V. Lifschitz. Classical negation in logic programs and
+     disjunctive databases. New Generation Comput., 9(3/4):365–386, 1991.
+[59] C. Guziolowski, S. Videla, F. Eduati, S. Thiele, T. Cokelaer, A. Siegel,
+     and J. Saez-Rodriguez. Exhaustively characterizing feasible logic mod-
+     els of a signaling network using answer set programming. Bioinformatics,
+     29(18):2320–2326, 2013. Erratum see Bioinformatics 30, 13, 1942.
+
+[60] M. Hecher. Treewidth-aware Reductions of Normal ASP to SAT - Is Normal
+     ASP Harder than SAT after All? In KR’20, pages 485–495, 9 2020. Winner
+     of the Best Student Paper Award at KR’20.
+[61] M. Hecher, M. Morak, and S. Woltran. Structural decompositions of epis-
+     temic logic programs. In AAAI’20, pages 2830–2837. AAAI Press, 2020.
+
+[62] M. Hecher, P. Thier, and S. Woltran. Taming High Treewidth with Ab-
+     straction, Nested Dynamic Programming, and Database Technology. In
+     SAT’20, volume 12178 of LNCS, pages 343–360. Springer, 2020.
+
+
+
+                                      33
+[63] R. Impagliazzo, R. Paturi, and F. Zane. Which problems have strongly
+     exponential complexity? J. of Computer and System Sciences, 63(4):512–
+     530, 2001.
+[64] M. Jakl, R. Pichler, and S. Woltran. Answer-set programming with
+     bounded treewidth. In IJCAI’09, volume 2, pages 816–822, 2009.
+
+[65] T. Janhunen. Some (in)translatability results for normal logic programs
+     and propositional theories. J. of Applied Non-Classical Logics, 16(1-2):35–
+     86, 2006.
+[66] T. Janhunen and I. Niemelä. The answer set programming paradigm. AI
+     Magazine, 37(3):13–24, 2016.
+[67] H. Kleine Büning and T. Lettman. Propositional logic: deduction and
+     algorithms. Cambridge University Press, 1999.
+[68] T. Kloks. Treewidth. Computations and Approximations, volume 842 of
+     LNCS. Springer, 1994.
+
+[69] T. Korhonen. Github repository of sharpsat-td, 2021. Available at: https:
+     //github.com/Laakeri/sharpsat-td.
+[70] T. Korhonen and M. Järvisalo. Integrating Tree Decompositions into De-
+     cision Heuristics of Propositional Model Counters. In CP’21, volume 210
+     of LIPIcs, pages 8:1–8:11. Dagstuhl Publishing.
+[71] M. Lackner and A. Pfandler. Fixed-parameter algorithms for finding min-
+     imal models. In KR’12. AAAI Press, 2012.
+[72] M. Lampis and V. Mitsou. Treewidth with a quantifier alternation revisited.
+     In IPEC’17, volume 89, pages 26:1–26:12. Dagstuhl Publishing, 2017.
+
+[73] V. Lifschitz and A. A. Razborov. Why are there so many loop formulas?
+     ACM Trans. Comput. Log., 7(2):261–268, 2006.
+[74] F. Lin and J. Zhao. On tight logic programs and yet another translation
+     from normal logic programs to propositional logic. In IJCAI’03, pages
+     853–858. Morgan Kaufmann, August 2003.
+[75] F. Lin and Y. Zhao. ASSAT: computing answer sets of a logic program by
+     SAT solvers. Artif. Intell., 157(1-2):115–137, 2004.
+[76] D. Lokshtanov, D. Marx, and S. Saurabh. Slightly superexponential pa-
+     rameterized problems. In SODA’11, pages 760–776. SIAM, 2011.
+
+[77] J.-G. Mailly, E. Lonca, J.-M. Lagniez, and J. Rossit. International Com-
+     petition on Computational Models of Argumentation 2021, 2021. Website:
+     http://argumentationcompetition.org/2021/rules.html.
+
+
+
+                                      34
+[78] W. Marek and M. Truszczyński. Autoepistemic logic. J. of the ACM,
+     38(3):588–619, 1991.
+[79] D. Marx and V. Mitsou. Double-Exponential and Triple-Exponential
+     Bounds for Choosability Problems Parameterized by Treewidth. In
+     ICALP’16, volume 55 of LIPIcs, pages 28:1–28:15. Dagstuhl Publishing,
+     2016.
+[80] R. Niedermeier. Invitation to Fixed-Parameter Algorithms, volume 31 of
+     Oxford Lecture Series in Mathematics and its Applications. Oxford Uni-
+     versity Press, 2006.
+
+[81] I. Niemelä, P. Simons, and T. Soininen. Stable model semantics of weight
+     constraint rules. In LPNMR’99, volume 1730 of LNCS, pages 317–331.
+     Springer, Dec. 1999.
+[82] M. Nogueira, M. Balduccini, M. Gelfond, R. Watson, and M. Barry. An A-
+     Prolog decision support system for the Space Shuttle. In PADL’01, volume
+     1990 of LNCS, pages 169–183. Springer, 2001.
+[83] R. Pichler, S. Rümmele, S. Szeider, and S. Woltran. Tractable answer-set
+     programming with weight constraints: bounded treewidth is not enough.
+     Theory Pract. Log. Program., 14(2), 2014.
+[84] N. Robertson and P. D. Seymour. Graph minors II: Algorithmic aspects of
+     tree-width. J. Algorithms, 7:309–322, 1986.
+[85] M. Samer and S. Szeider. Algorithms for propositional model counting. J.
+     Discrete Algorithms, 8(1):50–64, 2010.
+[86] T. Schaub and S. Woltran. Special issue on answer set programming. KI,
+     32(2-3):101–103, 2018.
+[87] P. Scheffler. A Practical Linear Time Algorithm for Disjoint Paths in
+     Graphs with Bounded Tree-width. Technical Report Report-396-1994,
+     TU Berlin, 1994.     Available at: http://www.redaktion.tu-berlin.de/
+     fileadmin/i26/download/AG DiskAlg/FG KombOptGraphAlg/preprints/
+     1994/Report-396-1994.ps.gz.
+
+[88] M. Truszczynski. Trichotomy and dichotomy results on the complexity of
+     reasoning with disjunctive logic programs. Theory Pract. Log. Program.,
+     11(6):881–904, 2011.
+
+
+
+
+                                     35
+A      Correctness of the Reduction of Section 3.1
+Theorem 2 (Correctness). The reduction from an HCF program Π and a
+TD T = (T, χ) of GΠ to SAT formula F consisting of Formulas (1)–(6) is
+correct. Precisely, for each answer set of Π there is a model of F and vice
+versa.
+Proof. “⇒”: Assume an answer set M of Π. Then, there is an ordering ϕ
+over at(Π), where every atom of M is proven. Next, we construct a model I
+of F as follows. For each x ∈ at(Π), we let (c1) x ∈ I if x ∈ M . For each node t
+of T , and x ∈ χ(t): (c2) For every l ∈ [[x]]t,i with i = ϕ̂t (x), we set l ∈ I if l
+is a variable. (c3) If there is a rule r ∈ Πt proving x, we let both px<t , pxt ∈ I.
+Finally, (c4) we set px<t ∈ I, if px<t0 ∈ I for t0 ∈ chldr(t).
+    It remains to show that I is indeed a model of F . By (c1), Formulas (1)
+are satisfied by I. Further, by (c2) of I, the order of ϕ is preserved among χ(t)
+for each node t of T , therefore Formulas (2) are satisfied by I. Further, by
+definition of TDs, for each rule r ∈ Π there is a node t with r ∈ Πt . Conse-
+quently, M is proven with ordering ϕ, for each x ∈ M there is a node t and a
+rule r ∈ Πt proving x. Then, Formulas (6) are satisfied by I due to (c3), and
+Formulas (5) are satisfied by I due to (c4). Finally, by connectedness of TDs,
+also Formulas (3) and (4) are satisfied.
+    “⇐”: Assume any model I of F . Then, we construct an answer set M of Π
+as follows. We set a ∈ M if a ∈ I for any a ∈ at(Π). We define for each node t
+a t-local ordering ϕt , where we set ϕt (x) to j for each x ∈ χ(t) such that j
+is the decimal number of the binary number for x in t given by I. Concretely,
+ϕt (x) := j, where j is such I |= [[x]]t,j . Then, we define an ordering ϕ iteratively
+as follows. We set ϕ(a) := 0 for each a ∈ at(Π), where there is no node t of T
+with ϕt (b) < ϕt (a). Then, we set ϕ(a) := 1 for each a ∈ at(Π), where there is
+no node t of T with ϕt (b) < ϕt (a) for some b ∈ χ(t) not already assigned in the
+previous iteration, and so on. In turn, we construct ϕ iteratively by assigning
+increasing values to ϕ. Observe that ϕ is well-defined, i.e., each atom a ∈ at(Π)
+gets a unique value since it cannot be the case for two nodes t, t0 and atoms
+x, x0 ∈ χ(t) ∩ χ(t0 ) that ϕt (x) < ϕt (x0 ), but ϕt0 (x) ≥ ϕt0 (x0 ). Indeed, this is
+prohibited by Formulas (2) and connectedness of T ensuring that T restricted
+to x is still connected.
+    It remains to show that ϕ is an ordering for Π proving M . Assume towards
+a contradiction that there is an atom a ∈ M that is not proven. Observe that
+either a is in the bag χ(n) of the root node n of T , or it is forgotten below n.
+In both cases we require a node t such that px<t ∈     / I by Formulas (4) and (3),
+respectively. Consequently, by connectedness of T and Formulas (5) there is a
+node t0 , where pxt0 ∈ I. But then, since Formulas (6) are satisfied by I, there is
+a rule r ∈ Πt0 proving a with ϕt0 . Therefore, since by construction of ϕ, there
+cannot be a node t of T with x, x0 ∈ χ(t), ϕt (x) < ϕt (x0 ), but ϕ(x) ≥ ϕ(x0 ), r
+is proving a with ϕ.
+
+
+
+
+                                         36
+                                                             t6 {a}
+
+                                                      t3 {a, c}     {a, d} t5
+
+                         nb       nd             d    t2 {b, c}    {d, nd} t4
+
+                             b           c       a   t1 {b, nb}
+  Figure 10: Graph GΠ0 (left) and a tree decomposition T 0 of GΠ0 (right), where pro-
+  gram Π0 is given in Example 14.
+
+  B        Strengthening the Reduction of Section 3.1
+  Next, we strengthen the reduction of Section 3.1 to remove some duplicate T -
+  local orderings for a particular answer set of Π.
+      In Formulas (27), we ensure that if a variable x ∈ at(Π) is set to false, then
+  its ordering position is zero. Formulas (28) make sure that if the position of x
+  is set to i ≥ 1 in node t, there has to be a bag atom y having position i − 1.
+  Intuitively, if this is not the case we could shift the position of x from i to i − 1.
+  Finally, Formulas (29) ensure that whenever in a node t there is a rule r ∈ Πt
+  with x ∈ Hr and x has position i ≥ 1, either there is at least one atom y ∈ Br+
+  having position i − 1, or r is not proving x.
+                  ^
+  ¬x −→                    ¬bjxt                for each x ∈ χ(t)                   (27)
+           1≤j≤dlog(|χ(t)|)e
+                _
+  [[x]]t,i −→       [[y]]t,i−1                               for each x ∈ χ(t), 1 ≤ i < |χ(t)| (28)
+           y∈χ(t)\{x}
+         ^                        _
+                ([[x]]t,i −→           ¬b ∨ (b 6≺t x)∨
+r∈Πt ,x∈Hr ,1≤i<|χ(t)|           b∈Br+
+                         _                _
+                                  a∨          [[y]]t,i−1 )   for each x ∈ χ(t)                (29)
+                a∈Br− ∪(Hr \{x})         y∈Br+
+
+
+      In general, we do not expect to get rid of all redundant T -local orderings for
+  an answer set, though. The reason for this expectation lies in the fact that the
+  different (chains of) rules required for setting the position for an atom a that
+  is part of cycles of DΠ might be spread across the whole tree decomposition.
+  Therefore, these local orderings might not provide the same information that
+  we get from global orderings [65], where we have absolute values. Instead, these
+  local orderings are insufficient to conclude absolute positions without further
+  information. This is clarified in the following example.
+  Example 14. Consider the program Π0 := {b ∨ nb ←; c ← b; a ← c; d ∨ nd ←
+  ; a ← d}. Observe that program Π0 has four answer sets {nb, nd}, {a, d, nb},
+  {a, b, c, nd}, as well as {a, b, c, d}. Assume the TD T 0 = (T 0 , χ0 ) of Figure 10,
+  whose width is 1 and equals the treewidth of GΠ . This TD T 0 is such that Πt3 =
+
+
+                                                       37
+{a ← c} and Πt5 = {a ← d}. The particular issue is that node t3 only con-
+siders atoms a, c and node t5 only considers atoms a, d. Now, assume answer
+set M = {a, b, c, d}. Then, given only t3 -local orderings and t5 -local orderings,
+we cannot conclude a unique, canonical global ordering for {a, c, d} ⊆ M . In
+particular, one could prove a with either a ← c or with a ← d (or both). From a
+global perspective the latter rule would be preferred to prove a, since it allows an
+ordering with a smaller position for a. This is witnessed by the corresponding
+ordering ϕ := {b 7→ 0, c 7→ 1, d 7→ 0, a 7→ 1} for M . If instead we use the
+rule a ← c for proving a, this would require ordering ϕ0 := {b 7→ 0, c 7→ 1, a 7→
+2, d 7→ 0}, i.e., ϕ is preferred since ϕ(a) < ϕ0 (a). However, this information is
+“lost” due to the usage of local orderings, which makes it hard to define canon-
+ical orderings. Therefore our constructed SAT formula yields two satisfying
+assignments for M in this case, corresponding to proving a either with a ← d
+or a ← c. In general, a TD similar to T 0 cannot be avoided. In particular, one
+can construct programs, where similar situations have to occur in every TD of
+smallest width.
+
+    One can even devise further cases, where without absolute orders it is hard
+to verify whether it is indeed required that an atom precedes an other atom.
+This is still the case, if for each answer set M of Π, and every a ∈ M , there can
+be only one rule r ∈ Π suitable for proving a. From now on, we refer to such
+HCF programs Π by uniquely provable. Note that even for uniquely provable
+programs, there might be several cycles in its positive dependency graph. In
+fact, the program that will be used for the hardness result of normal ASP and
+treewidth in Section 4 is uniquely provable. However, even for uniquely provable
+programs and any TD of GΠ , there is in general no bijective correspondence
+between answer sets of Π and models of Formulas (1)–(29). Consequently, one
+could compare different, absolute positions of orderings, cf., [65], instead of the
+ordering positions relative to one TD node as presented here, which requires to
+store for each atom in the worst-case numbers up to |at(Π)| − 1. Obviously, this
+number is then not bounded by the treewidth, and one cannot encode it without
+increasing the treewidth in general. Observe that even if one uses orderings on
+a component-by-component basis, similar to related work [65], this issue still
+persists in general since the whole program could be one large component.
+
+
+C     Correctness of the Reduction of Section 3.2
+In order to discuss correctness, we rely on the following lemma, which establishes
+that the reduction actually ensures and preserves the transitive closure over ≺
+for each node of any tree decomposition.
+
+Lemma 2 (Transitive Closure). Let Π be an HCF program, T = (T, χ) be a
+TD of GΠ , and let t be any node of T . Further, let F≤t consist of all For-
+mulas (9) constructed for node t and every node below t in T , and let χ≤t be
+the union of bag χ(t) and all bag contents for every node below t in T . Then,
+
+
+
+                                        38
+for any model M of F≤t the following invariant holds: All transitive conse-
+quences of ≺ in F≤t are preserved for t, i.e., we have M ⊇ {(x ≺ y) | {x, y} ⊆
+χ(t), there is a path x, p1 , . . . , po , y from x to y in GΠ with {p1 , . . . , po } ⊆ χ≤t ,
+{(x ≺ p1 ), (p1 ≺ p2 ), . . . , (po ≺ y)} ⊆ M }.
+Proof. The proof proceeds by induction. Thereby we assume the invariant holds
+for every child node of t and show that then it also is ensured for t. For sim-
+plicity, we only show the ideas for nice TDs, as for non-nice TDs the following
+cases just overlap. Recall that a nice TD of GΠ of width k = tw (GΠ ), having
+only h = O(|at(Π)|) many nodes [68][Lem. 13.1.2] always exists. We distinguish
+the following cases.
+    Case (type(t) = leaf): The invariant vacuously holds since χ(t) = ∅.
+    Case (type(t) = forget or type(t) = join): In these cases, we do not encounter
+any new auxiliary variable, nor do we add a new formula (that has not been
+constructed for a node below t) of the form (9). Therefore, since the invariant
+holds for the child node of t, it is also valid for t.
+    Case (type(t) = int): Let {a} = χ(t) \ χ(t0 ) with chldr(t) = {t0 }. Assume
+towards a contradiction that a transitive consequence of F≤t is missing, i.e.,
+we have a path x, p1 , . . . , po , y from x to y in GΠ with {p1 , . . . , po } ⊆ χ≤t ,
+but (x ≺ y) ∈  / M . Then, we have either x = a or y = a since otherwise
+the consequence would have been already missing for t0 . We continue with the
+case x = a since the other case works analogously. Consequently, p1 ∈ χ(t),
+since otherwise T would not be a TD of GΠ due to the fact that the edge {x, p1 }
+would not occur in any TD node of T . Then, by the induction hypothesis, we
+have (p1 ≺ y) ∈ M . As a result, we obtain (x ≺ y) ∈ M since x, p1 , y ∈ χ(t),
+which contradicts our assumption.
+Corollary 7 (Acyclicity). Let Π be an HCF program, T = (T, χ) be a TD
+                                                           0
+of GΠ , and let t be any node of T . Then, the formula F≤t    consisting of all
+Formulas (9) and (10) for t and every node below t, ensures that there cannot
+                      0                                                0
+exist a model M of F≤t  , where the transitive consequences of ≺ in F≤t  as in
+Lemma 2 form a cycle.
+Proof. The proof is a direct consequence of Lemma 2 and the observation that
+if there is a path x, p1 , . . . , po , x from x to x in GΠ with (x ≺ p1 ), (p1 ≺
+p2 ), . . . , (po ≺ x) ∈ M , one can reverse any (y ≺ y 0 ) ∈ M . More con-
+cretely, for any (y ≺ y 0 ) ∈ M with y, y 0 ∈ χ(t), by Formulas (9), one can
+derive (y 0 ≺ y) ∈ M , which is prohibited by Formulas (10). Consequently,
+cyclic, transitive consequences over variables in χ≤t cannot occur in any model
+      0
+of F≤t    . The claim follows since χ≤n = at(Π) for root n = root(T ).
+Theorem 6 (Correctness and Bijectivity). The reduction from a uniquely prov-
+able program Π and a TD T = (T, χ) of GΠ to SAT formula F 0 consisting of
+Formulas (1), (3)–(5), and (7)–(15) is correct. Concretely, for each answer set
+of Π there is exactly one model of F 0 and vice versa.
+
+
+
+
+                                             39
+Proof. “⇒”: Assume an answer set M of Π. Then, there is a minimal5 order-
+ing ϕ over at(Π), where every atom of M is proven. Next, we construct a model I
+of F 0 as follows. For each x ∈ at(Π), we let (c1) x ∈ I if x ∈ M . For each
+node t of T , and x, y ∈ χ(t): (c2) We set (x ≺ y) ∈ I if and only if ϕ(x) < ϕ(y).
+(c3) If there is a rule r ∈ Πt proving x using ϕ, we let pxt,r , px<t , pxt ∈ I as well
+as py≺x
+     t    , py≺x               +
+             <t ∈ I for y ∈ Br . Further (c4) if there is z ∈ χ(t) with |{x, y, z}| = 3
+                                                                           0
+and (x ≺ y), (y ≺ z) ∈ I, we set px≺z  t , px≺z
+                                            <t ∈ I. Finally, (c5) for t ∈ chldr(t),
+           x         x                    y≺x         y≺x
+we set p<t ∈ I if p<t0 ∈ I, as well as p<t ∈ I if p<t0 ∈ I.
+     Observe that I is indeed a model of F 0 . By (c1), Formulas (1) are satisfied
+by I. Further, by (c2) of I, the order of ϕ is preserved among χ(t) for each node t
+of T , therefore Formulas (9) and (10) are satisfied by I. Then, due to (c3),
+Formulas (7) and Formulas (8) are satisfied and so are Formulas (11). Further,
+due to both (c3) and (c4), Formulas (12) are satisfied. Further, by definition
+of TDs, for each rule r ∈ Π there is a node t with r ∈ Πt . Consequently, M
+is proven with ordering ϕ, for each x ∈ M there is a node t and a rule r ∈ Πt
+proving x. Then, Formulas (5) and (15) satisfied by I due to (c5). Finally, by
+connectedness of TDs, also Formulas (3) and (4) as well as (13) and (14) are
+satisfied.
+     It remains to show that there cannot be a model I 0 6= I of F 0 with I 0 ∩at(Π) =
+M . Assume towards a contradiction that such a model I 0 of F 0 indeed exists.
+Then, since Π is uniquely provable, for each atom x ∈ at(Π), there is only one
+rule r suitable for proving x. Observe that therefore I 0 agrees with I on variables
+of the form pxt,r by Formulas (7). Consequently, I 0 agrees with I on provability
+variables of the form pxt , px<t by Formulas (11) and (3)–(5). Analogously I 0 also
+sets provability variables of the form px≺y
+                                         t   , px≺y
+                                                <t as I by Formulas (12) and (13)–
+                                     0
+(15). Then, since relation ≺ for I is transitively closed by Lemma 2 and due to
+acyclicity of ≺ by Corollary 7, we have that I 0 precisely gives rise to ordering ϕ,
+which contradicts the assumption.
+     “⇐”: Assume any model I of F 0 . Then, we construct an answer set M of Π
+as follows. We set a ∈ M if a ∈ I for any a ∈ at(Π). Then, we define an
+ordering ϕ iteratively as follows. We set ϕ(a) := 0 for each a ∈ at(Π), where
+there is no atom b ∈ at(Π) with (b ≺ a) ∈ I. Then, we set ϕ(a) := 1 for
+each a ∈ at(Π), where there is no atom b ∈ at(Π) with (b ≺ a) ∈ I such that b
+has not been already assigned in the previous notation. In turn, we construct ϕ
+iteratively by assigning increasing values to ϕ. Observe that ϕ is well-defined,
+i.e., each atom a ∈ at(Π) gets a unique value, since ≺ is transitively closed by
+Lemma 2 and by Corollary 7 there cannot be a cycle over relation ≺ for I.
+     Obviously, M is a model of Π by Formulas (1). It remains to show that ϕ
+is an ordering for Π proving M . Assume towards a contradiction that there is
+an atom a ∈ M that is not proven. Observe that either a is in the bag χ(n)
+of the root node n of T , or it is forgotten below n. In both cases we require a
+node t such that px<t ∈  / I by Formulas (4) and (3), respectively. Consequently,
+by connectedness of T and Formulas (5) there is a node t0 , where pxt0 ∈ I. But
+   5 An ordering ϕ over at(Π) is minimal (for M ) if there is no atom a ∈ at(Π) such that when
+
+decreasing ϕ(a), interpretation M can still be proved with the resulting (modified) ordering.
+
+
+
+                                             40
+then, since Formulas (12) are satisfied by I, there is a rule r ∈ Πt0 proving a
+with ϕ.
+    Note that the bijectivity result above can be generalized. Let therefore Π be
+an HCF program and M be an answer set of Π. Then, we define the dependency
+         M               M :=
+graph DΠ    for M by DΠ         (M, E) where we have an edge (x, y) ∈ E if and
+only if there is a rule r ∈ Π suitable for proving y with x ∈ Br+ . Observe
+that Theorem 6 also holds for HCF programs Π, as long as for each answer
+                         M
+set M of Π the graph DΠ     is acyclic. We call such programs Π deterministically
+provable and it is easy to see that every uniquely provable program is also
+deterministically provable. While for such deterministically provable programs
+there might be several rules suitable for proving an atom a of such an answer
+set M , a model for M of the SAT formula constructed above is still unique as
+it greedily aims to prove a with every applicable rule, cf., Formulas (8).
+Corollary 8. The reduction from a deterministically provable program Π and
+a TD T = (T, χ) of GΠ to SAT formula F 0 consisting of Formulas (1), (3)–(5),
+and (7)–(15) is correct. Concretely, for each answer set of Π there is exactly
+one model of F 0 and vice versa.
+Proof. “⇒”: Assume an answer set M of Π. Then, there is a greedy-minimal6
+ordering ϕ over at(Π), where every atom of M is proven. Next, we construct a
+model I of F 0 as in Theorem 6. Observe that I is a model of F 0 by the same
+arguments as in Theorem 6.
+    It remains to show that there cannot be a model I 0 6= I of F 0 with I 0 ∩at(Π) =
+M . Assume towards a contradiction that such a model I 0 of F 0 exists. Then,
+                                                                          M
+since Π is deterministically provable, i.e., there is no cycle in DΠ          for each
+atom x ∈ M , every rule suitable for proving x proves x, cf., Formulas (8). Ob-
+serve that therefore I 0 agrees with I on variables of the form pxt,r by Formulas (7).
+Consequently, I 0 agrees with I on provability variables of the form pxt , px<t by
+Formulas (11) and (3)–(5). Analogously I 0 also sets provability variables of the
+form px≺y
+        t  , px≺y
+              <t as I by Formulas (12) and (13)–(15). Then, since relation ≺
+      0
+for I is transitively closed by Lemma 2 and due to acyclicity of ≺ by Corol-
+lary 7, we have that I 0 precisely gives rise to ordering ϕ, which contradicts the
+assumption.
+    “⇐”: The other direction holds by the same argument as in Theorem 6.
+
+Example 15. Recall program Π from Example 1 and answer sets M1 = {b, c, d},
+M2 = {b, e}, M3 = {a, c, d} as well as M4 = {a, d, e} of Π. Observe that the
+        M                                                                M2
+graph DΠ   is acyclic for any answer set M ∈ {M1 , M3 , M4 }, whereas DΠ     con-
+                                            0
+tains a cycle. Consequently, the formula F constructed by the reduction above
+is guaranteed to have exactly one model for each of the answer sets M1 , M3 , M4 ,
+which is a priori not guaranteed for M2 . However, in this case it is easy to
+   6 A greedy-minimal ordering ϕ over at(Π) for M is an ordering that serves in proving every
+
+atom a ∈ M with every rule r ∈ Π suitable for proving a, which is not the case anymore when
+decreasing ϕ(b) for some b ∈ at(Π).
+
+
+
+
+                                             41
+see that also for M2 formula F 0 has only one corresponding model since, al-
+         M2
+though DΠ    is not acyclic, there is no rule suitable for proving e without having b
+first.
+
+
+D       Correctness of the Reduction of Section 4
+For proving correctness of Theorem 4, we rely on the following key lemma.
+Lemma 3 (≤ 1 Outgoing Edge). Let us consider any instance I = (G, P ) of
+the Disjoint Paths Problem, and any answer set M of R(I, T ) using any
+pair-connected TD T of (G, P ). Then, there cannot be two edges of the form
+eu,v , eu,w ∈ M .
+Proof. Assume towards a contradiction that there are three different vertices u, v,
+w ∈ V with eu,v , eu,w ∈ M . Then, by Rules (26) there cannot be a node t
+with (u, v), (u, w) ∈ Etre . However, by the definition of TDs, there are nodes t0 , t00
+with (u, v) ∈ Etre0 and (u, w) ∈ Etre00 . By connectedness of TDs, u appears in each
+bag of any node of the path X between t0 and t00 . Then, either t0 is an ancestor
+of t00 (or vice versa, symmetrical) or there is a common ancestor t. In the former
+case, ftu00 is justified by Rules (22) and so is ft̂u on each node t̂ of X by Rules (23)
+and therefore ultimately Rules (25) fail due to ftu0 , eu,w ∈ M . In the latter case,
+ftu00 , ftu0 is justified by Rules (22) and so is ft̂u on each node t̂ of X by Rules (23).
+Then, Rules (24) fail due to ftu0 , ftu00 ∈ M .
+Theorem 4 (Correctness). Reduction R as proposed in this section is correct.
+Let us consider an instance I = (G, P ) of the Disjoint Paths Problem, and
+a pair-connected TD T = (T, χ) of G. Then, I has a solution if and only if the
+program R(I, T ) admits an answer set.
+Proof. “⇒”: Assume any positive instance I of Disjoint Paths Problem.
+Then, there are disjoint paths P1 , . . . , Pi , . . . P|P | from s1 to d1 , . . . , si to di , . . . ,
+s|P | to d|P | for each pair (si , di ) ∈ P . Assuming further pair-connected TD T
+of I, we construct in the following an answer set M of Π = R(I, T ). To this
+end, we collect reachable atoms A := {u | u appears in some Pi , 1 ≤ i ≤ |P |}
+and used edges U := {(u, v) | v appears immediately after u in some Pi , 1 ≤
+i ≤ |P |}. Then, we construct answer set candidate M := {ru | u ∈ A} ∪ {eu,v |
+(u, v) ∈ U } ∪ {neu,v | (u, v) ∈ E \ U } ∪ {ftu | (u, v) ∈ U ∩ Etre } ∪ {ftu |
+(u, v) ∈ U ∩ Etre0 , u ∈ χ(t), t0 is a descendant of t in T }. It remains to show
+that M is an answer set of Π. Observe that M satisfies all the rules of ΠR . In
+particular, by construction, we have reachability rv for every vertex v of every
+pair in P , and the partition in used edges eu,v and unused edges neu,v is ensured.
+Further, ΠL is satisfied, as, again by construction, for each vertex v of every
+pair in P , we have rv ∈ M . Finally, ΠC is satisfied as by construction ftu ∈ M iff
+eu,v ∈ M ∩ Etre or eu,v ∈ M ∩ Etre0 for any descendant node t0 of t with u ∈ χ(t).
+It is easy to see that M is indeed a ⊆-smallest model of the reduct ΠM , since,
+atoms for used and unused edges form a partition of E.
+
+
+                                                  42
+    “⇐”: Assume any answer set M of Π. First, we observe that we can only
+build paths from sources towards destinations, as sources have only outgoing
+edges and destinations allow only incoming edges. Further, by construction,
+vertices can only have one used, outgoing edge, cf., Lemma 3. Consequently,
+if a vertex had more than one used, incoming edge, one cannot match at least
+one pair of P (by combinatorial pigeon hole principle). Hence, in an answer
+set M of Π, there is at most one incoming edge per vertex. By construction
+of Π, in order to reach each di with (si , di ) ∈i σ, si cannot reach some dj 0
+with j 0 < i. Towards a contradiction assume otherwise, i.e., si reaches dj 0 . But
+then, by construction of the reduction, we also have a reachable path from dj 0
+to si , consisting of dj 0 , dj 0 +1 , . . . , di−1 , si . Since every vertex has at most one
+incoming edge, dj 0 cannot have any other justification for being reachable, nor
+does any source on this path. Hence, this forms a cycle such that no atom
+of the cycle is proven, which cannot be present in an answer set. Therefore,
+si only reaches di , since otherwise there would be at least one vertex sj re-
+quired to reach si0 with (si0 , di0 ) ∈i0 σ, i0 < j. Consequently, we construct a
+witnessing path Pi for each pair (s, d) ∈i σ as follows: Pi := s, p1 , . . . , pm , d
+where {es,p1 , ep1 ,p2 , . . . , epm−1 ,pm , epm ,d } ⊆ M . Thus, Pi starts with s, follows
+used edges in M and reaches d.
+
+
+E      Properties and Consequences of Section 4
+The resulting program of the reduction consisting of Rules (16)–(26) is not
+unary. However, only Rules (21) as well as (24)–(26) are not unary. Still,
+Rules (25) and (26) can be turned unary by replacing the occurrence of eu,v in
+these two rules by ¬neu,v . Further, Rules (24) can be replaced by the following
+rules, which use an additional auxiliary atom “bad”.
+bad ← ftu , ftu0                                  for each u ∈ χ(t0 ) ∩ χ(t00 ), t0 6= t00 (30)
+← bad                                                                                     (31)
+
+    On the other hand, for Rules (21) the resulting (positive) cycles of the de-
+pendency graph are required for the whole construction, cf., Figure 6. More
+precisely, it is indeed essential for the whole construction that reachability of
+a source si requires both reachability of the preceding source si−1 and desti-
+nation di−1 . Otherwise we cannot prevent a source from reaching a preceding
+destination via cyclic reachability without provability and still linearly preserve
+the treewidth. Consequently, Rules (21) are not unary and we expect that
+this is crucial. Nevertheless, it was shown that non-unary programs are more
+expressive than unary programs [65]. Still, we are convinced that exploiting
+cyclic, unproven reachability such that the treewidth is not increased more than
+linearly, actually requires the usage of non-unary rules.
+Example 16. Consider again Figure 6, depicting the positive dependency graph
+DRL of Rules (21), as well as Example 12. More concretely, consider the
+same situation of Example 12, where a source si reaches some destination dj
+
+
+                                             43
+with j < i, which causes a cycle C=rsi , . . . , rdj , rsj+1 , . . . , rsi over reachability
+atoms. Then, it is crucial for the construction that Rules (21) are not unary.
+To be more concrete, for the instantiated rule r with rsj+1 ∈ Hr , we require
+that both rsj , rdj ∈ Br+ . If instead of r we constructed two rules rsj+1 ← rsj
+and rsj+1 ← rdj , every atom of the cycle C could be provable since rsj+1 can
+already be proven by the former rule. Further, also for the instantiated rule r0
+of Rules (21) with rso ∈ Hr0 for every j + 1 < o ≤ i, we require that the body
+is not unary. If instead of such a rule r0 , we constructed two rules rdo ← rso−1
+and rdo ← rdo−1 , every atom of the cycle C could be provable since rdo is already
+proven by the latter rule. Since, in particular the result should hold for any such
+cycle C, we rely on non-unary rules for our reduction to work.
+
+
+
+
+                                            44
+

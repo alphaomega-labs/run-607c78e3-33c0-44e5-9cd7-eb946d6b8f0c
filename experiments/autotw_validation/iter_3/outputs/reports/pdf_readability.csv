@@ -1,0 +1,4 @@
+pdf_path,page_count,width,height,status
+paper/figures/iter_3/guard_coverage_runtime_semantics.pdf,1,1404,562,ok
+paper/figures/iter_3/regret_and_calibration_panels.pdf,1,1404,562,ok
+paper/figures/iter_3/tradeoff_and_cache_panels.pdf,1,1404,562,ok

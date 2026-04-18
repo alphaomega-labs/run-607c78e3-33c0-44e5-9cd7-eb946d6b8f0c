@@ -1,0 +1,100 @@
+{
+  "stage": "full",
+  "datasets": {
+    "exp01": "paper/data/iter_1/exp01_runs.csv",
+    "exp02": "paper/data/iter_1/exp02_runs.csv",
+    "exp03": "paper/data/iter_1/exp03_runs.csv",
+    "exp04": "paper/data/iter_1/exp04_runs.csv",
+    "real_solver_runs": "paper/data/iter_1/real_solver_checks/real_solver_runs.csv",
+    "real_solver_regret": "paper/data/iter_1/real_solver_checks/real_solver_regret.csv"
+  },
+  "figures": {
+    "guard_runtime": "paper/figures/iter_1/guard_coverage_runtime_semantics.pdf",
+    "regret_calibration": "paper/figures/iter_1/regret_and_calibration_panels.pdf",
+    "tradeoff_cache": "paper/figures/iter_1/tradeoff_and_cache_panels.pdf"
+  },
+  "tables": {
+    "semantic_audit_table": "paper/tables/iter_1/semantic_audit_table.csv",
+    "router_calibration_table": "paper/tables/iter_1/router_calibration_table.csv",
+    "tradeoff_table": "paper/tables/iter_1/exact_vs_approx_tradeoff_table.csv",
+    "cache_table": "paper/tables/iter_1/cache_counterexample_table.csv",
+    "uncertainty_table": "paper/tables/iter_1/uncertainty_intervals_table.csv",
+    "protocol_table": "paper/tables/iter_1/protocol_table.csv"
+  },
+  "datasets_artifacts": {
+    "exp01": "paper/data/iter_1/exp01_runs.csv",
+    "exp02": "paper/data/iter_1/exp02_runs.csv",
+    "exp03": "paper/data/iter_1/exp03_runs.csv",
+    "exp04": "paper/data/iter_1/exp04_runs.csv",
+    "real_solver_runs": "paper/data/iter_1/real_solver_checks/real_solver_runs.csv",
+    "real_solver_regret": "paper/data/iter_1/real_solver_checks/real_solver_regret.csv"
+  },
+  "sympy_report": "experiments/autotw_validation/iter_1/outputs/reports/sympy_validation_report.md",
+  "theorem_audit_table": "experiments/autotw_validation/iter_1/outputs/reports/theorem_assumption_audit_table.csv",
+  "dataset_resolution_log": "experiments/autotw_validation/iter_1/outputs/logs/dataset_resolution_log.json",
+  "real_solver_confirmatory": {
+    "semantic_table": "paper/data/iter_1/real_solver_checks/real_solver_semantic_table.csv",
+    "router_table": "paper/data/iter_1/real_solver_checks/real_solver_router_table.csv",
+    "report": "paper/data/iter_1/real_solver_checks/real_solver_confirmatory_report.md"
+  },
+  "presentation": {
+    "figure_captions": {
+      "paper/figures/iter_1/guard_coverage_runtime_semantics.pdf": {
+        "panels": [
+          "Left: median runtime by baseline across all datasets and seeds.",
+          "Right: semantic-equivalence pass rate by baseline."
+        ],
+        "variables": "runtime_s in seconds; semantic_pass in [0,1]",
+        "takeaway": "Guarded rewrite has best median runtime among exact-preserving variants and preserves semantic pass rate in this validation model.",
+        "uncertainty": "Runtime dispersion is summarized in uncertainty_intervals_table.csv (bootstrap 95% CI)."
+      },
+      "paper/figures/iter_1/regret_and_calibration_panels.pdf": {
+        "panels": [
+          "Left: mean regret by feature-set and fallback policy.",
+          "Right: envelope-violation and tail-runtime trends over uncertainty tau."
+        ],
+        "variables": "regret_s in seconds, violation_rate in [0,1], tail_runtime_s in seconds",
+        "takeaway": "Uncertainty-gated fallback reduces regret and controls tail runtime in most feature settings.",
+        "uncertainty": "Folded bootstrap intervals are reported in router_calibration_table.csv and uncertainty_intervals_table.csv."
+      },
+      "paper/figures/iter_1/tradeoff_and_cache_panels.pdf": {
+        "panels": [
+          "Left: latency distribution summary across exact/approx policies.",
+          "Right: cache-hit versus false-hit outcomes by key strategy."
+        ],
+        "variables": "latency_ms in milliseconds, cache_hit_rate in [0,1], false_hit as count",
+        "takeaway": "Calibrated routing improves latency while preserving feasibility constraints; guard-signature cache key avoids false hits.",
+        "uncertainty": "Policy latency uncertainty is quantified in uncertainty_intervals_table.csv."
+      }
+    }
+  },
+  "reports": {
+    "guard_audit_report": "experiments/autotw_validation/iter_1/outputs/reports/guard_audit_report.md",
+    "limitations_appendix": "experiments/autotw_validation/iter_1/outputs/reports/limitations_appendix.md",
+    "real_solver_confirmatory_report": "paper/data/iter_1/real_solver_checks/real_solver_confirmatory_report.md"
+  },
+  "claim_support": {
+    "claim_guarded_rewrite_preserves_semantics": {
+      "status": "supported",
+      "reason": "Guarded rewrite semantic pass rate=1.0000, drift_count=0.",
+      "appendix_artifact": "experiments/autotw_validation/iter_1/outputs/reports/guard_audit_report.md"
+    },
+    "claim_uncertainty_gated_router_reduces_regret": {
+      "status": "mixed",
+      "reason": "Best sweep mean regret=0.0584s; real-check violation rate=0.0444. Broad sweep includes settings above strict 5% violation target.",
+      "appendix_artifact": "paper/data/iter_1/real_solver_checks/real_solver_router_table.csv"
+    },
+    "claim_cache_manifest_counterexample_closure": {
+      "status": "mixed",
+      "reason": "Minimum false-hit count across key strategies=0; canonicalized strategy reaches zero while weaker keys do not.",
+      "appendix_artifact": "paper/tables/iter_1/cache_counterexample_table.csv"
+    }
+  },
+  "headline_numbers": {
+    "guarded_median_runtime_s": 1.0122266706404335,
+    "fixed_enum_median_runtime_s": 1.805,
+    "fixed_comp_median_runtime_s": 1.2344227690736995,
+    "real_check_mean_regret_s": 0.006763506848882445,
+    "real_check_violation_rate": 0.044444444444444446
+  }
+}

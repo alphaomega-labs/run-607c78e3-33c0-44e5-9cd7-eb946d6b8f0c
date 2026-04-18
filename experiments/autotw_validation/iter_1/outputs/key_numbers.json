@@ -1,0 +1,20 @@
+{
+  "guard_sem_pass": 1.0,
+  "guard_drift": 0,
+  "guard_median_runtime": 1.0122266706404335,
+  "fixed_enum_median_runtime": 1.805,
+  "fixed_comp_median_runtime": 1.2344227690736995,
+  "best_router": {
+    "feature_set": "tw_only",
+    "fallback_policy": "none",
+    "uncertainty_tau": 0.05,
+    "mean_regret": 0.058364975319232196,
+    "violation_rate": 0.1910384068278805
+  },
+  "real_mean_regret": 0.006763506848882445,
+  "real_violation_rate": 0.044444444444444446,
+  "real_instances": 90,
+  "cache_best_strategy": "normalized_ast_hash",
+  "cache_best_false_hits": 0,
+  "cache_worst_false_hits": 276
+}

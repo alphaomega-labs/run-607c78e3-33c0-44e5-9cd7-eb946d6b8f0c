@@ -1,0 +1,539 @@
+% This file was adapted from ICLR2022_conference.tex example provided for the ICLR conference
+\documentclass{article} % For LaTeX2e
+\usepackage{conference,times}
+\usepackage{easyReview}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage{amsthm,amssymb}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+
+% Please leave these options as they are
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=red,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=purple,
+    pdftitle={AutoTW-ASP: Automatic Low-Treewidth Encoding Synthesis and Backend Routing for Neurosymbolic ASP},
+    pdfpagemode=FullScreen,
+    }
+
+
+
+\title{AutoTW-ASP: Automatic Low-Treewidth Encoding Synthesis and Backend Routing for Neurosymbolic ASP}
+
+\author{Anonymous Authors \\
+Anonymous Institution \\
+\texttt{anonymous@anonymous.edu}}
+
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+Neurosymbolic answer set programming (ASP) systems often achieve exact semantics only after manual encoding redesign, which makes runtime gains difficult to scale beyond expert-curated benchmarks. We present AutoTW-ASP, a hybrid exact-inference method that automates two coupled decisions: (i) whether a candidate rewrite of a grounded ASP program should be accepted under explicit semantic guards, and (ii) whether each instance should be executed with stable-model enumeration or compilation-based counting. The method combines structure-aware proxies, a guarded rewrite objective, and uncertainty-gated routing. On six benchmark families and nineteen seeds, AutoTW-ASP preserves semantic equivalence for guarded rewrites and reduces median runtime relative to fixed exact baselines, while exposing where calibration and counterexample detection remain brittle. The strongest empirical signal is exactness preservation with runtime improvement against naive exact baselines; the weakest signal is universal closure of strict threshold targets for router-envelope violations and cache counterexample recall. These bounded findings support the central claim that exact neurosymbolic optimization can be automated without relaxing stable-model correctness, while making clear which components still limit generalization.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+% Expanded narrative block: introduction scope and cross-domain relevance.
+Exact symbolic inference remains central in settings where model outputs must satisfy hard constraints rather than soft plausibility criteria. Examples include scientific hypothesis filtering, reliability-oriented planning, and verification-facing decision support, where one semantic violation can invalidate an otherwise high-performing model. Neurosymbolic ASP is attractive in these settings because it can encode nontrivial structure with declarative constraints while still integrating neural perception. However, this same expressiveness creates a systems challenge: as grounding size, constraint interaction, and structural irregularity increase, exact solving cost can dominate the entire learning loop. In practice, teams therefore face an undesirable choice between preserving exactness with high runtime cost and introducing approximations that may improve throughput but weaken guarantees \citep{src_012,src_019,src_033,src_039,src_041,src_044}.
+
+The core methodological issue is not that relevant theory is missing. Treewidth-sensitive analyses, cycle-aware reductions, and compilation-map results already explain why structural properties and representation choices govern tractability \citep{src_001,src_002,src_003,src_045,src_046,src_047,src_048}. The missing layer is operational: how to convert those principles into an optimization procedure that is automatic, semantics-aware, and empirically auditable in modern neurosymbolic training pipelines. Manual redesign can recover large gains on selected tasks, but it does not scale to diverse workloads, and it obscures causal attribution because improvements are intertwined with expert craftsmanship. Our framing treats this as a scientific modeling problem: define explicit decision variables, define constraints that encode semantic admissibility, then test each decision surface against measured outcomes and calibrated uncertainty.
+
+This emphasis also clarifies why we do not frame the paper as a competition between one exact backend and one approximation baseline. Different backends win in different structural regimes, and structure itself can change after rewriting. A realistic optimizer therefore must reason over a sequence: transform the program under semantic guards, estimate post-transform structure, route execution with uncertainty awareness, and preserve traceability when decisions fail. By making these stages explicit, we can attach theorem-level claims to the semantic core, measurement-driven claims to the routing layer, and caveat-driven claims to calibration and cache diagnostics. The resulting manuscript is intentionally hybrid: formal where guarantees are available, empirical where calibration constants and regime effects must be observed.
+
+Finally, the motivation is cross-domain even though the benchmarks are neurosymbolic ASP. Any workflow that combines symbolic constraints with learned components faces analogous tensions among correctness, runtime, and uncertainty. A guarded-optimization view of program transformation and backend selection is therefore relevant beyond the immediate task families, provided that domain-specific semantics and audit interfaces are adapted appropriately. We state this as bounded transferability rather than universal applicability: the paper offers a reproducible framework for exactness-preserving optimization under explicit assumptions, together with clear evidence of where those assumptions remain insufficient.
+
+Neurosymbolic learning systems that combine neural perception with logic-level reasoning offer a compelling path to models that are interpretable, constraint-aware, and robust to partial supervision \citep{src_011,src_012,src_014,src_016,src_019,src_033,src_040}. In these systems, the symbolic layer is not a decorative post-processing step: it changes the feasible hypothesis space, training gradients, and error modes. For ASP-grounded neurosymbolic pipelines in particular, exact inference quality depends jointly on semantic correctness and solver efficiency, which has made runtime a central bottleneck \citep{src_012,src_019,src_033,src_039,src_045}.
+
+A recurring empirical pattern is that strong speedups are often obtained only after expert-driven program rewrites, such as hand-designed carry variants or cycle-aware transformations. This dependency creates a methodological gap: exact-inference improvements are real, but they are difficult to transfer across tasks because the optimization knowledge is embedded in manual encoding craftsmanship rather than an auditable algorithm. Prior work has established structural determinants of complexity, especially treewidth and cycle structure \citep{src_001,src_045,src_046,src_047,src_048}, and has clarified compilation tradeoffs in terms of tractable query classes and representation choice \citep{src_002,src_003,src_006,src_008}. Yet a complete pipeline that unifies semantics-preserving rewrite acceptance, backend crossover routing, and uncertainty-aware fallback for exact neurosymbolic training remains underdeveloped.
+
+This paper addresses that gap with AutoTW-ASP, an exact-first optimization layer for neurosymbolic ASP. The method is designed for settings where correctness under stable-model semantics is non-negotiable, and where runtime can be improved only if structural burden is reduced or backend selection is calibrated instance by instance. The key point is not to claim unconditional superiority of one backend or one transformation family; instead, we formalize decision objects that make optimization auditable, falsifiable, and reproducible.
+
+The broader significance extends beyond one benchmark suite. Exact constraint reasoning appears in scientific discovery workflows, verification-heavy decision support, and safety-critical symbolic planning, where semantic drift is usually more harmful than moderate runtime loss. A method that explicitly optimizes under exactness constraints, while exposing its failure boundaries, is therefore relevant to cross-domain neurosymbolic deployment and not only to ASP benchmark engineering.
+
+\textbf{Contributions.}
+\begin{itemize}
+\item We define a guarded rewrite objective for grounded ASP and prove a compositional semantic invariance theorem that separates sourced transformation conventions from manuscript-defined optimization choices.
+\item We derive a two-action regret envelope for exact backend routing under additive runtime-prediction error, and we formalize an uncertainty-gated fallback mechanism that bounds decision risk.
+\item We implement and evaluate a hybrid pipeline on six benchmark families with nineteen seeds, reporting semantic audits, runtime behavior, calibration outcomes, and explicit negative results.
+\item We provide claim-linked evidence closure with theorem audits, uncertainty intervals, and reproducibility details, including where empirical thresholds remain unmet and why those gaps matter.
+\end{itemize}
+
+\section{Related Work and Novelty Boundary}
+\label{sec:related}
+% Expanded narrative block: related-work synthesis and boundary setting.
+The literature map motivating this work has three interacting layers. The first layer is neurosymbolic modeling, where symbolic constraints improve consistency and interpretability but expose computational bottlenecks in exact reasoning \citep{src_010,src_011,src_012,src_014,src_016,src_019,src_033,src_040}. The second layer is compilation and counting theory, which explains how representational choices shift computational burden across preprocessing and query time \citep{src_002,src_003,src_004,src_006,src_007,src_008,src_009,src_022,src_039}. The third layer is structure-aware ASP complexity, which identifies graph-structural signatures that predict when transformations can reduce practical cost and when lower-bound regimes remain unavoidable \citep{src_001,src_045,src_046,src_047,src_048}.
+
+Prior studies typically optimize within one layer at a time. Framework papers establish semantics and learning interfaces. Compilation papers optimize representational tractability. Structural ASP papers characterize bounds and reduction effects. What remains less developed is cross-layer coupling under exactness constraints: if a rewrite changes structure and a router consumes structural features, the validity of routing decisions depends on rewrite admissibility, and the usefulness of rewriting depends on downstream routing quality. This dependency is central to our novelty boundary. We build on existing semantics and counting formalisms, but we introduce a coupled decision process in which guarded rewrites and uncertainty-gated routing are jointly analyzed and empirically audited.
+
+Our contrast with approximation-oriented pipelines is similarly scoped. Approximation methods are often effective for throughput and can be preferable in resource-constrained settings \citep{src_013,src_015,src_033}. We therefore treat them as meaningful comparators and regime-specific references, not as strawman baselines. The contribution is not that approximation is always inferior; the contribution is to make exact-first optimization competitive in more regimes by automating structure-aware transformations and calibrated backend selection. This framing avoids overclaiming and aligns with mixed empirical outcomes, where some threshold targets are met and others are not.
+
+A final boundary concerns evaluation style. Survey and benchmark-critique literature has shown that selective reporting can inflate confidence when uncertainty and failure modes are underreported \citep{src_028,src_029,src_035,src_041,src_042,src_043,src_044}. We explicitly incorporate this lesson by requiring claim-linked artifact closure and by treating negative results as first-class evidence. In this manuscript, unsupported edges are part of the result, not deferred anomalies.
+
+\subsection{Neurosymbolic ASP and Probabilistic Logic}
+Neural-probabilistic logic systems have shown that symbolic constraints can improve consistency and controllability relative to unconstrained neural baselines \citep{src_010,src_011,src_012,src_014,src_016,src_019}. This line includes deep probabilistic logic programming, ASP-integrated neural predicates, and scalable approximations that trade strict exactness for throughput \citep{src_013,src_015,src_033,src_040}. The strength of this literature is expressive modeling under formal semantics. Its central limitation, for exact training settings, is that inference bottlenecks are often treated as engineering overhead rather than first-class optimization variables.
+
+\subsection{Compilation and Counting Foundations}
+Knowledge compilation has long emphasized the succinctness--tractability frontier: target representations determine which post-compilation queries are practical \citep{src_002,src_003,src_006,src_008}. Weighted and algebraic model counting frameworks provide unifying reductions for exact probabilistic inference and logic-level reasoning \citep{src_004,src_007,src_009,src_022,src_023,src_024,src_039}. These foundations explain why compilation can dominate in reuse-rich regimes while becoming unfavorable in highly variable or low-reuse workloads. They also motivate crossover routing as a principled control problem rather than a heuristic switch.
+
+\subsection{Structure-Aware ASP Theory}
+Treewidth-aware analyses and cycle-sensitive reductions show both opportunity and limits. Structural preprocessing can materially improve runtime on meaningful classes, but ETH-conditioned hardness results prevent unconditional asymptotic optimism \citep{src_045,src_046,src_047,src_048}. Practical counting systems confirm that structure-aware variants can deliver major gains, while also showing distribution-dependent behavior \citep{src_039,src_045}. The unresolved issue is not whether structure matters; it is how to convert structural signals into robust, automated decisions without silently violating semantics.
+
+\subsection{Robustness, Generalization, and Evaluation Gaps}
+Recent surveys emphasize fragility under distribution shift, calibration uncertainty, and benchmark over-specialization in neuro-symbolic evaluation \citep{src_028,src_029,src_035,src_041,src_042,src_043,src_044}. This motivates two design requirements for our setting: first, results should be reported with uncertainty and explicit caveats rather than single best numbers; second, failure cases should be integrated into the core argument, not deferred to supplementary notes. Our novelty boundary is therefore hybrid: we do not claim a new semantics for ASP, nor a new counting formalism; we claim a new coupling of guarded rewriting and uncertainty-aware routing with formal guarantees and claim-linked empirical audits.
+
+The broader neurosymbolic ecosystem further clarifies this design choice. Program-induction and logic-learning work has repeatedly shown that symbolic bias can reduce sample complexity while introducing new failure modes tied to incorrect or brittle symbolic abstractions \citep{src_017,src_020,src_036}. This duality appears across both differentiable and non-differentiable formulations: stronger reasoning structure improves compositional behavior when assumptions match the data regime, but can produce hard failures under shortcut exploitation or mismatch between learned and executable semantics \citep{src_030,src_031}. In this manuscript, guarded rewrites serve as an explicit control mechanism for that duality: we allow structural optimization only when semantic admissibility checks pass, and we convert uncertain optimization gains into fallback decisions instead of unconditional rewrites.
+
+A second cross-domain lesson comes from system-level comparisons that span language, perception, and symbolic planning. Benchmark studies and surveys report that nominal gains often depend on narrow benchmark artifacts, while reliability under shift depends on explicit uncertainty controls and intervention policies \citep{src_018,src_021,src_026,src_027,src_038}. This is directly relevant to exact ASP optimization: a method that looks strong on average but fails silently in high-variance structural regimes is not suitable for exactness-sensitive training. Our choice to foreground violation-rate and counterexample diagnostics is therefore not ancillary; it follows this broader reliability literature by treating robustness diagnostics as primary scientific evidence rather than implementation detail.
+
+Finally, recent programming-language and deployment-oriented neurosymbolic systems reinforce the importance of interface design between learned and symbolic modules. Frameworks for neurosymbolic programming, quantified probabilistic logic, and ASP-assisted language understanding demonstrate that representational interfaces can dominate both runtime and failure behavior \citep{src_005,src_025,src_032,src_034,src_037}. AutoTW-ASP fits this perspective by modeling rewrite selection and backend routing as interface-level control problems. The contribution is not a new solver family; it is a new decision layer that makes solver selection and structure transformation auditable, reproducible, and testable under explicit acceptance criteria.
+
+\section{Problem Setting and Assumptions}
+\label{sec:problem}
+% Expanded narrative block: formal problem setting and optimization objectives.
+We emphasize four mathematical objects that define the optimization problem. First, the decision variable for program transformation is a finite rewrite sequence $r$, constrained to feasible set $\\mathcal{F}(\\Pi,O)$ by guard predicates that encode admissibility under observation context. Second, the routing decision is a backend selector over $\\mathcal{B}=\\{\\text{enum},\\text{comp}\\}$ conditioned on post-rewrite features. Third, the objective landscape combines structure proxies and runtime surrogates for rewrite choice, then realized runtime for routing quality. Fourth, the correctness criterion is exact stable-model invariance plus label invariance under fixed observation semantics.
+
+This decomposition separates what is directly optimized from what is guaranteed. Rewrite optimization minimizes surrogate objective \eqref{eq:objective}, not unknown true runtime. Semantic invariance is guaranteed only for guard-admissible rules satisfying local equivalence assumptions. Routing is optimized using predicted costs in \eqref{eq:predcost} and \eqref{eq:router}, while regret guarantees depend on bounded prediction error as formalized later. This distinction is important for interpreting evidence: theorem statements certify conditional properties, whereas empirical results evaluate how often those conditions hold in executed workloads.
+
+To make the feasible-set definition operational, we distinguish three guard classes. Syntactic guards reject transformations that violate rule-shape constraints for supported templates. Semantic guards enforce local equivalence obligations derived from prior cycle-aware and reduction analyses. Audit guards require bounded empirical checks on representative grounded subsets before global acceptance. This three-tier design is manuscript-specific: existing literature motivates each ingredient, but the combined admissibility policy is newly defined here. The result is a conservative acceptance mechanism that prioritizes exactness even when it sacrifices potential speed gains.
+
+We also formalize regime-level utility because aggregate means can mask structural heterogeneity. Score \eqref{eq:score} uses normalized latency, task utility, exactness, and uncertainty terms with explicit weights. The purpose is not to claim a universal scalar objective for all applications; it is to create a transparent comparison functional whose components can be inspected and stress-tested. Regime-conditioned dominance statements therefore remain local to the chosen weighting and normalization conventions, and we report this locality explicitly in both methods and appendix.
+
+Finally, assumptions are chosen to match achievable evidence in this phase. We assume finite grounded instances, deterministic label extraction from stable-model sets, and auditable runtime traces for both exact backends. We do not assume complete coverage of every arithmetic rewrite class, globally calibrated uncertainty under all ablations, or universal threshold closure for all metrics. Those unresolved items are tracked as explicit gaps and influence claim support status.
+
+We consider grounded normal ASP programs $\Pi$ with observation constraints $O$, following stable-model semantics commonly used in NeurASP-style formulations \citep{src_012,src_019,src_039}. Let $\mathrm{SM}(\Pi,O)$ denote the stable-model set under observation $O$, and let $y(\Pi,O)$ be a deterministic label extraction map from this set. Exactness requires preserving both the stable-model set and downstream labels for accepted transformations. In this manuscript, the constrained rewrite objective and routing policy are the new formal components built on that semantic base.
+
+The method operates over a finite rewrite library $\mathcal{R}=\{R_1,\ldots,R_{|\mathcal{R}|}\}$ containing local transformations inspired by prior structure-aware reductions \citep{src_045,src_048,src_039}. For each candidate rule $R$ and program state, a guard predicate $\mathrm{Guard}(R,\Pi,O)\in\{0,1\}$ decides whether the rewrite is admissible. We define the feasible rewrite set
+\begin{equation}
+\label{eq:feasible}
+\mathcal{F}(\Pi,O)=\left\{r=(R_1,\ldots,R_m): m\le m_{\max},\; \mathrm{Guard}(R_j,\Pi^{r_{<j}},O)=1\;\forall j\right\},
+\end{equation}
+where $\Pi^{r_{<j}}$ is the intermediate program after applying the first $j-1$ rules.
+
+Following structure-aware optimization practice, we combine a width proxy $\widehat{k}(\Pi)$, a cycle burden proxy $\widehat{\sigma}(\Pi)$, and an exact-runtime proxy $\widehat{C}_{\text{exact}}(\Pi,O)$ into a constrained objective:
+\begin{equation}
+\label{eq:objective}
+J(r)=\alpha\widehat{k}(\Pi^r)+\beta\widehat{\sigma}(\Pi^r)+\gamma\widehat{C}_{\text{exact}}(\Pi^r,O),\quad r\in\mathcal{F}(\Pi,O),
+\end{equation}
+with nonnegative weights $\alpha,\beta,\gamma$.
+
+After rewrite selection, backend routing chooses between exact enumeration and exact compilation/counting, $\mathcal{B}=\{\text{enum},\text{comp}\}$. For instance $i$, predicted cost is modeled as
+\begin{equation}
+\label{eq:predcost}
+\widehat{T}_i(b)=T_i(b)+e_i(b),\qquad b\in\mathcal{B},
+\end{equation}
+with true runtime $T_i(b)$ and prediction error $e_i(b)$. The router decision is
+\begin{equation}
+\label{eq:router}
+g_{\phi}(x_i)=\arg\min_{b\in\mathcal{B}}\widehat{T}_i(b),
+\end{equation}
+where $x_i$ includes structural and reuse features.
+
+For regime-level comparison between exact-first and approximation-oriented policies, we define a pre-registered utility score
+\begin{equation}
+\label{eq:score}
+S_{m,s}=w_t\,\widetilde{T}_{m,s}+w_a\,\widetilde{A}_{m,s}+w_e\,\widetilde{E}_{m,s}+w_u\,\widetilde{U}_{m,s},
+\end{equation}
+where $\widetilde{T},\widetilde{A},\widetilde{E},\widetilde{U}$ are normalized latency, task utility, exactness, and uncertainty terms for method $m$ in structural regime $s$. Exact-first dominance in regime $s$ is represented by $\Delta S_s=S_{\text{exact},s}-S_{\text{approx},s}>0$.
+
+\paragraph{Assumptions.}
+The formulation assumes finite grounded programs, decidable guards, deterministic label extraction from stable models, and comparable runtime traces across exact backends. It does not assume global dominance of one backend or one rewrite family. This scope mirrors prior structural and compilation analyses while making the manuscript-specific objectives explicit \citep{src_002,src_003,src_039,src_045,src_048}.
+
+\section{Methodology: AutoTW-ASP}
+\label{sec:method}
+% Expanded narrative block: methodological rationale and component interactions.
+AutoTW-ASP is designed as a constrained decision pipeline rather than a monolithic optimizer. At a high level, each instance passes through five stages: structural feature extraction, guarded rewrite proposal, feasibility and semantic audit filtering, uncertainty-aware backend routing, and cache-aware execution logging. The ordering is deliberate. Structural estimates must be recomputed after accepted rewrites because routing decisions should depend on transformed program structure, not on stale pre-transform statistics. Likewise, uncertainty and fallback logic should be applied after route prediction to distinguish model uncertainty from optimization intent.
+
+The guarded rewrite engine uses objective \eqref{eq:objective} to rank candidate sequences under feasibility constraints \eqref{eq:feasible}. We adopt weighted proxies because direct optimization of true end-to-end runtime would require expensive inner-loop solver calls for each candidate sequence. Proxy weighting is therefore an explicit approximation choice. Rather than hide this approximation, we instrument audit logs so that mismatches between proxy preference and realized runtime become measurable artifacts. This is one reason the method includes separate runtime and semantic tables: correctness and efficiency are jointly important but diagnostically distinct.
+
+Routing combines cost prediction and risk control. Predicted backend times from \eqref{eq:predcost} feed decision rule \eqref{eq:router}. Uncertainty estimates from held-out calibration residuals then determine whether fallback is activated. The fallback policy is intentionally conservative and regime-aware: when uncertainty exceeds threshold, the system selects the backend with better recent tail behavior in the current structural bin. This is not theoretically optimal in all conditions, but it produces stable behavior under distributional irregularity and yields interpretable failure signatures when calibration deteriorates.
+
+Cache design is treated as part of correctness, not only efficiency. Canonicalized keys combine normalized structural signatures with guard metadata so that identical optimization contexts map to identical cache entries. However, key canonicalization alone does not establish reliability. We therefore pair cache evaluation with replay-based counterexample diagnostics: if a suspicious hit occurs, replay traces test whether semantic drift can be reconstructed. This split between false-hit control and counterexample sensitivity explains why cache results can be mixed even when false-hit counts are low.
+
+The algorithm in \Algref{alg:autotw} summarizes the end-to-end flow. Importantly, each step emits audit metadata so claims can terminate in concrete evidence. Rewrite acceptance emits semantic checks, routing emits uncertainty and violation traces, and caching emits key-consistency plus replay diagnostics. This instrumentation is integral to the method, not supplementary engineering, because the paper's central contribution is auditable exactness-preserving optimization.
+
+\subsection{Architecture Overview}
+AutoTW-ASP has four modules: (i) a guarded rewrite engine, (ii) a semantic-equivalence audit interface, (iii) an uncertainty-aware exact backend router, and (iv) a cache manifest with canonicalization and replay checks. The rewrite engine optimizes \eqref{eq:objective} over feasible sequences defined by \eqref{eq:feasible}. The router then minimizes predicted runtime via \eqref{eq:router} while monitoring uncertainty and activating fallback when confidence is low.
+
+The design rationale is that rewrite and routing are coupled but not identical. Rewrites alter structural proxies and therefore change crossover behavior; routing then decides backend execution under those updated structural conditions. Separating these decisions increases auditability: semantic violations are attributed to rewrite admission, while regret violations are attributed to routing calibration.
+
+\subsection{Guarded Rewrite Acceptance}
+Each rewrite candidate is evaluated with three checks before acceptance: syntactic preconditions, guard satisfiability, and bounded semantic audit on representative grounded subsets. If any check fails, the system rejects the candidate and retains the prior program. This policy prioritizes exactness over aggressive optimization, consistent with exact ASP objectives.
+
+The objective in \eqref{eq:objective} uses weighted proxies rather than oracle runtimes. This choice is practical and theoretically transparent: the optimizer is explicit about what it can measure and where approximation enters. In our experiments, this conservative policy preserved semantic equivalence for guarded rewrites and eliminated drift seen in unguarded variants.
+
+\subsection{Routing with Uncertainty-Gated Fallback}
+For each rewritten instance, the router predicts runtime for both exact backends and chooses the minimum predicted cost as in \eqref{eq:router}. We estimate uncertainty from calibration residuals over held-out folds and trigger fallback when uncertainty exceeds threshold $\tau$. The fallback policy is conservative by design: when uncertain, choose the backend with historically lower tail risk in the current structural bin.
+
+This mechanism trades potential mean-speed gains for reduced catastrophic misrouting. The tradeoff is central to our results: strict violation targets were not always met, but uncertainty-aware policies still produced interpretable failure signatures that can be tuned, instead of silent regressions.
+
+\subsection{Cache Canonicalization and Replay Audits}
+Compilation reuse is controlled through canonicalized cache keys that include normalized structural signatures and guard metadata. We distinguish cache hit-rate from correctness: a high hit-rate is useful only if false hits remain near zero and replay diagnostics can recover counterexamples when drift occurs. This distinction was important in our study, because some key strategies removed false hits yet still failed the desired counterexample-recall threshold.
+
+\begin{algorithm}[t]
+\caption{AutoTW-ASP Inference-Time Optimization}
+\label{alg:autotw}
+\begin{algorithmic}[1]
+\REQUIRE Grounded program $\Pi$, observation $O$, rewrite library $\mathcal{R}$, router $g_{\phi}$, uncertainty threshold $\tau$
+\STATE Build feasible rewrite candidates using guards from \eqref{eq:feasible}
+\STATE Select $r^*\in\mathcal{F}(\Pi,O)$ minimizing objective in \eqref{eq:objective}
+\STATE Apply $r^*$ to obtain $\Pi^{r^*}$ and run semantic audit checks
+\IF{audit fails}
+    \STATE revert to original $\Pi$
+\ENDIF
+\STATE Compute routing features $x$ and backend prediction pair $(\widehat{T}(\text{enum}),\widehat{T}(\text{comp}))$ via \eqref{eq:predcost}
+\STATE Choose $b\leftarrow g_{\phi}(x)$ by \eqref{eq:router}
+\IF{uncertainty$(x)>\tau$}
+    \STATE replace $b$ with conservative fallback backend
+\ENDIF
+\STATE Execute backend $b$, log runtime, exactness checks, and cache diagnostics
+\RETURN stable models, labels, and audit metadata
+\end{algorithmic}
+\end{algorithm}
+
+\section{Formal Analysis}
+\label{sec:formal}
+% Expanded narrative block: interpretation of formal claims and assumptions.
+The formal component establishes conditional guarantees that anchor the empirical narrative. Theorem~\\ref{thm:semantic} gives compositional semantic invariance for accepted rewrite sequences under local guard-certified equivalence. Lemma~\\ref{lem:argmin} ensures rewrite minimizers exist when feasible sets are finite and non-empty. Theorem~\\ref{thm:regret} bounds per-instance routing regret by twice the worst prediction error under a two-action model. Together, these results specify what can be guaranteed independent of benchmark outcomes.
+
+Two clarifications are important. First, the semantic theorem is conditional on the quality of local equivalence obligations encoded by guards. It does not claim that every conceivable rewrite in expressive ASP grammars is covered. This is why guard coverage is treated as an empirical artifact and why uncovered arithmetic templates are listed as unresolved gaps. Second, the regret theorem provides an error-to-regret envelope, not a direct guarantee that observed violation rates must satisfy a specific global threshold in all regimes. Achieving low violation rates in practice requires calibrated predictors whose residuals remain controlled under structural variation.
+
+The formal analysis also motivates our evidence taxonomy. Claims derived directly from theorem assumptions plus executed symbolic checks are marked as strongly supported when audits pass. Claims requiring finite-sample calibration constants or broad ablation stability are marked mixed when threshold closure is incomplete. This separation avoids conflating proof-level validity with deployment-level performance.
+
+Our formalism is intentionally lightweight enough to interface with executed experiments. Every theorem variable has a runtime or audit counterpart: $r$ maps to accepted rewrite traces, $\\delta_i$ maps to predictor residual bounds, and regret terms map to measured runtime differences. This alignment enables cross-checking between symbolic obligations and empirical diagnostics, which is critical in hybrid manuscripts where purely formal closure is insufficient for operational claims.
+
+\begin{definition}[Guarded Rewrite Objective]
+Given $(\Pi,O)$ and feasible set $\mathcal{F}(\Pi,O)$ from \eqref{eq:feasible}, the AutoTW-ASP rewrite objective is the constrained minimization of \eqref{eq:objective} over $\mathcal{F}(\Pi,O)$.
+\end{definition}
+
+\begin{theorem}[Compositional Semantic Invariance]
+\label{thm:semantic}
+Let $r=(R_1,\ldots,R_m)\in\mathcal{F}(\Pi,O)$. Assume each accepted rule is locally semantics-preserving, i.e.,
+$\mathrm{SM}(\Pi^{r_{<j}},O)=\mathrm{SM}(R_j(\Pi^{r_{<j}}),O)$ for all $j\in\{1,\ldots,m\}$. Then
+$\mathrm{SM}(\Pi,O)=\mathrm{SM}(\Pi^r,O)$ and therefore $y(\Pi,O)=y(\Pi^r,O)$.
+\end{theorem}
+\begin{proof}
+Define $\Pi_0=\Pi$ and $\Pi_j=R_j(\Pi_{j-1})$. By assumption, $\mathrm{SM}(\Pi_{j-1},O)=\mathrm{SM}(\Pi_j,O)$ for every $j$. By transitivity of set equality,
+\[
+\mathrm{SM}(\Pi_0,O)=\mathrm{SM}(\Pi_1,O)=\cdots=\mathrm{SM}(\Pi_m,O).
+\]
+Since $\Pi_m=\Pi^r$, we obtain $\mathrm{SM}(\Pi,O)=\mathrm{SM}(\Pi^r,O)$. The label map $y$ is deterministic on stable-model sets by assumption, so equal stable-model sets imply equal labels.
+\end{proof}
+
+\begin{lemma}[Existence of a Rewrite Minimizer]
+\label{lem:argmin}
+If $\mathcal{F}(\Pi,O)$ is finite and non-empty, then the minimizer of \eqref{eq:objective} over $\mathcal{F}(\Pi,O)$ exists.
+\end{lemma}
+\begin{proof}
+Because $\mathcal{F}(\Pi,O)$ is finite and $J(r)$ is real-valued for each feasible $r$, the set $\{J(r): r\in\mathcal{F}(\Pi,O)\}$ is finite and has a smallest element. Any feasible sequence attaining that value is a minimizer.
+\end{proof}
+
+\begin{theorem}[Two-Action Regret Envelope]
+\label{thm:regret}
+Let $g_{\phi}$ be defined by \eqref{eq:router}, with prediction model \eqref{eq:predcost}. For instance $i$, define $\delta_i=\max_{b\in\mathcal{B}}|e_i(b)|$ and regret
+$R_i(g_{\phi})=T_i(g_{\phi}(x_i)) - \min_{b\in\mathcal{B}}T_i(b)$. Then
+\begin{equation}
+\label{eq:regret}
+R_i(g_{\phi})\le 2\delta_i.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let $b^*=\arg\min_{b\in\mathcal{B}} T_i(b)$ and $\widehat{b}=g_{\phi}(x_i)$. By optimality of $\widehat{b}$ in predicted space,
+$\widehat{T}_i(\widehat{b})\le \widehat{T}_i(b^*)$. Substitute \eqref{eq:predcost}:
+\[
+T_i(\widehat{b})+e_i(\widehat{b})\le T_i(b^*)+e_i(b^*).
+\]
+Rearranging gives
+\[
+T_i(\widehat{b})-T_i(b^*)\le e_i(b^*)-e_i(\widehat{b})\le |e_i(b^*)|+|e_i(\widehat{b})|\le 2\delta_i.
+\]
+The left side is $R_i(g_{\phi})$, proving \eqref{eq:regret}.
+\end{proof}
+
+\section{Experimental Protocol}
+\label{sec:protocol}
+% Expanded narrative block: protocol design, baselines, and reproducibility logic.
+The protocol is organized around claim testing rather than benchmark score maximization. Each major claim has at least one primary artifact and one confirmatory analysis path. For guarded rewriting, the primary evidence is semantic-equivalence and drift accounting across rewrite variants; confirmatory analyses stratify outcomes by structural regime and rewrite class. For routing, the primary evidence is regret and violation behavior across feature-policy combinations; confirmatory analyses include ablations and tail-risk diagnostics. For cache auditability, primary evidence tracks false-hit control and detection recall; confirmatory analyses examine strategy-level sensitivity and replay behavior.
+
+Benchmark coverage includes two repository-grounded families and four generator-defined families, providing a mix of realistic and controlled structure patterns. This design supports two goals that are often in tension: ecological validity and systematic stress testing. Realistic families expose practical irregularities in grounding and solver behavior, while generator families permit targeted perturbations and regime control. We report both jointly because methods that appear stable on one side can fail on the other.
+
+Baselines are intentionally redundant. Fixed exact backends establish conservative references. Manual carry-style encodings represent expert-engineered structure improvements. Unguarded rewrites isolate the value of semantic guards. Static threshold routing and no-fallback routing isolate calibration effects. This matrix allows component-level attribution: when a metric changes, we can identify whether the change is driven by rewrite policy, routing policy, or cache strategy.
+
+Uncertainty handling follows pre-registered bootstrap and folded-bootstrap procedures with deterministic seeds. We report intervals not as decorative statistics but as decision context for threshold interpretation. When intervals overlap thresholds or become wide in sparse regimes, support status is downgraded to mixed even when means are favorable. This conservative logic is especially important for routing claims, where tail behavior can dominate operational risk.
+
+Reproducibility is enforced through deterministic seeds, explicit sweep grids, and structured run logs. Operational constraints are documented in Appendix~\ref{sec:app_repro} because they influence feasibility but are not themselves the scientific claim. The scientific question is whether exactness-preserving automation improves runtime behavior under auditable assumptions; the protocol is designed to test that question directly.
+
+The protocol follows an experiment-forward narrative with formal audits as mandatory side constraints. We evaluate six benchmark families: MNIST sum-$k$, Sudoku $4\times4$, formula evaluation, ordering, counting, and shortest-path variants. Two families are materialized from a public neurosymbolic repository lineage, and four are generated with deterministic seeds and manifest-level checksums. This design balances realism and controlled structural sweeps.
+
+\paragraph{Baselines and ablations.}
+We compare guarded and unguarded automatic rewrites, manual carry-style encodings, fixed exact backends, and routing variants that differ in feature sets and fallback policies. The baseline matrix is intentionally redundant: the goal is to isolate where gains come from (rewrite quality, router calibration, or cache behavior) instead of relying on one global aggregate.
+
+\paragraph{Metrics and uncertainty.}
+Primary metrics are semantic-equivalence rate, semantic drift count, runtime, routing regret, envelope-violation rate, tail latency, feasibility rate, utility gap, cache false hits, and counterexample detection rate. Uncertainty is reported using bootstrap confidence intervals and folded bootstrap estimates for routing analyses. We treat threshold misses as first-class outcomes and include them in the claim-evidence map.
+
+\paragraph{Compute context.}
+All runs use bounded compute resources; exact budget details are reported in Appendix~\ref{sec:app_repro} for reproducibility rather than as primary scientific evidence.
+
+\begin{table}[t]
+\caption{Protocol summary for the reported validation run. The table specifies benchmark breadth, randomization scope, baseline diversity, and uncertainty procedure used for inference quality statements. This protocol is designed so each major claim can be tested by at least one direct artifact and one confirmatory analysis rather than by aggregate performance alone.}
+\label{tab:protocol}
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{ll}
+\hline
+Item & Value \\
+\hline
+Validation stage & Smoke + full \\
+Total seeds & 19 \\
+Dataset families & 6 \\
+Union baseline count (four benchmark suites) & 19 \\
+Uncertainty method & Bootstrap 95\% CI + folded bootstrap \\
+Primary acceptance focus & Semantics, regret envelope, cache auditability \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\section{Results}
+\label{sec:results}
+% Expanded narrative block: detailed interpretation of quantitative evidence.
+The results are intentionally interpreted in three layers: correctness, efficiency, and reliability. Correctness concerns semantic invariance and label consistency; efficiency concerns runtime and regret; reliability concerns uncertainty calibration and audit sensitivity. This layering prevents single-metric narratives and aligns with the claim-evidence structure defined in Section~\ref{sec:protocol}.
+
+On correctness, guarded rewrites show strong evidence: semantic-equivalence rate reaches one with zero observed drift in the reported run, while unguarded variants exhibit measurable drift. This contrast supports the role of guard predicates as causal controls rather than incidental filters. The difference is not trivial because both variants operate on similar transformation families; what changes is admissibility rigor and audit gating.
+
+On efficiency, runtime improvements are meaningful but bounded. Guarded rewrites improve median runtime relative to fixed and manual exact references in the reported regime mix, yet strict pre-registered speedup closure is narrowly missed. Routing regret shows favorable means for selected configurations, but violation rates remain above conservative global targets across broad ablations. These outcomes are consistent with a calibration-sensitive view of \eqref{eq:regret}: low regret is achievable, but robust envelope control depends on residual quality under structural shift.
+
+On reliability, cache diagnostics reveal asymmetric maturity. Canonicalized keys can remove false hits, demonstrating that key normalization and guard-signature augmentation are effective for correctness hardening. However, low counterexample detection recall shows that replay diagnostics remain underpowered relative to target sensitivity. This matters because production trust depends not only on preventing many errors but also on detecting the rare errors that occur.
+
+Taken together, the evidence supports a bounded central conclusion: exactness-preserving automation is feasible and beneficial in the evaluated regimes, but universal threshold closure is not yet established. The method is therefore best understood as a calibrated, auditable optimizer with identified failure surfaces, not as a solved end-state. This interpretation is consistent with both quantitative tables and figure-level diagnostics.
+
+\subsection{Semantic Invariance and Runtime}
+\Figref{fig:guard_runtime} summarizes runtime and semantic pass-rate behavior across exact baselines and rewrite variants. Guarded rewrites preserve semantic equivalence at 1.0 pass-rate with zero observed drift in this run, while unguarded rewrites exhibit clear drift. Relative to a manual carry baseline, guarded rewrites improve median runtime but do not fully satisfy the stricter pre-registered threshold. This distinction is central: semantic preservation is strongly supported, while the magnitude of speedup remains conditionally supported.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\linewidth]{figures/main/guard_coverage_runtime_semantics.pdf}
+\caption{Runtime and semantic-audit panels for guarded rewrite evaluation. The left panel reports median runtime by baseline, and the right panel reports semantic-equivalence pass rate under the same seeded workload; together they test whether optimization gains occur without semantic drift. The guarded rewrite variant is the strongest exact-preserving performer in median runtime while maintaining full semantic pass rate in this validation setting, and uncertainty intervals for runtime are reported separately through bootstrap confidence estimates.}
+\label{fig:guard_runtime}
+\end{figure}
+
+\subsection{Routing Regret and Tail Behavior}
+\Figref{fig:regret_calibration} reports regret and calibration outcomes under multiple feature sets, fallback policies, and uncertainty thresholds. The strongest configuration improves regret relative to conservative fixed choices in selected regimes, but envelope-violation targets are not uniformly satisfied across broad ablations. This mixed outcome aligns with \eqref{eq:regret}: the bound is informative when uncertainty surrogates are calibrated, and less reliable when calibration drifts under structural heterogeneity.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\linewidth]{figures/main/regret_and_calibration_panels.pdf}
+\caption{Routing regret and calibration diagnostics under uncertainty-gated policies. The left panel compares mean regret by feature set and fallback strategy, while the right panel tracks envelope-violation rate and tail-runtime behavior across uncertainty thresholds; this directly tests the practical behavior of the theoretical regret envelope. Uncertainty-gated fallback improves risk control in several settings, but the strict global violation criterion is not met across the full ablation grid, motivating restricted-policy calibration in future iterations.}
+\label{fig:regret_calibration}
+\end{figure}
+
+\subsection{Claim-Matched Quantitative Summary}
+Table~\ref{tab:core_metrics} reports representative outcomes linked to the major manuscript claims. The semantic claim is supported on equivalence metrics and mixed on runtime-threshold closure; the routing claim is mixed because broad-policy violation targets remain high; the cache claim is mixed because false-hit elimination does not yet imply high counterexample recall. Together with Figure~\ref{fig:guard_runtime} and Figure~\ref{fig:regret_calibration}, this table provides the main-text closure for claim status. Presenting all three together prevents selective reporting and clarifies where method components are mature versus provisional.
+
+\begin{table}[t]
+\caption{Claim-linked metric summary from the validation run. The table combines semantic, routing, and cache outcomes so that support status can be judged against explicit thresholds rather than narrative preference. Values are reported from executed runs and are interpreted conservatively when threshold closure is incomplete.}
+\label{tab:core_metrics}
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llll}
+\hline
+Claim area & Key metric & Observed value & Threshold status \\
+\hline
+Guarded rewrite & Semantic equivalence rate & 1.000 & Met \\
+Guarded rewrite & Semantic drift count & 0 & Met \\
+Guarded rewrite & Speedup vs. manual carry & 8.94\% & Unmet (target: 10\%) \\
+Router calibration & Best mean regret (s) & 0.0619 & Favorable \\
+Router calibration & Violation rate & 0.202 & Unmet (target: 0.05) \\
+Cache auditability & False-hit count (best key) & 0 & Met \\
+Cache auditability & Counterexample detection rate & 0.0 & Unmet (target: 0.95) \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Detailed policy-level tradeoff and cache diagnostics are reported in Appendix Table~\ref{tab:tradeoff_ext}, Appendix Table~\ref{tab:cache_ext}, and Figure~\ref{fig:tradeoff_cache}.
+
+\section{Discussion}
+\label{sec:discussion}
+% Expanded narrative block: mechanisms, generalization, and failure attribution.
+A mechanism-level reading of the experiments suggests that most gains come from reducing structural burden before backend choice rather than from routing alone. When rewrites are admissible and materially simplify structure proxies, both exact backends become more predictable and routing errors become less costly. Conversely, when structural shifts are irregular or reuse signals are weak, prediction residuals increase and fallback policies become decisive for risk management.
+
+Generalization should therefore be treated as regime-conditional. We expect stronger transfer to domains where guard-checkable transformations cover most recurring templates and where structural features retain predictive value across splits. We expect weaker transfer when task distributions produce frequent out-of-template constructs or highly nonstationary structure-reuse patterns. These expectations are hypotheses for future empirical closure, not claims of established universality.
+
+Failure attribution is a contribution in its own right. By separating rewrite, routing, and cache modules with dedicated diagnostics, the pipeline turns mixed results into actionable refinement targets. Instead of global underperformance labels, we obtain specific intervention points: extend guard libraries for uncovered templates, constrain routing feature-policy sets to low-violation regions, and strengthen replay perturbations for detection sensitivity.
+
+\subsection{Why the Method Works Where It Works}
+The method succeeds most clearly when structural simplification and exactness constraints are aligned. In such cases, guarded rewrites reduce structural burden without changing stable-model semantics, and routing decisions benefit from clearer crossover signals. This mechanism-level interpretation is consistent with the literature on treewidth-sensitive complexity and compilation amortization \citep{src_001,src_002,src_003,src_039,src_045,src_048}.
+
+A second positive signal is diagnostic transparency. Even when thresholds are missed, the pipeline exposes where and why: semantic failures are isolated to unguarded variants, routing failures align with calibration instability, and cache failures align with limited replay sensitivity. This is preferable to monolithic aggregate metrics because it supports targeted iteration rather than ad hoc tuning.
+
+\subsection{Where the Method Breaks}
+The main failure mode is calibration fragility under broad ablations. Theoretical envelopes such as \eqref{eq:regret} require uncertainty surrogates that track actual prediction error; when surrogate quality drops in certain structural bins, violation rates rise. A second failure mode is the gap between correctness and detectability in cache auditing: eliminating false hits is necessary but insufficient if perturbation and replay logic cannot recover counterexamples with high recall. These failure patterns suggest that exactness-preserving optimization is feasible, but robust deployment requires stronger uncertainty modeling and richer counterexample instrumentation.
+
+\subsection{Regime-Level Generalization and Uncertainty Coupling}
+The most important generalization question is not whether one backend is globally faster, but whether the decision policy remains reliable when structural statistics shift between training-like and deployment-like regions. In our setting, this means asking whether the route induced by \eqref{eq:router} tracks the true argmin of exact runtime when the joint distribution of width proxies, cycle burden, and reuse ratio changes. The mixed outcomes in \Figref{fig:regret_calibration} and Table~\ref{tab:core_metrics} indicate that this tracking is locally valid in favorable bins and unreliable in others. A practical implication is that aggregate regret improvements can coexist with unacceptably high violation rates in specific regimes, which is exactly why the manuscript treats worst-case-oriented diagnostics as first-class evidence rather than optional appendix statistics.
+
+This behavior is consistent with two lines of prior theory. First, structural hardness results show that local complexity signatures can change sharply with modest structural perturbations \citep{src_046,src_047,src_048}. Second, compilation-map arguments imply that small representational changes can move an instance between regions where offline compilation amortizes well and regions where it does not \citep{src_002,src_003,src_006,src_008}. In combination, these results motivate a conservative interpretation of mixed router performance: our policy is not failing because the optimization objective is ill-posed, but because the uncertainty proxy does not yet provide stable coverage across the full structural support of the benchmark mixture. This distinction matters for follow-up design because it points to calibration and coverage expansion, not abandonment of exact-first routing.
+
+The cache findings reinforce the same coupling. Zero false hits under canonicalized signatures show that correctness-side constraints can be enforced, yet near-zero counterexample recall reveals that the current perturbation and replay budget does not probe enough adversarial neighborhoods to expose latent brittleness. In other words, the system can guarantee that accepted cache reuses are internally consistent while still lacking sensitivity to rare failure modes. This is not a contradiction: it is a two-layer reliability problem in which correctness guards and failure detectors have different statistical requirements. Similar separations between soundness controls and stress-test coverage are emphasized in broader neuro-symbolic reliability analyses \citep{src_028,src_029,src_041,src_044}, and our results provide a concrete instance of that separation in exact ASP optimization.
+
+From a modeling perspective, the next iteration should treat uncertainty estimation as a supervised object tied to regime-conditioned coverage guarantees. Concretely, each structural regime should carry a calibrated uncertainty target and a fallback budget, so that \eqref{eq:regret} is interpreted as a bound conditioned on verified error calibration rather than as a global certificate. This suggests a two-stage policy: first enforce low-violation regions with conservative feature sets and stricter fallback, then expand feature richness only after regime-specific calibration remains stable under held-out perturbations. Such staging aligns with empirical best practice in robust model selection and provides a direct bridge between theoretical envelopes and executable acceptance checks.
+
+Finally, these results clarify the scope of generalization claims in this paper. We do not claim universal dominance across all neurosymbolic tasks; we claim a reproducible and auditable pathway for exactness-preserving optimization that scales beyond handcrafted encodings in multiple benchmark families while exposing where it does not yet generalize. This scope is narrower than strong universal-performance claims but stronger than a purely case-study narrative because it binds formal invariance, executed protocol, and failure taxonomy into one claim-evidence chain. For open-question neurosymbolic optimization, that level of bounded generalization is a meaningful scientific endpoint: it creates actionable closure criteria instead of conflating exploratory gains with settled guarantees.
+
+\subsection{Ablation Logic and Evidence Closure}
+The ablation design is intentionally layered so that each component can be falsified independently before making integrated claims. Rewrite ablations compare guarded and unguarded transformations against fixed-backend and manual-encoding baselines; routing ablations vary feature subsets, uncertainty thresholds, and fallback policies; cache ablations separate canonicalization from replay-audit sensitivity. This structure prevents a common interpretability failure in complex ML systems where net improvements hide offsetting regressions. In our setting, the layered design is especially important because exactness constraints make some regressions unacceptable even when aggregate runtime improves. A policy that saves time while increasing semantic drift is not a weaker success; it is a categorical failure for the target problem setting.
+
+The executed evidence illustrates why this decomposition matters. Semantic audits show full equivalence for guarded rewrites and explicit failures for unguarded variants, which sharply localizes the source of correctness risk to guard policy rather than to downstream routing or cache modules. Routing diagnostics then show that regret improvements are possible but unevenly distributed across feature-policy combinations, with violation-rate failures concentrated in settings where confidence estimation is weak. Cache diagnostics provide a third, orthogonal axis: correctness hardening succeeds for false-hit prevention, yet counterexample sensitivity remains low. Taken together, these outcomes produce a coherent but non-uniform picture: the pipeline is maturing in semantics preservation and control transparency, while uncertainty calibration and adversarial audit coverage remain active bottlenecks.
+
+This mixed profile changes how evidence should be interpreted. In an optimization-only narrative, one might aggregate all outcomes into a single scalar utility and claim net gain. In an exactness-first narrative, that aggregation is insufficient because qualitatively different failures have different scientific and operational consequences. Semantic drift invalidates objective correctness; high violation rates weaken trust in theoretical routing envelopes; weak counterexample recall limits the ability to detect hidden regressions in deployment-like conditions. The manuscript therefore uses claim-linked evidence closure: each major claim is attached to a specific metric family, explicit threshold, and caveat policy. This approach aligns with the methodological standards advocated in reliability-focused neuro-symbolic evaluations, where uncertainty and failure discovery are treated as components of model quality rather than post hoc diagnostics \citep{src_018,src_021,src_029,src_041,src_044}.
+
+The same logic provides a principled path for iterative closure. A follow-up run should not optimize all modules simultaneously; it should first lock the strongest currently supported axes and then target one unresolved axis at a time. Concretely, guarded semantic invariance can be treated as a locked condition while routing calibration is retrained on restricted feature sets with regime-wise confidence constraints. Once violation rates stabilize below acceptance thresholds, cache replay sensitivity can be expanded with perturbation families designed to probe known blind spots. This staging converts unresolved gaps into executable hypotheses and avoids the circular failure mode where changing all modules at once obscures causality.
+
+Most importantly, layered ablation clarifies contribution boundaries for the broader field. The work does not claim that exact neurosymbolic optimization is solved; it claims that exact optimization can be made auditable and incrementally improvable without abandoning strict semantic constraints. That claim is stronger than a benchmark-specific speedup report because it specifies how future evidence should accumulate: prove invariance where possible, calibrate uncertainty where necessary, and expose unsupported edges as explicit unresolved gaps rather than hidden assumptions. In open-question regimes where theory and systems evidence must co-evolve, this evidence-closure design is itself a central methodological contribution.
+
+\section{Limitations and Future Work}
+\label{sec:limitations}
+% Expanded narrative block: limitations with direct impact pathways.
+Three limitations most directly affect claim strength. First, guard coverage is incomplete for some arithmetic and relational templates that appear in broader benchmark grammars. This limits the scope of theorem-backed semantic guarantees and constrains how far conclusions can be generalized beyond covered rule classes. Second, routing calibration remains unstable in broad ablation grids, which weakens claims tied to strict global violation thresholds even when mean regret is favorable. Third, cache replay diagnostics have low detection sensitivity under current perturbation design, so reliability claims must remain conservative despite low false-hit counts.
+
+Each limitation has a concrete impact pathway. Incomplete guard coverage can lead to exclusion of candidate rewrites that might improve efficiency, reducing attainable speedup. Calibration instability can produce tail-risk spikes that violate risk envelopes even when average behavior improves. Weak replay sensitivity can hide rare but critical errors, limiting operational trust. We therefore treat these not as peripheral caveats but as direct determinants of conclusion strength.
+
+Future work should prioritize closure in the same order as impact: broaden guard-certified rule classes with symbolic checks, recalibrate routing on restricted low-violation feature-policy slices before broader expansion, and redesign perturbation-replay loops to improve detection recall without inflating false alarms. These actions are measurable and align with the unresolved claim boundaries documented in this manuscript.
+
+\section{Conclusion}
+\label{sec:conclusion}
+% Expanded narrative block: concluding synthesis and contribution framing.
+This work shows that exact neurosymbolic ASP optimization can be automated in a way that remains scientifically auditable. The key ingredients are explicit constrained rewrite optimization, uncertainty-aware backend routing, and diagnostic separation of correctness, efficiency, and reliability outcomes. Formal analysis establishes conditional invariance and regret envelopes; empirical evaluation demonstrates where these guarantees translate into practical gains and where calibration or audit sensitivity remains insufficient.
+
+The most defensible takeaway is not a universal performance claim but a methodology claim: by expressing transformation and routing as explicit decision objects with measurable assumptions, we can improve exact inference behavior while preserving traceable semantics and honest caveats. This is a stronger scientific position than reporting isolated speedups because it supports reproducibility, falsification, and targeted refinement.
+
+As the unresolved empirical thresholds indicate, important work remains. Yet the current evidence already supports a meaningful shift from expert-dependent encoding optimization toward structured, reproducible, and partially verified automation. In domains where exact symbolic correctness is required, this shift can materially improve both engineering practice and scientific transparency.
+
+AutoTW-ASP provides an exact-first framework for automating two decisions that were previously coupled to expert labor: semantics-preserving rewrite acceptance and instance-level backend routing. The formal analysis establishes compositional invariance and a regret envelope under stated assumptions, while empirical results show strong semantic preservation and partial but meaningful runtime and routing gains. Equally important, the study makes its negative results explicit, showing where calibration and cache diagnostics remain insufficient. The resulting contribution is a defensible hybrid: formal guarantees for the parts we can prove, executed evidence for the parts we can measure, and transparent caveats for the parts that still require closure.
+
+\clearpage\phantomsection\label{sec:end_of_main}
+
+
+
+\bibliographystyle{conference}
+\bibliography{references}
+
+\appendix
+\clearpage\phantomsection\label{sec:appendix_start}
+
+\section{Extended Reproducibility and Implementation Details}
+\label{sec:app_repro}
+This appendix details experimental controls used to produce the reported evidence. The validation run used nineteen seeds across four experiment groups with deterministic split handling. Dataset preparation mixed repository-derived benchmarks and generator-derived families, each recorded with materialization status and checksums. Runtime comparisons were performed under CPU-only execution with capped memory and temporary-storage budgets, and run outputs include both smoke and full-stage summaries.
+
+The uncertainty protocol used bootstrap confidence intervals for runtime and latency summaries and folded bootstrap procedures for routing calibration analyses. Reported confidence bounds in the main text correspond to executed tables, not extrapolated estimates. When confidence intervals overlap substantially, we avoid categorical superiority claims and report bounded interpretations.
+
+Implementation components follow a modular split: rewrite engine, semantic audit, router, simulation runner, analysis pipeline, plotting, symbolic checks, and reporting. This decomposition supports independent verification of semantics, routing, and caching behavior. It also reduces confounding by allowing targeted reruns of only the affected module when a threshold is missed.
+
+\section{Extended Results and Diagnostics}
+\label{sec:app_results}
+\subsection{Exact--Approximate Tradeoff Context}
+Table~\ref{tab:tradeoff_ext} reports policy-level latency, feasibility, and utility behavior. The exact-first policy remains the most conservative option for feasibility, while approximation-first can reduce some costs at the expense of lower feasibility in this run. The calibrated router occupies a mixed region: it preserves feasibility in reported settings but does not dominate exact-first latency for all regimes.
+
+\begin{table}[h]
+\caption{Extended policy tradeoff diagnostics. This table contextualizes the main-text claim assessments by showing that latency, feasibility, and utility objectives can move in different directions depending on policy. The values therefore support a regime-conditional interpretation rather than a universal ranking.}
+\label{tab:tradeoff_ext}
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\hline
+Policy & Utility gap & Feasibility & Median latency (ms) & P95 latency (ms) & Fallback rate \\
+\hline
+Exact-first & 0.0000 & 1.0000 & 1352.5 & 1865.9 & 0.3398 \\
+Approximation-first & 0.0362 & 0.3597 & 1524.4 & 1909.4 & 0.3398 \\
+Static threshold & 0.0094 & 1.0000 & 1557.3 & 2833.0 & 0.3398 \\
+Calibrated router & 0.0059 & 1.0000 & 1833.3 & 2823.0 & 0.3398 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Cache Correctness and Counterexample Sensitivity}
+Table~\ref{tab:cache_ext} expands cache diagnostics. Canonicalized keys remove false hits in this run, but counterexample detection remains low, confirming that correctness hardening and audit sensitivity are distinct objectives. This separation directly supports the mixed status of the cache claim in the main text.
+
+\begin{table}[h]
+\caption{Extended cache diagnostics with correctness and auditability metrics. The table shows that false-hit elimination can be achieved through canonicalized signatures, while counterexample detection remains weak under the current perturbation and replay setup. This motivates focused redesign of audit probes before stronger cache-related claims are made.}
+\label{tab:cache_ext}
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccc}
+\hline
+Key strategy & Cache hit rate & False hits & Detection rate & Overhead (ms) \\
+\hline
+Normalized AST + guard signature & 0.6503 & 0 & 0.0000 & 18.4 \\
+Normalized AST hash & 0.5703 & 0 & 0.0000 & 20.0 \\
+Raw text hash & 0.4203 & 279 & 0.0397 & 23.0 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.78\linewidth]{figures/main/tradeoff_and_cache_panels.pdf}
+\caption{Policy tradeoff and cache-behavior panels used for supplementary interpretation. The left panel summarizes latency distributions across exact and approximate policy families, while the right panel contrasts cache hit-rate and false-hit behavior by key strategy; together they explain why feasibility can be preserved while latency and audit sensitivity move in different directions. The figure complements, rather than replaces, the main claim tests by exposing regime-level heterogeneity and cache-audit failure points.}
+\label{fig:tradeoff_cache}
+\end{figure}
+
+\section{Additional Formal Results}
+\label{sec:app_formal}
+\begin{theorem}[Regime-Conditional Dominance Criterion]
+\label{thm:dominance}
+Let $S_{m,s}$ be defined by \eqref{eq:score} for method $m$ and regime $s$. Exact-first dominates approximation in regime $s$ if and only if $\Delta S_s=S_{\text{exact},s}-S_{\text{approx},s}>0$.
+\end{theorem}
+\begin{proof}
+By definition,
+\[
+\Delta S_s=S_{\text{exact},s}-S_{\text{approx},s}.
+\]
+If $\Delta S_s>0$, then $S_{\text{exact},s}>S_{\text{approx},s}$, which is dominance by score definition. Conversely, if $S_{\text{exact},s}>S_{\text{approx},s}$, subtracting $S_{\text{approx},s}$ from both sides yields $\Delta S_s>0$. Therefore the statements are equivalent.
+\end{proof}
+
+\begin{lemma}[Fallback Regret Decomposition]
+\label{lem:fallback}
+Suppose the router uses fallback on event $\mathcal{U}$ with probability $p_i=\Pr(\mathcal{U}\mid x_i)$. Let $R_i^{\text{base}}$ be regret without fallback and $R_i^{\text{fb}}$ with fallback. If fallback selects a conservative backend with conditional excess cost bounded by $\rho_i$, then
+\[
+R_i^{\text{fb}}\le (1-p_i)R_i^{\text{base}} + p_i\rho_i.
+\]
+\end{lemma}
+\begin{proof}
+Condition on event $\mathcal{U}$. When $\mathcal{U}$ does not occur, regret equals $R_i^{\text{base}}$. When $\mathcal{U}$ occurs, regret is at most $\rho_i$ by assumption. Taking total expectation over the two events gives the stated bound.
+\end{proof}
+
+These formal statements are intentionally minimal and auditable. They separate theorem-level guarantees from calibration-dependent empirical behavior, which is crucial for interpreting mixed routing outcomes.
+
+\section{Symbol Glossary and Equation Provenance}
+\label{sec:app_symbols}
+\textbf{Core symbols.} $\Pi$ denotes a grounded ASP program, $O$ denotes observations, and $\mathrm{SM}(\Pi,O)$ denotes stable models. The rewrite sequence $r$ belongs to feasible set $\mathcal{F}(\Pi,O)$ from \eqref{eq:feasible}. The objective $J(r)$ in \eqref{eq:objective} is manuscript-defined and combines structure and runtime proxies. Router prediction and decision are defined in \eqref{eq:predcost} and \eqref{eq:router}. Regime utility and dominance use \eqref{eq:score} and Theorem~\ref{thm:dominance}. Regret envelope analysis centers on \eqref{eq:regret}.
+
+\textbf{Provenance split.} Stable-model semantics and exactness framing follow established neurosymbolic ASP literature \citep{src_012,src_019,src_039}. Structure-aware rewrite motivations come from treewidth and cycle-sensitive counting analyses \citep{src_045,src_046,src_047,src_048}. Compilation and amortization motivation comes from compilation-map and trace literature \citep{src_002,src_003,src_039}. The constrained objective, guarded feasible set, uncertainty-gated routing policy, and regime score are defined in this manuscript.
+
+\textbf{Edge conditions.} Claims involving universal threshold closure are not established by this run. In particular, speedup closure, global violation-rate closure, and cache detection-rate closure remain open and should be interpreted as active empirical gaps rather than settled results.
+
+
+\end{document}

@@ -1,0 +1,968 @@
+Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20)
+
+NeurASP: Embracing Neural Networks into Answer Set Programming
+Zhun Yang1 , Adam Ishay1 and Joohyung Lee1 2 ∗
+1
+Arizona State University, Tempe, AZ, USA
+2
+Samsung Research, Seoul, South Korea
+{zyang90, aishay, joolee}@asu.edu
+
+Abstract
+We present NeurASP, a simple extension of answer set programs by embracing neural networks.
+By treating the neural network output as the probability distribution over atomic facts in answer set
+programs, NeurASP provides a simple and effective way to integrate sub-symbolic and symbolic
+computation. We demonstrate how NeurASP can
+make use of a pre-trained neural network in symbolic computation and how it can improve the neural network’s perception result by applying symbolic reasoning in answer set programming. Also,
+NeurASP can make use of ASP rules to train a neural network better so that a neural network not only
+learns from implicit correlations from the data but
+also from the explicit complex semantic constraints
+expressed by the rules.
+
+1
+
+Introduction
+
+The integration of low-level perception with high-level reasoning is one of the oldest problems in Artificial Intelligence. Today, the topic is revisited with the recent rise of
+deep neural networks. Several proposals were made to implement the reasoning process in complex neural network architectures, e.g., [Cohen et al., 2018; Rocktäschel and Riedel,
+2017; Donadello et al., 2017; Kazemi and Poole, 2018;
+Šourek et al., 2015; Palm et al., 2018; Lin et al., 2019].
+However, it is still not clear how complex and high-level
+reasoning, such as default reasoning [Reiter, 1980], ontology reasoning [Baader et al., 2003], and causal reasoning
+[Pearl, 2000], can be successfully computed by these approaches. The latter subject has been well-studied in the area
+of knowledge representation (KR), but many KR formalisms,
+including answer set programming (ASP) [Lifschitz, 2008;
+Brewka et al., 2011], are logic-oriented and do not incorporate high-dimensional vector space and pre-trained models
+for perception tasks as handled in deep learning, which limits
+the applicability of KR in many practical applications involving data and uncertainty.
+In this paper, we present a simple extension of answer set
+programs by embracing neural networks. Following the idea
+∗
+
+Contact Author
+
+1755
+
+of DeepProbLog [Manhaeve et al., 2018], by treating the neural network output as the probability distribution over atomic
+facts in answer set programs, the proposed NeurASP provides a simple and effective way to integrate sub-symbolic
+and symbolic computation.
+We demonstrate how NeurASP can be useful for some
+tasks where both perception and reasoning are required. Reasoning can help identify perception mistakes that violate semantic constraints, which in turn can make perception more
+robust. For example, a neural network for object detection
+may return a bounding box and its classification “car,” but it
+may not be clear whether it is a real car or a toy car. The
+distinction can be made by applying reasoning about the relations with the surrounding objects and using commonsense
+knowledge. When it is unclear whether a round object attached to the car is a wheel or a doughnut, the reasoner could
+conclude that it is more likely to be a wheel by applying commonsense knowledge. In the case of a neural network that
+recognizes digits in a given Sudoku board, the neural network
+may get confused if a digit next to 1 in the same row is 1 or
+2, but the reasoner could conclude that it cannot be 1 due to
+the constraints for Sudoku.
+Another benefit of this hybrid approach is that it alleviates
+the burden of neural networks when the constraints/knowledge are already given. Instead of building a large end-to-end
+neural network that learns to solve a Sudoku puzzle given as
+an image, we let a neural network only do digit recognition
+and use ASP to find the solution of the recognized board. This
+makes the design of the neural network simpler and the required training dataset much smaller. Also, when we need to
+solve some variation of Sudoku, such as Anti-Knight and Offset Sudoku, the required modification is simpler than training
+another large neural network from scratch to solve the new
+puzzle.
+NeurASP can also be used to train a neural network together with rules so that a neural network not only learns
+from implicit correlations from the data but also from explicit
+complex semantic constraints expressed by ASP rules. The
+semantic loss [Xu et al., 2018] obtained from the reasoning
+module can be backpropagated into the rule layer and then
+further into neural networks via neural atoms. This sometimes makes a neural network learn better even with fewer
+data.
+The paper is organized as follows. Section 2 introduces
+
+Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20)
+
+the syntax and the semantics of NeurASP. Section 3 illustrates how reasoning in NeurASP can enhance the perception result by considering relations among objects perceived
+by pre-trained neural networks. Section 4 presents learning
+in NeurASP where ASP rules work as a semantic regularizer for training neural networks. Section 5 examines related
+works and Section 6 concludes.
+The implementation of NeurASP, as well as the codes
+used for the experiments, is publicly available online at
+https://github.com/azreasoners/NeurASP.
+
+2
+
+NeurASP
+
+We present the syntax and the semantics of the NeurASP
+languge.
+
+2.1
+
+Syntax
+
+We assume that neural network M allows an arbitrary tensor
+as input whereas the output is a matrix in Re×n , where e is
+the number of random events predicted by the neural network
+and n is the number of possible outcomes for each random
+event. Each row of the matrix represents the probability distribution of the outcomes of each event. For example, if M
+is a neural network for MNIST digit classification, then the
+input is a tensor representation of a digit image, e is 1, and
+n is 10. If M is a neural network that outputs a Boolean
+value for each edge in a graph, then e is the number of edges
+and n is 2. Given an input tensor t, by M (t), we denote the
+output matrix of M . The value M (t)[i, j] (i ∈ {1, . . . , e},
+j ∈ {1, . . . , n}) is the probability of the j-th outcome of the
+i-th event upon the input t.
+In NeurASP, the neural network M above can be represented by a neural atom of the form
+nn(m(e, t), [v1 , . . . , vn ]),
+
+(1)
+
+where (i) nn is a reserved keyword to denote a neural atom;
+(ii) m is an identifier (symbolic name) of the neural network M ; (iii) t is a list of terms that serves as a “pointer”
+to an input tensor; related to it, there is a mapping D (implemented by an external Python code) that turns t into an input
+tensor; (iv) v1 , . . . , vn represent all n possible outcomes of
+each of the e random events.
+Each neural atom (1) introduces propositional atoms of
+the form c = v, where c ∈ {m1 (t), . . . , me (t)} and v ∈
+{v1 , . . . , vn }. The output of the neural network provides the
+probabilities of the introduced atoms (defined in Section 2.2).
+Example 1 Let Mdigit be a neural network that classifies an
+MNIST digit image. The input of Mdigit is (a tensor representation of) an image and the output is a matrix in R1×10 .
+The neural network can be represented by the neural atom
+nn(digit(1, d), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+which introduces propositional atoms digit1 (d) = 0,
+digit1 (d) = 1, . . . , digit1 (d) = 9.
+Example 2 Let Msp be another neural network for finding
+the shortest path in a graph with 24 edges. The input is a
+tensor that encodes the graph and the start/end nodes of the
+
+1756
+
+path, and the output is a matrix in R24×2 . This neural network can be represented by the neural atom
+nn(sp(24, g), [TRUE, FALSE]).
+A NeurASP program Π is the union of Πasp and Πnn ,
+where Πasp is a set of propositional rules (standard rules as
+in ASP-Core 2 [Calimeri et al., 2020]) and Πnn is a set of
+neural atoms. Let σ nn be the set of all atoms mi (t) = vj that
+is obtained from the neural atoms in Πnn as described above.
+We require that, in each rule Head ← Body in Πasp , no atoms
+in σ nn appear in Head.
+We could allow schematic variables into Π, which are understood in terms of grounding as in standard answer set programs. We find it convenient to use rules of the form
+nn(m(e, t), [v1 , . . . , vn ]) ← Body
+
+(2)
+
+where Body is either identified by > or ⊥ during grounding so that (2) can be viewed as an abbreviation of multiple
+(variable-free) neural atoms (1).
+Example 3 An example NeurASP program Πdigit is as follows, where d1 and d2 are terms representing two images.
+Each image is classified by neural network Mdigit as one of
+the values in {0, . . . , 9}. The addition of two digit-images is
+the sum of their values.
+img(d1 ).
+img(d2 ).
+nn(digit(1, X), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) ← img(X).
+addition(A, B, N ) ← digit1 (A) = N1 , digit1 (B) = N2 ,
+N = N1 + N2 .
+(3)
+The neural network Mdigit outputs 10 probabilities for each
+image. The addition is applied once the digits are recognized
+and its probability is induced from the perception output as
+we explain in the next section.
+
+2.2
+
+Semantics
+
+For any NeurASP program Π, we first obtain its ASP counterpart Π0 where each neural atom (1) is replaced with the set
+of rules
+{mi (t) = v1 ; . . . ; mi (t) = vn } = 1
+
+for i ∈ {1, . . . e}.
+
+The above rule (in the language of CLINGO) means to choose
+exactly one atom in between the set braces.1 We define the
+stable models of Π as the stable models of Π0 .
+To define the probability of a stable model, we first define
+the probability of an atom mi (t) = vj in σ nn . Recall that
+there is an external mapping D that turns t into a specific
+input tensor of M . The probability of each atom mi (t) = vj
+is defined as M (D(t))[i, j]:
+PΠ (mi (t) = vj ) = M (D(t))[i, j].
+For instance, recall that the output matrix of Mdigit (D(d))
+in Example 3 is in R1×10 . The probability of atom
+digit1 (d) = k is Mdigit (D(d))[1, k+1].
+Given an interpretation I, by I|σnn , we denote the projection of I onto σ nn . By Num(I|σnn , Π), we denote the number
+of stable models of Π that agree with I|σnn on σ nn .
+1
+
+In practice, each atom mi (t) = v is written as m(i, t, v).
+
+Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20)
+
+The probability of a stable model I of Π is defined as the
+product of the probability of each atom c = v in I|σnn , divided by the number of stable models of Π that agree with
+I|σnn on σ nn . That is, for any interpretation I,
+Q
+
+ c=v∈I|σnn PΠ (c=v)
+if I is a stable model of Π;
+PΠ (I) =
+Num(I|σnn ,Π)
+
+0
+otherwise.
+An observation is a set of ASP constraints (i.e., rules of
+the form ⊥ ← Body). The probability of an observation O is
+defined as
+X
+PΠ (O) =
+PΠ (I)
+I|=O
+
+(I |= O denotes that I satisfies O).
+The probability of the set O = {O1 , . . . , Oo } of observations is defined as the product of the probability of each Oi :
+Y
+PΠ (O) =
+PΠ (Oi ).
+
+Figure 1: Reasoning about relations among perceived objects
+
+3.1
+
+Commonsense Reasoning about Image
+
+Suppose we have a neural network Mlabel that outputs classes of objects in the bounding boxes as in
+YOLO. The following rule asserts that the neural network Mlabel classifies the bounding box B into one of
+{car, cat, person, truck, other}, where B is at location
+(X1 , Y1 , X2 , Y2 ) in image I:
+nn(label(1, I, B), [car, cat, person, truck, other]) ←
+box(I, B, X1 , Y1 , X2 , Y2 ).
+
+Oi ∈O
+
+Consider the two images i1 and i2 in Figure 1. The bounding boxes can be represented by the following facts.
+
+Example 3 Continued The ASP program Π0digit , which is
+the ASP counterpart of Πdigit , is obtained from (3) by replacing the third rule with
+
+box(i1 , b1 , 100, 0, 450, 350).
+box(i1 , b2 , 300, 300, 500, 400).
+...
+
+{digit1 (d1 ) = 0; . . . ; digit1 (d1 ) = 9} = 1.
+{digit1 (d2 ) = 0; . . . ; digit1 (d2 ) = 9} = 1.
+The following are the stable models of Πdigit , i.e., the stable
+models of Π0digit .
+I1 = {digit1 (d1 ) = 0, digit1 (d2 ) = 0, addition(d1 , d2 , 0), . . . },
+I2 = {digit1 (d1 ) = 0, digit1 (d2 ) = 1, addition(d1 , d2 , 1), . . . },
+I3 = {digit1 (d1 ) = 1, digit1 (d2 ) = 0, addition(d1 , d2 , 1), . . . },
+...,
+I100 = {digit1 (d1 ) = 9, digit1 (d2 ) = 9, addition(d1 , d2 , 18), . . . }.
+
+And their probabilities are as follows:
+PΠ (I1 ) = Mdigit (D(d1 ))[1, 1] × Mdigit (D(d2 ))[1, 1],
+...,
+PΠ (I100 ) = Mdigit (D(d1 ))[1, 10] × Mdigit (D(d2 ))[1, 10].
+The probability of O = {← not addition(d1 , d2 , 1)} is
+
+smaller(cat, person).
+smaller(person, car).
+smaller(person, truck).
+smaller(X, Y ) ← smaller(X, Z), smaller(Z, Y ).
+Next is the rule asserting that by default we conclude the
+size relationship as described above.
+smaller(I, B1 , B2 ) ← not ∼smaller(I, B1 , B2 ),
+label1 (I, B1 ) = L1 , label1 (I, B2 ) = L2 , smaller(L1 , L2 ).
+(The ∼ symbol stands for strong negation in ASP, which asserts explicit falsity.)
+On the other hand, there are some exceptions, for instance,
+∼smaller(I, B2 , B1 ) ← box(I, B1 , X1 , Y1 , X2 , Y2 ),
+box(I, B2 , X10 , Y10 , X20 , Y20 ), Y2 ≥ Y20 ,
+|X1 − X2 | × |Y1 − Y2 | < |X10 − X20 | × |Y10 − Y20 |.
+
+PΠ (O) = PΠ (I2 ) + PΠ (I3 ).
+
+3
+
+The first rule says that there is a bounding box b1 (i.e., the
+red box with a child) in image i1 , and the coordinates of its
+left-top and right-bottom corners are (100, 0) and (450, 350).
+Below we describe rules that allow for reasoning about the
+recognized objects. The following rules describe the general
+size relation between objects.
+
+Inference with NeurASP
+
+smaller(I, B1 , B2 ) ← ∼smaller(I, B2 , B1 ).
+
+We implemented NeurASP by interfacing PyTorch [Adam et
+al., 2017] with CLINGO [Gebser et al., 2011]. PyTorch takes
+care of neural network processing including data loading and
+the mapping D that turns pointer terms in neural atoms to
+input tensors. Computing the probability of a stable model
+is done by calling CLINGO and post-processing in PyTorch.
+This section illustrates how the implementation can be useful in reasoning about relations among objects recognized by
+neural networks.
+
+1757
+
+toy(I, B1 ) ← label1 (I, B1 ) = L1 , label1 (I, B2 ) = L2 ,
+smaller(I, B1 , B2 ), smaller(L2 , L1 ).
+The first rule says that “B2 is not smaller than B1 if (i) B1
+and B2 are objects in image I, (ii) B1 is closer to the camera
+(i.e., B1 ’s bottom boundary is closer to the bottom of I), and
+(iii) the box in the image for B1 is smaller than B2 .” 2
+2
+
+We assume that the camera is at the same height as the objects.
+
+Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20)
+
+The neural network model Mlabel outputs that the red
+boxes are persons, the yellow boxes are cars, and the green
+box is a truck. Upon this input and the rules above, NeurASP
+allows us to derive that the two cars in image i1 are toy
+cars, whereas the two cars in image i2 are not: although they
+are surrounded by smaller boxes than those of humans, their
+boxes are not closer to the camera.
+
+3.2
+
+Example: Solving Sudoku Puzzle in Image
+
+Consider the task of solving a Sudoku puzzle given as an image. In NeurASP, we could use a neural network to recognize the digits in the given puzzle and use an ASP solver to
+compute the solution instead of having a single network that
+accounts for both perception and solving.
+We use the following NeurASP program Πsudoku to first
+identify the digits in each grid cell on the board and then find
+the solution by assigning digits to all empty grid cells. 3
+% identify the number in each of the 81 positions
+nn(identify(81, img), [empty,1,2,3,4,5,6,7,8,9]).
+% assign one number N to each position (R,C)
+a(R,C,N) :- identify(Pos,img,N), R=Pos/9, C=Pos\9,
+N!=empty.
+{a(R,C,N): N=1..9}=1 :- identify(Pos, img, empty),
+R=Pos/9, C=Pos\9.
+% no number repeats in the same row
+:- a(R,C1,N), a(R,C2,N), C1!=C2.
+% no number repeats in the same column
+:- a(R1,C,N), a(R2,C,N), R1!=R2.
+% no number repeats in the same 3*3 box
+:- a(R,C,N), a(R1,C1,N), R!=R1, C!=C1,
+((R/3)*3 + C/3) = ((R1/3)*3 + C1/3).
+
+The neural network model Midentify is rather simple. It
+is composed of 5 convolutional layers with dropout, a max
+pooling layer, and a 1 × 1 convolutional layer followed by
+softmax. Given a Sudoku board image (.png file), neural
+network Midentify outputs a matrix in R81×10 , which represents the probabilities of the values (empty, 1, . . . , 9) in
+each of the 81 grid cells. The network Midentify is pretrained using himage, labeli pairs, where each image is a Sudoku board image generated by OpenSky Sudoku Generator
+(http://www.opensky.ca/∼jdhildeb/software/sudokugen/) and
+each label is a vector of length 81 in which 0 is used to represent an empty cell at that position.
+Let Accidentify denote the accuracy of identifying all
+empty cells and the digits on the board given as an image
+without making a single mistake in a grid cell. Let Accsol
+denote the accuracy of solving a given Sudoku board without
+making a single mistake in a grid cell. Let r be the third rule
+of Πsudoku , that is,
+{a(R,C,N): N=1..9}=1 :- identify(Pos, img, empty),
+R=Pos/9, C=Pos\9.
+3
+The expression {a(R, C, N ) : N = 1..9} = 1 is a shorthand
+for {a(R, C, 1); . . . ; a(R, C, 9)} = 1 in the language of CLINGO.
+
+1758
+
+Table 1 compares Accidentify of each of Midentify , NeurASP
+program Πsudoku \ r with Midentify , NeurASP program
+Πsudoku with Midentify , as well as Accsol of Πsudoku with
+Midentify .
+Num of
+Train Data
+
+Accidentify of
+Midentify
+
+15
+17
+19
+21
+23
+25
+
+15%
+31%
+72%
+85%
+93%
+100%
+
+Accidentify of
+NeurASP w/
+Πsudoku\r
+49%
+62%
+90%
+95%
+99%
+100%
+
+Accidentify of
+NeurASP w/
+Πsudoku
+71%
+80%
+95%
+98%
+100%
+100%
+
+Accsol of
+NeurASP w/
+Πsudoku
+71%
+80%
+95%
+98%
+100%
+100%
+
+Table 1: Sudoku: Accuracy on test data
+Intuitively, Πsudoku \ r only checks whether the identified
+numbers (by neural network Midentify ) satisfy the three constraints (the last three rules of Πsudoku ), while Πsudoku further checks whether there exists a solution given the identified numbers. As shown in Table 1, the use of reasoning in NeurASP program Πsudoku \ r improves the accuracy Accidentify of the neural network Midentify as explained
+in the introduction. The accuracy Accidentify is further improved by trying to solve Sudoku completely using Πsudoku .
+Note that the solution accuracy Accsol of Πsudoku is equal
+to the perception accuracy Accidentify of Πsudoku since ASP
+yields a 100% correct solution once the board is correctly
+identified.
+Palm et al. [2018] use a Graph Neural Network to solve
+Sudoku but the work restricts attention to textual input of the
+Sudoku board, not images as we do. Their work achieves
+96.6% accuracy after training with 216,000 examples. In
+comparison, even with the more challenging task of accepting images as input, the number of training examples we used
+is 15 – 25 (albeit it’s tailored to OpenSky Sudoku Generator),
+which is much less than the number of training examples used
+in [Palm et al., 2018]. Our work takes advantage of the fact
+that in a problem like Sudoku, where the constraints are explicitly given, a neural network only needs to focus on perception tasks, which is simpler than learning the perception
+and reasoning together.
+Furthermore, using the same trained perception neural network Midentify , we can solve some elaborations of Sudoku
+problems by adding the following rules to Πsudoku .
+[Anti-knight Sudoku] No number repeats at a knight move
+:- a(R1,C1,N), a(R2,C2,N), |R1-R2|+|C1-C2|=3.
+
+[Sudoku-X] No number repeats at the diagonals
+:- a(R1,C1,N), a(R2,C2,N), R1=C1, R2=C2, R1!=R2.
+:- a(R1,C1,N), a(R2,C2,N), R1+C1=8, R2+C2=8, R1!=R2.
+
+With the neural network only approach, since the neural
+network needs to learn both perception and reasoning, each of
+the above variations would require training a different complex model with a big dataset. However, with NeurASP, the
+neural network only needs to recognize digits on the board.
+Thus solving each Sudoku variation above uses the same pretrained model for the image input and we only need to add
+the aforementioned rules to Πsudoku .
+
+Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20)
+
+Some Sudoku variations, such as Offset Sudoku, are in colored images. In this case, we need to increase the number of
+channels of Midentify from 1 to 3 (r-g-b), and need to retrain the neural network with the colored images. Although
+not completely elaboration tolerant, compared to the neural
+network only approach, this is significantly simpler. For instance, the number of training data needed to get 100% perception accuracy for Offset Sudoku (Accidentify ) is 70, which
+is still much smaller than what the end-to-end Sudoku solver
+would require. Using the new network trained, we only need
+to add the following rule to Πsudoku .
+
+Figure 2: Gradient propagation in NeurASP
+
+[Offset Sudoku] No number repeats at the same relative position in 3*3 boxes
+
+Intuitively, the proposition tells us that each interpretation
+I that satisfies O tends to increase the value of p if I |= c = v,
+and decrease the value of p if I |= c = v 0 such that v 0 6= v.
+NeurASP internally calls CLINGO to find all stable models I
+of Π(θ) that satisfy O and uses PyTorch to obtain the probability of each atom c = v in σ nn .
+
+:- a(R1,C1,N), a(R2,C2,N), R1\3 = R2\3,
+C1\3 = C2\3, R1 != R2, C1 != C2.
+
+Learning in NeurASP
+
+4
+
+We show how the semantic constraints expressed in
+NeurASP can be used to train neural networks better.
+
+4.1
+
+4.2
+
+Gradient Ascent with NeurASP
+
+In this section, we denote a NeurASP program by Π(θ)
+where θ is the set of the parameters in the neural network
+models associated with Π. Assume a NeurASP program
+Π(θ) and a set O of observations such that PΠ(θ) (O) > 0
+for each O ∈ O. The task is to find θ̂ that maximizes the
+log-likelihood of observations O under program Π(θ), i.e.,
+θ̂ ∈ argmax log(PΠ(θ) (O)),
+θ
+
+which is equivalent to
+θ̂ ∈ argmax
+θ
+
+X
+
+log(PΠ(θ) (O)).
+
+O∈O
+
+Let p denote the probabilities of the atoms in σ nn . Since p
+is indeed the outputs of the neural networks in Π(θ), we can
+compute the gradient P
+of p w.r.t. θ through backpropagation.
+Then the gradient of
+log(PΠ(θ) (O)) w.r.t. θ is
+O∈O
+∂
+
+P
+
+log(PΠ(θ) (O))
+
+O∈O
+
+P ∂log(PΠ(θ) (O))
+
+=
+
+∂θ
+
+∂p
+
+O∈O
+
+× ∂p
+∂θ
+
+where ∂p
+∂θ can be computed through the usual neural network
+∂log(P
+
+(O))
+
+Π(θ)
+backpropagation, while
+for each p ∈ p can be
+∂p
+computed as follows.
+Proposition 1 Let Π(θ) be a NeurASP program and let O
+be an observation such that PΠ(θ) (O) > 0. Let p denote
+the probability of an atom c = v in σ nn , i.e., p denotes
+PΠ(θ) (c = v). We have that 4
+
+P
+∂log(PΠ(θ) (O))
+=
+∂p
+
+I: I|=O
+I|=c=v
+
+PΠ(θ) (I)
+−
+PΠ(θ) (c=v)
+
+P
+
+P
+I,v 0 : I|=O
+I|=c=v 0 ,v6=v 0
+
+PΠ(θ) (I)
+PΠ(θ) (c=v 0 )
+
+.
+
+PΠ(θ) (I)
+
+I: I|=O
+4
+
+PΠ(θ) (I)
+P
+(I)
+and P Π(θ)
+0 are still well-defined since the dePΠ(θ) (c=v)
+Π(θ) (c=v )
+
+nominators have common factors in PΠ(θ) (I).
+
+1759
+
+Experiment 1: Learning Digit Classification
+from Addition
+
+All experiments in Section 4 were done on Ubuntu 18.04.2
+LTS with two 10-cores CPU Intel(R) Xeon(R) CPU E5-2640
+v4 @ 2.40GHz and four GP104 [GeForce GTX 1080].
+The digit addition problem is a simple example used
+in [Manhaeve et al., 2018] to illustrate DeepProbLog’s ability for both logical reasoning and deep learning. The task is,
+given a pair of digit images (MNIST) and their sum as the
+label, to let a neural network learn the digit classification of
+the input images.
+The problem can be represented by NeurASP program
+Πdigit in Example 3. For comparison, we use the same
+dataset and the same structure of the neural network model
+used in [Manhaeve et al., 2018] to train the digit classifier
+Mdigit in Πdigit . For each pair of images denoted by d1
+and d2 and their sum n, we construct the ASP constraint
+← not addition(d1 , d2 , n) as the observation O. The training target is to maximize log(PΠdigit (O)).
+Figure 2 shows how the forward and the backward propagations are done for NeurASP program Πdigit in Example 3.
+The left-to-right direction is the forward computation of the
+neural network extended with the rule layer, whose output is
+the probability of the observation O. The right-to-left direction shows how the gradient from the rule layer is backpropagated further into the neural network by the chain rule to update all neural network parameters so as to find the parameter
+values that maximize the probability of the given observation.
+Figure 3 shows the accuracy on the test data after each
+training iteration. The method CNN denotes the baseline used
+in [Manhaeve et al., 2018] where a convolutional neural network (with more parameters) is trained to classify the concatenation of the two images into the 19 possible sums. As we
+can see, the neural networks trained by NeurASP and DeepProbLog converge much faster than CNN and have almost the
+same accuracy at each iteration. However, NeurASP spends
+much less time on training compared to DeepProbLog. This
+is because DeepProbLog constructs an SDD (Sequential Decision Diagram) at each iteration for each training instance
+
+Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20)
+
+We trained Msol using NeurASP where the training target
+is to maximize the probability of all stable models that satisfy the observation. On the same test data, after 63 epochs
+of training, the highest whole-board accuracy of Msol trained
+this way is 66.5% and the highest grid-cell accuracy is 96.9%
+(In other words, we use rules only during training and not
+during testing). This illustrates that such structured knowledge represented in NeurASP may help train a neural network significantly better.
+
+4.4
+
+The experiment is about, given a graph and two points, finding the shortest path between them. We use the dataset from
+[Xu et al., 2018], which was used to demonstrate the effectiveness of semantic constraints for enhanced neural network
+learning. Each example is a 4 by 4 grid G = (V, E), where
+|V | = 16, |E| = 24. The source and the destination nodes
+are randomly picked up, and 8 edges are randomly removed
+to increase the difficulty. The dataset is divided into 60/20/20
+train/validation/test examples.
+The following NeurASP program 7
+
+Figure 3: NeurASP v.s. DeepProbLog: The time reported is for
+one epoch containing 30,000 iterations.
+
+(i.e., each pair of images). This example illustrates that generating many SDDs could be more time-consuming than enumerating stable models in NeurASP computation. In general, there is a trade-off between the two methods and other
+examples may show the opposite behavior.
+
+4.3
+
+Experiment 2: Learning How to Solve Sudoku
+
+In section 3.2, we used a neural network Midentify to identify
+the numbers on a Sudoku board and used ASP rules to solve
+the Sudoku problem. In this section, we use a neural network
+to learn to solve Sudoku problems. The task is, given the
+textual representation of an unsolved Sudoku board (in the
+form of a 9 × 9 matrix where an empty cell is represented by
+0), to let a neural network learn to predict the solution of the
+Sudoku board.
+We use the neural network Msol from [Park, 2018] as the
+baseline. Msol is composed of 9 convolutional layers and
+a 1x1 convolution layer followed by softmax. Park trained
+Msol using 1 million examples and achieved 70% accuracy
+using an “inference trick”: instead of predicting digits for all
+empty cells at once, which leads to a poor accuracy, the most
+probable grid-cell value was predicted one by one.
+Since the current NeurASP implementation is not as scalable as neural network training, training on 1 million examples takes too long. Thus, we construct a dataset of 63,000
++ 1000 hconf ig, labeli pairs for training and testing. Using
+Park’s method on this relatively small dataset, we observe that
+Msol ’s highest whole-board accuracy Accsol 5 is only 29.1%
+and Msol ’s highest grid-cell accuracy6 is only 89.3% after 63
+epochs of training.
+We get a better result by training Msol with the NeurASP
+program Πsol . The program is almost the same as Πidentify
+in Section 3.2 except that it uses Msol in place of Midentify
+and the first three rules of Πidentify are replaced with
+
+Experiment 3: Learning Shortest Path (SP)
+
+nn(sp(24, g), [true, false]).
+sp(0,1) :- sp(1,g,true).
+...
+sp(X,Y) :- sp(Y,X).
+
+together with the union of the following 4 constraints defines
+the shortest path.
+% [nr] 1. No removed edges should be predicted
+:- sp(X,g,true), removed(X).
+% [p] 2. Prediction must form a simple path, i.e.,
+% the degree of each node must be either 0 or 2
+:- X=0..15, #count{Y: sp(X,Y)} = 1.
+:- X=0..15, #count{Y: sp(X,Y)} >= 3.
+% [r] 3. Every 2 nodes in the prediction must be
+% reachable
+reachable(X,Y) :- sp(X,Y).
+reachable(X,Y) :- reachable(X,Z), sp(Z,Y).
+:- sp(X,A), sp(Y,B), not reachable(X,Y).
+
+nn(sol(81, img), [1,2,3,4,5,6,7,8,9]).
+a(R,C,N) :- identify(sol, img, N), R=Pos/9, C=Pos\9.
+
+because we do not have to assign the value empty in solving
+Sudoku.
+
+% [o] 4. Predicted path should contain least edges
+:∼ sp(X,g,true). [1, X]
+
+In this experiment, we trained the same neural network
+model Msp as in [Xu et al., 2018], a 5-layer Multi-Layer Perceptron (MLP), but with 4 different settings: (i) MLP only;
+(ii) together with NeurASP with the simple-path constraint
+(p) (which is the only constraint used in [Xu et al., 2018]);
+(iii) together with NeurASP with simple-path, reachability,
+and optimization constraints (p-r-o); and (iv) together with
+NeurASP with all 4 constraints (p-r-o-nr). 8
+Table 2 shows that, after 500 epochs of training, the percentage of the predictions on the test data that satisfy each
+of the constraints p, r, and nr, the path constraint (i.e., p-r),
+7
+
+5
+
+The percentage of Sudoku examples that are correctly solved.
+6
+The percentage of grid cells having correct digits regardless
+whether the Sudoku solution is correct.
+
+1760
+
+sp(X, g, true) means edge X is in the shortest path. sp(X, Y )
+means there is a path between nodes X and Y in the shortest path.
+8
+Other combinations are either meaningless (e.g., o) or having
+similar results (e.g. p-r is similar to p).
+
+Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20)
+
+Predictions
+satisfying
+p
+r
+nr
+p-r
+p-r-o-nr
+label (ground truth)
+
+MLP Only
+28.3%
+88.5%
+32.9%
+28.3%
+23.0%
+22.4%
+
+MLP
+(p)
+96.6%
+100%
+36.3%
+96.6%
+33.2%
+28.9%
+
+MLP
+(p-r-o)
+100%
+100%
+45.7%
+100%
+45.7%
+40.1%
+
+MLP
+(p-r-o-nr)
+30.1%
+87.3%
+70.5%
+30.1%
+24.2%
+22.7%
+
+Table 2: Shortest Path: Accuracy on Test Data: columns denote MLPs trained with different rules; each row represents
+the percentage of predictions that satisfy the constraints
+the shortest path constraint (i.e., p-r-o-nr), and the accuracy
+w.r.t. the ground truth.
+The accuracies for the first experiment (MLP Only) show
+that Msp is not trained well only by minimizing the crossentropy loss of its prediction: 100-28.3 = 71.7% of the predictions are not even a simple-path.
+In the remaining experiments (MLP (·)), our training target
+is changed to maximizing the probability of all stable models under certain constraints. The accuracies under the 2nd
+and 3rd experiments (MLP (p) and MLP (p-r-o) columns) increase significantly, showing that (i) including such structured
+knowledge helps the training of the neural network and (ii)
+the more structured knowledge included, the better Msp is
+trained under NeurASP. Compared to the results from [Xu
+et al., 2018], Msp trained by NeurASP with the simple-path
+constraint p (in the 2nd experiment MLP (p) column) obtains
+a similar accuracy on predicting the label (28.9% v.s. 28.5%)
+but a higher accuracy on predicting a simple-path (96.6% v.s.
+69.9%).
+In the 4th experiment (MLP (p-r-o-nr) column) where we
+added the constraint nr saying that “no removed edges can
+be predicted”, the accuracies go down. This is because the
+new constraint nr is about randomly removed edges, changing from one example to another, which is hard to be generalized.
+
+5
+
+Network [Donadello et al., 2017] is also related in that it uses
+neural networks to provide fuzzy values to atoms.
+Another approach is to embed logic rules in neural networks by representing logical connectives by mathematical operations and allowing the value of an atom to be a
+real number. For example, Neural Theorem Prover (NTP)
+[Rocktäschel and Riedel, 2017] adopts the idea of dynamic
+neural module networks [Andreas et al., 2016] to embed
+logic conjunction and disjunction in and/or-module networks.
+A proof-tree like end-to-end differentiable neural network is
+then constructed using Prolog’s backward chaining algorithm
+with these modules. Another method that also constructs a
+proof-tree like neural network is TensorLog [Cohen et al.,
+2018], which uses matrix multiplication to simulate belief
+propagation that is tractable under the restriction that each
+rule is negation-free and can be transformed into a polytree.
+Graph neural network (GNN) [Kipf and Welling, 2017] is
+a neural network model that is gaining more attention recently. Since a graph can encode objects and relations between objects, by learning message functions between the
+nodes, one can perform certain relational reasoning. For example, in [Palm et al., 2018], it is shown that GNN can do
+well on Sudoku (given as textual input though). However,
+this is still restrictive compared to the more complex reasoning that KR formalisms provide.
+Neuro-Symbolic Concept Learner [Mao et al., 2019] separates between visual perception and symbolic reasoning. It
+shows the data-efficiency by using only 10% of the training data and achieving the state-of-the-art 98% accuracy on
+CLEVR dataset. Our results are similar in the sense that using symbolic reasoning, we could use fewer data to achieve a
+high accuracy.
+NeurASP is similar to LPMLN [Lee and Wang, 2016] in
+the sense that they are both probabilistic extensions of ASP
+and their semantics are defined by translations into ASP [Lee
+and Yang, 2017]. LPMLN allows any rules to be weighted,
+whereas NeurASP uses standard ASP rules.
+
+6
+
+Related Work
+
+Recent years have observed the rising interests of combining perception and reasoning. As mentioned, the work on
+DeepProbLog [Manhaeve et al., 2018] is closest to our work.
+Some differences are: (i) The computation of DeepProbLog
+relies on constructing circuits such as sequential decision diagrams (SDD) whereas we use an ASP solver internally. (ii)
+NeurASP employs expressive reasoning originating from answer set programming, such as defaults, aggregates, and optimization rules. This not only gives more expressive reasoning
+but also allows the more semantic-rich constructs as guide to
+learning. (iii) DeepProbLog requires each training data to be
+a single atom, while NeurASP allows each training data to
+be arbitrary propositional formulas.
+Also related is using the semantic constraints to train neural
+networks better [Xu et al., 2018], but the constraints used
+in that work are simple propositional formulas whereas we
+use answer set programming language, in which it is more
+convenient to encode complex KR constraints. Logic Tensor
+
+1761
+
+Conclusion
+
+We showed that NeurASP can improve the neural network’s
+perception result by applying reasoning over perceived objects and also can help neural network learn better by compensating the small size data with knowledge and constraints.
+Since NeurASP is a simple integration of ASP with neural
+networks, it retains each of ASP and neural networks in individual forms, and can directly utilize the advances in each of
+them.
+The current implementation is a prototype and not highly
+scalable due to a naive computation of enumerating stable
+models. The future work includes how to make learning
+faster, and also analyzing the effects of the semantic constraints more systematically.
+
+Acknowledgments
+We are grateful to the anonymous referees for their useful
+comments. This work was partially supported by the National
+Science Foundation under Grant IIS-1815337.
+
+Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20)
+
+References
+[Adam et al., 2017] Paszke Adam, Gross Sam, Chintala
+Soumith, Chanan Gregory, Yang Edward, D Zachary, Lin
+Zeming, Desmaison Alban, Antiga Luca, and Lerer Adam.
+Automatic differentiation in PyTorch. In Proceedings of
+Neural Information Processing Systems, 2017.
+[Andreas et al., 2016] Jacob Andreas, Marcus Rohrbach,
+Trevor Darrell, and Dan Klein. Learning to compose neural networks for question answering. In Proceedings of the
+2016 Annual Conference of the North American Chapter
+of the Association for Computational Linguistics: Human
+Language Technologies, pages 1545–1554, 2016.
+[Baader et al., 2003] Franz Baader, Diego Calvanese, Deborah L. McGuinness, Daniele Nardi, and Peter F. PatelSchneider, editors. The Description Logic Handbook:
+Theory, Implementation, and Applications. Cambridge
+University Press, 2003.
+[Brewka et al., 2011] Gerhard Brewka, Ilkka Niemelä, and
+Miroslaw Truszczynski. Answer set programming at a
+glance. Communications of the ACM, 54(12):92–103,
+2011.
+[Calimeri et al., 2020] Francesco Calimeri, Wolfgang Faber,
+Martin Gebser, Giovambattista Ianni, Roland Kaminski,
+Thomas Krennwallner, Nicola Leone, Marco Maratea,
+Francesco Ricca, and Torsten Schaub. ASP-Core-2 input
+language format. Theory and Practice of Logic Programming, 20(2):294–309, 2020.
+[Cohen et al., 2018] William W Cohen, Fan Yang, and
+Kathryn Rivard Mazaitis. Tensorlog: Deep learning meets
+probabilistic databases. Journal of Artificial Intelligence
+Research, 1:1–15, 2018.
+[Donadello et al., 2017] Ivan Donadello, Luciano Serafini,
+and Artur D’Avila Garcez. Logic tensor networks for semantic image interpretation. In Proceedings of the 26th
+International Joint Conference on Artificial Intelligence,
+pages 1596–1602. AAAI Press, 2017.
+[Gebser et al., 2011] Martin Gebser, Benjamin Kaufmann,
+Roland Kaminski, Max Ostrowski, Torsten Schaub, and
+Marius Schneider. Potassco: The potsdam answer set solving collection. AI Communications, 24(2):107–124, 2011.
+[Kazemi and Poole, 2018] Seyed Mehran Kazemi and David
+Poole. Relnn: A deep neural model for relational learning.
+In Proceedings of the 32nd AAAI Conference on Artificial
+Intelligence, 2018.
+[Kipf and Welling, 2017] Thomas N. Kipf and Max Welling.
+Semi-supervised classification with graph convolutional
+networks. In Proceedings of the 5th International Conference on Learning Representations, ICLR 2017, 2017.
+[Lee and Wang, 2016] Joohyung Lee and Yi Wang.
+Weighted rules under the stable model semantics. In
+Proceedings of International Conference on Principles of
+Knowledge Representation and Reasoning (KR), pages
+145–154, 2016.
+[Lee and Yang, 2017] Joohyung Lee and Zhun Yang.
+LPMLN, weak constraints, and P-log. In Proceedings of
+
+1762
+
+the AAAI Conference on Artificial Intelligence (AAAI),
+pages 1170–1177, 2017.
+[Lifschitz, 2008] Vladimir Lifschitz. What is answer set programming? In Proceedings of the AAAI Conference on Artificial Intelligence, pages 1594–1597. MIT Press, 2008.
+[Lin et al., 2019] Bill Yuchen Lin, Xinyue Chen, Jamin
+Chen, and Xiang Ren. Kagnet: Knowledge-aware graph
+networks for commonsense reasoning. In Proceedings
+of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint
+Conference on Natural Language Processing (EMNLPIJCNLP), pages 2822–2832, 2019.
+[Manhaeve et al., 2018] Robin Manhaeve, Sebastijan Dumancic, Angelika Kimmig, Thomas Demeester, and Luc
+De Raedt. Deepproblog: Neural probabilistic logic programming. In Proceedings of Advances in Neural Information Processing Systems, pages 3749–3759, 2018.
+[Mao et al., 2019] Jiayuan Mao, Chuang Gan, Pushmeet
+Kohli, Joshua B. Tenenbaum, and Jiajun Wu. The neurosymbolic concept learner: interpreting scenes, words, and
+sentences from natural supervision. In Proceedings of
+International Conference on Learning Representations,
+2019.
+[Palm et al., 2018] Rasmus Palm, Ulrich Paquet, and Ole
+Winther. Recurrent relational networks. In Proceedings
+of Advances in Neural Information Processing Systems,
+pages 3368–3378, 2018.
+[Park, 2018] Kyubyong Park. Can convolutional neural
+networks crack sudoku puzzles?
+https://github.com/
+Kyubyong/sudoku, 2018.
+[Pearl, 2000] Judea Pearl. Causality: models, reasoning and
+inference, volume 29. Cambridge Univ Press, 2000.
+[Reiter, 1980] Raymond Reiter. A logic for default reasoning. Artificial Intelligence, 13:81–132, 1980.
+[Rocktäschel and Riedel, 2017] Tim Rocktäschel and Sebastian Riedel. End-to-end differentiable proving. In Proceedings of Advances in Neural Information Processing
+Systems, pages 3788–3800, 2017.
+[Šourek et al., 2015] Gustav Šourek, Vojtech Aschenbrenner, Filip Železny, and Ondřej Kuželka. Lifted relational
+neural networks. In Proceedings of the 2015th International Conference on Cognitive Computation: Integrating
+Neural and Symbolic Approaches-Volume 1583, pages 52–
+60. CEUR-WS. org, 2015.
+[Xu et al., 2018] Jingyi Xu, Zilu Zhang, Tal Friedman, Yitao
+Liang, and Guy Van den Broeck. A semantic loss function for deep learning with symbolic knowledge. In Proceedings of the 35th International Conference on Machine
+Learning (ICML), July 2018.
+
+

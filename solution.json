@@ -1,0 +1,41 @@
+{
+  "abstract": null,
+  "artifacts": [
+    {
+      "kind": "github_repo",
+      "label": "GitHub Repo",
+      "uri": "https://github.com/alphaomega-labs/run-607c78e3-33c0-44e5-9cd7-eb946d6b8f0c"
+    },
+    {
+      "kind": "paper_pdf",
+      "label": "Paper PDF",
+      "uri": "https://raw.githubusercontent.com/alphaomega-labs/run-607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/main/paper/main.pdf"
+    },
+    {
+      "kind": "paper_thumbnail",
+      "label": "Paper Thumbnail",
+      "uri": "https://raw.githubusercontent.com/alphaomega-labs/run-607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/main/paper/thumbnail.png"
+    },
+    {
+      "kind": "latex_sources",
+      "label": "LaTeX Sources",
+      "uri": "https://github.com/alphaomega-labs/run-607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/blob/main/paper/main.tex"
+    }
+  ],
+  "artifacts_summary": "Exported a compile-ready conference manuscript, bibliography, equation-usage map, and supporting figure/table/code references with explicit claim-evidence caveats and page-budget evidence.",
+  "context_id": "607c78e3-33c0-44e5-9cd7-eb946d6b8f0c",
+  "created_at": "2026-04-17 23:25:45.578406+00:00",
+  "paper_pdf_url": "https://raw.githubusercontent.com/alphaomega-labs/run-607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/main/paper/main.pdf",
+  "paper_thumbnail_url": "https://raw.githubusercontent.com/alphaomega-labs/run-607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/main/paper/thumbnail.png",
+  "parent_run_id": "607c78e3-33c0-44e5-9cd7-eb946d6b8f0c",
+  "pipeline_id": "607c78e3-33c0-44e5-9cd7-eb946d6b8f0c",
+  "preview_run_id": "49c8b3aa-a00b-4226-a16a-8a5483c28c36",
+  "published_run_id": "49c8b3aa-a00b-4226-a16a-8a5483c28c36",
+  "repo_url": "https://github.com/alphaomega-labs/run-607c78e3-33c0-44e5-9cd7-eb946d6b8f0c",
+  "request_text": null,
+  "root_run_id": "607c78e3-33c0-44e5-9cd7-eb946d6b8f0c",
+  "run_id": "49c8b3aa-a00b-4226-a16a-8a5483c28c36",
+  "session_id": "607c78e3-33c0-44e5-9cd7-eb946d6b8f0c",
+  "title": null,
+  "updated_at": "2026-04-17 23:48:22.657544+00:00"
+}

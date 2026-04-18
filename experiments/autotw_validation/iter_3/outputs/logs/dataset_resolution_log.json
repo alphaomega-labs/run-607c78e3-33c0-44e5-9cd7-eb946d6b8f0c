@@ -1,0 +1,15 @@
+{
+  "acquisition_budget_used_sec": 26,
+  "acquisition_status": "resolved",
+  "attempt_count": 0,
+  "claim_blockers": [],
+  "fallback_notes": [
+    "Foreground empirical closure on semantic correctness and bounded real-solver checks; keep broad-sweep simulator findings explicitly labeled as stress evidence.",
+    "Center limitations around unmet runtime-speedup and violation-rate thresholds instead of suppressing negative results."
+  ],
+  "generated_at": "2026-04-17T21:57:19.455494+00:00",
+  "markers": [],
+  "prerequisites": [],
+  "support_artifact_paths": [],
+  "variant": "benchmark_results"
+}

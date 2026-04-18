@@ -1,0 +1,822 @@
+                      Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                     Main Track
+
+
+
+
+ The Impact of Structure in Answer Set Counting: Fighting Cycles and its Limits
+
+                                         Markus Hecher1 , Rafael Kiesel2
+                          1
+                            Massachusetts Institute of Technology, Cambridge, United States
+                                 2
+                                   Vienna University of Technology, Vienna, Austria
+                                     hecher@mit.edu, rafael.kiesel@tuwien.ac.at
+
+
+                            Abstract                                             Conceptually, existing state-of-the-art techniques for
+                                                                              counting #SAT exactly, which are based on knowl-
+  Answer Set Programming is a widely used paradigm in
+                                                                              edge compilation (Darwiche 2004; Lagniez and Marquis
+  knowledge representation and reasoning, which strongly re-
+  lates to the satisfiability (SAT) of propositional formulas.                2017), caching (Thurley 2006), or structural measures like
+  While in the area of SAT, the last couple of years brought                  treewidth (Korhonen and Järvisalo 2021), follow a unified
+  significant advances and different techniques for solving hard              goal, see, e.g., (Fichte, Hecher, and Hamiti 2021): Decom-
+  counting-based problems (e.g., #SAT, weighted counting,                     pose the instance or find parts of the instance that can be
+  projected counting) that require more effort than deciding sat-             solved individually, such that individual solution counts can
+  isfiability, ASP still falls short. Intuitively, one explanation            be combined to obtain the count for the overall solution.
+  for this lies in the structure of a program, that – compared to                For ASP, the situation seems different. Indeed, there
+  SAT – was shown to yield strong evidence for being slightly                 exists evidence that treewidth, which intuitively mea-
+  less useful during solving. Indeed, for the structural measure              sures “treelikeness”, is at least slightly less useful for
+  treewidth that plays an important role in #SAT, ASP is ex-
+                                                                              #ASP (Hecher 2022). Further, the best known algorithm for
+  pected to be at least slightly harder than SAT. The underlying
+  source of this hardness increase lies in cyclic dependencies                #ASP, whose runtime is fixed parameter tractable with re-
+  in the positive dependency graph. In this work, we consider                 spect to the treewidth k is double exponential in k (Pichler
+  which strategies are appropriate to tackle counting-based                   et al. 2014), whereas for #SAT it is single exponential.
+  problems for ASP depending on cycle lengths. We present                        In this work, we take a closer look at the underlying
+  different encodings to counting-based variants of SAT that                  source of this increased hardness of answer set counting
+  utilize recent advances. For small cycle lengths, we demon-                 (#ASP) for treewidth compared to #SAT, namely the positive
+  strate a novel strategy based on feedback vertex sets. While                cyclic dependencies between atomic variables introduced by
+  medium cycle lengths leave room for future improvements,                    the stable model semantics of ASP. These lead to the fact that
+  surprisingly, if cycles are significantly larger than structural            any translation from ASP to SAT that does not make use of
+  dependencies (treewidth), we obtain a polynomial algorithm.
+                                                                              auxiliary variables is expected to have an exponential blow
+                                                                              up in general (Lifschitz and Razborov 2006). Additionally,
+                     1     Introduction                                       the typical strategy that does not make use of auxiliary vari-
+Counting the satisfying interpretations of a logical theory                   ables adds so-called loop formulas (Lin and Zhao 2004b),
+is a notoriously hard problem but has especially recently                     which can lead to an unbounded increase of treewidth.
+gained relevance due to its relation to probabilistic reason-                    We tackle the cyclic dependencies by identifying different
+ing (Raedt, Kimmig, and Toivonen 2007; Lee and Yang                           strategies that come with promising runtime and treewidth
+2017; Eiter, Hecher, and Kiesel 2021), parameter learn-                       guarantees. Thereby, the relation of the length of cyclic de-
+ing in neuro-symbolic reasoning (Manhaeve et al. 2019;                        pendencies (SCC size) compared to the treewidth of the pro-
+Skryagin et al. 2021; Yang, Ishay, and Lee 2020), knowledge                   gram turns out to be a useful criterion to decide for appro-
+compilation (Huang and Darwiche 2005; Darwiche 2004;                          priate strategies. Our main contributions are:
+Lagniez and Marquis 2017), and other fields.                                   • We establish an overview and a characterization of dif-
+   While there have been significant advances in recent years                    ferent strategies, depending on cycle sizes (SCC sizes).
+for #SAT, i.e., model counting if the considered logical the-                    We distinguish three different ranges of SCC sizes and
+ory is a propositional formula, the question remains open                        we propose corresponding solving techniques.
+how #ASP, i.e., the corresponding problem in the context                       • For small cycles, we present a new approach that com-
+of Answer Set Programming (ASP), should be tackled. In-                          bines two techniques from the literature (Janhunen and
+deed, despite the availability of existing approaches for solv-                  Niemelä 2011; Eiter, Hecher, and Kiesel 2021). Here, we
+ing #ASP (Janhunen and Niemelä 2011; Fichte et al. 2017;                        consider the feedback vertex set size (FVS size), which
+Eiter, Hecher, and Kiesel 2021; Fichte et al. 2022), which                       is strictly smaller than SCC size. This allows us to pro-
+were shown to be effective in some settings, their runtime                       vide strictly better upper bounds combined with matching
+guarantees do not imply efficient performance in general.                        lower bounds under ETH (exponential time hypothesis).
+
+
+
+                                                                       344
+                         Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                        Main Track
+
+
+• Interestingly, the proposed approach for small cycles also                         Br+ , Br− , not a, where na is a fresh propositional atom. We
+  works for medium-sized cycles. While a small gap re-                               denote by A(Π) the set of atoms occurring in Π.
+  mains open to our ETH-based lower bounds, we discuss                                  An interpretation, denoted I, is a subset of A(Π); it sat-
+  the challenges associated with the closing of it and possi-                        isfies an atom a ∈ A(Π) (resp. not a for a ∈ A(Π)), written
+  ble techniques for achieving this.                                                 I |= a (resp. I |= not a), if a ∈ I (resp. a ̸∈ I). It sat-
+• Finally, we establish new strategies for large cycles. First,                      isfies Π (is a model of Π), if for each rule r ∈ Π it holds
+  we show how to apply projected model counting (PMC)                                that either I |= Hr , i.e., there exists some a ∈ Hr such that
+  for counting answer sets. The second approach uses a                               I |= a, or I ̸|= Br , i.e., there exists some l ∈ Br such
+  novel encoding to #SAT that bijectively preserves the an-                          that I ̸|= l. Furthermore, I is an answer set of Π if it is
+  swer sets. This encoding even works for disjunctive pro-                           a ⊆-minimal model of its GL-reduct (Gelfond and Lifschitz
+  grams; it is based on a novel approach that is single-                             1988) ΠI = {Hr ← Br+ | r ∈ Π, Br− ∩ I = ∅}.
+  exponential only in the program’s treewidth. However,                                 Schematic rules with variables X, Y, . . . are implic-
+  due to large cycles, the encoding is polynomial in the in-                         itly universally quantified and their semantics is given by
+  stance size. Further, we show that with our encoding an-                           grounding (instantiation) with concrete values (constants).
+  swer set counting can be carried out in polynomial time.                           Example 1 (Reachability). We consider a standard problem
+                                                                                     that can easily be modelled using cyclic programs but is
+Our work shows that while there are still gaps between the                           harder to model with a Boolean formula, namely reachabil-
+upper and lower bounds for #ASP with medium SCC size,                                ity in a directed graph, as a running example.
+we have efficient strategies for both small and large SCC                                  i(X) ← t(X)                      {t(X)} ← v(X)
+size that cannot be significantly improved under ETH. Ad-                                  i(Y ) ← i(X), t(X, Y )        {t(X, Y )} ← e(X, Y )
+ditionally, our novel encoding based on a fine grained cycle                         Here, we guess for each vertex (v(X)), whether we take
+analysis that exploits FVS size pushes the limits of tractabil-                      it (t(X)), and for each edge e(X, Y ), whether we take it
+ity in the presence of cycles even further.                                          (t(X, Y )). If a vertex x is taken, then it is included (i(x)). If
+                                                                                     a vertex x is included and edge x, y is taken, y is included.
+Related Work. For disjunctive programs and extensions                                   By taking the complete graph over vertices in {0, 1, 2},
+thereof, algorithms have been proposed (Jakl, Pichler, and                           we can ground and simplify the program to obtain Πg :
+Woltran 2009; Fichte et al. 2017) running in time linear in
+                                                                                                  {t(0)}              {t(1)}             {t(2)}
+the instance size, but double exponential in the treewidth.
+Under ETH, one cannot significantly improve this runtime,                                   i(0) ← t(0)         i(1) ← t(1)         i(2) ← t(2)
+using a result (Lampis and Mitsou 2017) for QBFs with                                           {t(0, 1)}          {t(1, 2)}           {t(2, 0)}
+quantifier depth two and a standard reduction (Eiter and Got-                                   {t(0, 2)}          {t(2, 1)}           {t(1, 0)}
+tlob 1995) from this QBF fragment to disjunctive ASP. The
+consistency of normal programs for treewidth is expected                                     i(0) ← i(2), t(2, 0)         i(0) ← i(1), t(1, 0)
+to be slightly harder than SAT (Hecher 2022). This even                                      i(1) ← i(2), t(2, 1)         i(1) ← i(0), t(0, 1)
+holds in case the largest SCC size is bounded (Fandinno and                                  i(2) ← i(1), t(1, 2)         i(2) ← i(0), t(0, 2)
+Hecher 2021). Also programs, where the number of even
+and/or odd cycles is bounded, have been analyzed (Lin and                               We consider graphs and digraphs, using the following no-
+Zhao 2004a), which is orthogonal to largest SCC size.                                tation. The vertex- and edge-set of a (di)graph G = (V, E)
+                                                                                     is denoted by V (G) and E(G), respectively. For V ⊆ V (G)
+                                                                                     we let G[V ] be the (di)graph obtained by removing all ver-
+                        2    Preliminaries                                           tices not in V from V (G) (i.e. V (G[V ]) = V (G) ∩ V )
+We assume familiarity with SAT and denote by #SAT(φ)                                 and removing all edges which use a vertex not in V (i.e.
+the number of models of a Boolean formula φ. Further,                                E(G[V ]) = E(V ) ∩ V × V ). Further, we define G \ V as
+PMC(φ, A) for a set A of variables corresponds to the pro-                           G[V (G) \ V ]. Subgraph C = G[V ] is strongly connected if
+jected model count |{M ∩ A | M ⊆ var(φ), M |= φ}|.                                   every vertex in C is reachable from any other vertex in C.
+    Below, we give the background on ASP, graph represen-                               We denote by SCC(G) the set of strongly connected com-
+tations of programs, and their associated structural parame-                         ponents (SCCs) of a digraph G, which are strongly con-
+ters. An answer set program Π (Eiter, Ianni, and Krennwall-                          nected subgraphs G[V ], where V is subset-maximal. Based
+ner 2009) is a finite set of rules r of the form                                     on this, the condensation of G is the graph (SCC(G), E ∗ )
+         a1 ∨ · · · ∨ ak ← b1 , . . . , bn , not c1 , . . . , not cm , (1)           such that there is an edge (V, V ′ ) ∈ E ∗ if V ̸= V ′ and for
+where ai , bj , cj are propositional atoms. Given a rule r, let                      some v ∈ V, v ′ ∈ V there is an edge (v, v ′ ) ∈ E(G).
+                                                                                        The (positive) dependency graph DΠ of a program Π is
+  Hr = {a1 , . . . , ak }, Br+ = {b1 , . . . , bn },                                 the digraph G with V (G)=A(Π) and (b, a) ∈ E(G) if there
+ Br− = {c1 , . . . , cm }, Br = {b1 , . . . , bn , ¬c1 , . . . , ¬cm }.              is a rule r∈Π such that a∈Hr and b∈Br+ . The primal graph
+A program Π is normal if k = 1 and disjunctive, otherwise.                           GΠ of Π is the graph G with V (G)=A(Π) and (x, y)∈E(G)
+    By slight abuse of notation, we write ←                                          if there is a rule r ∈ Π with x, y ∈ Hr ∪ Br+ ∪ Br− .
+b1 , . . . , bn , not c1 , . . . , not cm for ⊥ ← b1 , . . . , bn , not c1 ,            A feedback vertex set of a graph G is a set F ⊆ V (G)
+. . . , not cm , not ⊥, where ⊥ is a fresh atom not in Π.                            such that (i) G \ F is acyclic, i.e., there is no node that is
+    Further, we allow choice rules {a} ← Br+ , Br− as a short-                       reachable from itself, and (ii) F is minimal with respect to
+hand for the two rules a ← Br+ , Br− , not na and na ←                               cardinality among the sets satisfying (i).
+
+
+
+                                                                               345
+                       Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                      Main Track
+
+
+Example 2 (cont.). The dependency graph of Πg is shown                         be true, i(0)(j−1) and t(0, 1) hold, or i(2)(j−1) and t(2, 1)
+in Figure 1. It is the graph we used to ground the program,                    hold. Thus, intuitively, the j in i(x)(j) tells us the number
+when reduced to the atoms of the form i(x) for x = 0, . . . , 2.               of steps used in this derivation. Note now that for a given
+The digraph has exactly one SCC S = {i(0), i(1), i(2)} and                     guess I of the take atoms, if i(x) is derived from the origi-
+thus its condensation is the digraph ({S}, ∅).                                 nal program and I, then there is a unique level j such that
+                                                                               i(x)(j) holds but i(x)(j−1) does not (or j = 0).
+                         i(0)           i(1)                                      The idea behind the translation of (Janhunen 2004) is now
+                                                                               the following: introducing |S(a)| copies per atom a, where
+                                i(2)                                           S(a) is the SCC of the dependency graph that contains a,
+                                                                               is costly and should be avoided. Instead, each atom a ∈
+Figure 1: Dependency graph of Πg reduced to atoms of the form                  A(Π) has an associated binary counter that can represent
+i(x) for x = 0, . . . , 2.                                                     the numbers 0, . . . , |S(a)| − 1 via c(a) = ⌈log2 (|S(a)|)⌉
+                                                                                                            (c(a))             (1)
+                                                                               auxiliary variables ba               , . . . , ba . During cycle break-
+  Next, we recall the definition of treewidth.                                 ing, constraints are added to ensure that in every answer
+Definition 1. Let G be a graph. A tree decomposition (TD)                      set I the number represented by the auxiliary variables
+                                                                                 (c(a))            (1)
+(Robertson and Seymour 1986) is a pair (T, χ), where T is a                    ba       , . . . , ba corresponds to the length of the shortest
+rooted tree, chld(t) is the set of child nodes for every node t                derivation of a in ΠI .
+in T , and χ is a labeling of V (T ) by subsets of V (G) s.t.                     The basic cycle breaking proceeds by adding for each nor-
+• for all nodes v ∈ V (G) there is t ∈ V (T ) s.t. v ∈ χ(t);                   mal rule of the form (1) and atom a ∈ A(Π) additional rules:
+• for every edge {v1 , v2 } ∈ E(G) there exists t ∈ V (T ) s.t.                                  a ← b1 , . . . , bn , not c1 , . . . , not cm .        (2)
+  v1 , v2 ∈ χ(t);                                                              That is, we keep all original rules.
+• for all nodes v ∈ V (G) the set of nodes {t ∈ V (T ) | v ∈                      justa ← b1 , ltb1 ,a , . . . , bn , ltbn ,a , not c1 , . . . , not cm (3)
+  χ(t)} forms a (connected) subtree of T .
+                                                                                           ← a, not justa                                               (4)
+The width of (T, χ) is maxt∈V ′ |χ(t)|−1. The treewidth of a                   That is, we additionally require that if an atom a is true, then
+graph is the minimal width of any of its tree decompositions.                  there needs to be a rule deriving it (i) whose body is true and
+   Intuitively, treewidth is a measure of the distance of a                    (ii) the binary counter of every positive body literal b is less
+graph from a tree. It is motivated by the fact that many                       than the binary counter of a. This ensures that a derivation
+computationally hard problems are tractable on trees. Cor-                     can only use positive literals that are derived strictly earlier.
+respondingly, trees are the only graphs that have treewidth 1.                      nexta ← b1 , . . . , bn , not c1 , . . . , not cm , succa,bi        (5)
+For low treewidth it is often possible to generalize tractabil-                                for i = 1, . . . , n
+ity results by decomposing problems into smaller subprob-
+lems using a TD witnessing the low width.                                                      ← a, not nexta                                           (6)
+                                                                               That is, we require that if an atom a is true, then there needs
+2.1   Binary Counter Cycle Breaking                                            to be a rule deriving it (i) whose body is true and (ii) the
+Cycle breaking is a technique that allows the translation of                   binary counter of a is the successor of some positive body
+normal programs to propositional formulas. We use the cy-                      literal b. This means that there must be a rule deriving a
+cle breaking by (Janhunen and Niemelä 2011) as the basis                      which uses a positive body literal b whose derivation is one
+for an improved cycle breaking. The idea here is based on                      shorter than the one of a.
+the insight that for a given interpretation I and a program Π                      ←b1 , ltb1 ,a , not succa,b1 , . . . , bn , ltbn ,a , not succa,bn ,
+it is determined for each atom a ∈ A(Π) how many steps                                not c1 , . . . , not cm                                           (7)
+the shortest derivation of a in ΠI takes.
+                                                                               That is, we require that if a rule justifies the derivation of a,
+Example 3 (cont.). A standard simple way to represent the                      then (i) a has a shorter derivation than any derivation using
+length of derivations in the program of our running example                    this rule (if not ltb,a holds for some positive body atom b)
+is to consider instead the graph given in Figure 2. The idea                   or (ii) the shortest derivation for a uses this rule (if succb,a
+                                                                               holds for some positive body atom b). This together with the
+             i(0)(0)          i(1)(0)          i(2)(0)                         two previous formulas enforces that the binary counter of a
+                                                                               represents the length of its shortest derivation, rather than
+                                                                               the length of some derivation.
+             i(2)(1)          i(0)(1)          i(1)(1)                            Note here that ltb,a , succa,b are auxiliary variables whose
+                                                                               truth value is defined in terms of the binary counters of a and
+             i(1)(2)          i(2)(2)          i(0)(2)                         b. For this, we use the following notation. Let:
+Figure 2: Unfolding of the dependency graph of Πg reduced to                   • S(.) be the function that assigns an atom a the SCC S(a)
+atoms of the form i(x) for x = 0, . . . , 2.                                     of the dependency graph of Π such that a ∈ S(a),
+                                                                               • ≻top be a topological ordering of the condensation of the
+is now the following: We can derive i(1)(j) iff we guess it to                   dependency graph of Π.
+
+
+
+                                                                        346
+                     Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                    Main Track
+
+
+We first define some auxiliary subformulas on the binary                     structure of programs and its largest SCC sizes. In the fol-
+counters. For a, b ∈ A(Π) such that S(a)=S(b) and 1 ≤                        lowing, we classify the mentioned gap for #ASP, where
+i ≤ c(a) we define auxiliary variables [ba = bb ]≥i via rules                we develop a range of cycle lengths (relative to treewidth k)
+                               (c(a))                                        with different general strategies for obtaining decent runtime
+  [ba = bb ]≥c(a) ← b(c(a))
+                      a     , bb
+                                           (c(a))                            bounds. We provide an overview of these ranges in Table 1.
+  [ba = bb ]≥c(a) ← not b(c(a))
+                         a      , not bb                                     For acyclic or mildly cyclic programs, i.e., where SCC sizes
+                                 (i−1)
+  [ba = bb ]≥i−1 ← b(i−1)
+                    a     , bb    , [ba = bb ]≥i                             are constant, we inherit ETH-tight runtime bounds from
+                        (i−1)
+  [ba = bb ]≥i−1 ← not ba     , not bb
+                                      (i−1)
+                                            , [ba = bb ]≥i                   SAT, which yields runtimes of 2Θ(k) · poly(n). These cases
+                                                                             are therefore (almost) identical to #SAT, where we obtain
+and the auxiliary variables [ba = bb + 1]≥i via the rules                    matching upper and lower bounds (under ETH). Then, for
+[ba = bb + 1]≥i ←b(j)
+                                  (j)                                        non-constant SCC sizes s that are polynomial in k, we ob-
+                  a , not bb , [ba = bb ]≥j+1 ,
+                                                     (i)         (j−1)       tain treewidth runtimes of the form 2Θ(k·log(k)) · poly(n),
+                     not b(i)              (j−1)
+                          a , . . . , not ba     , bb , . . . , bb           which also matches known lower bounds.
+  Based on this, the definition of “less than” and “succes-                     For super-polynomial SCC sizes s we obtain treewidth de-
+sor” are given by the following rules:                                       pendencies of the form 2Θ(k·log(s)) . While we provide im-
+                                                                             provements for such SCC sizes, there is still a gap in the
+             ← not a, b(i)
+                         a for i = 1, . . . , c(a),                          worst case. Interestingly, for large SCC sizes s that are at
+and, if S(a) ≻top S(b)                                                       least double-exponential in k, we obtain actually polyno-
+     ltb,a ←      succa,b ← not b(1)                (c(a))
+                                   a , . . . , not ba      ,                 mial runtimes. In other words, programs with SCC sizes
+                                                                             that are superpolynomial in the treewidth and below double-
+if S(b) ≻top S(a) we cannot derive ltb,a or succa,b , and if
+                                                                             exponential, are the challenging ones.
+S(a) = S(b) we add for i = 1, . . . , c(a) − 1
+                            (i)
+             ltb,a ← b(i)
+                      a , ¬bb , [ba = bb ]≥i+1
+                                                                                  4    Coping with Small to Medium Cycles
+          succa,b ← [ba = bb + 1]≥1
+                                                                             We show how we can deal with small to medium length cy-
+Note that although the definitions of ltb,a , succa,b , [ba =                cles by using and extending the approach of (Janhunen and
+bb ]≥i , and [ba = bb + 1]≥i are independent of the rule r                   Niemelä 2011). Our main insight here is that we can ex-
+that they are used in, we need to obtain a separate variable                 ploit a more fine grained structure of the cyclicity of the de-
+v (r) for each of the auxiliary variables v that is used only                pendency graph than SCC size s, namely |fS |, the smallest
+for this rule r, in order to prove our theoretical results. We               feedback vertex set size (FVS size). While Janhunen and
+refrain from adding the superscript (r) to each variable to                  Niemelä’s approach needs a binary counter with ⌈log2 (s)⌉
+reduce syntactic noise.                                                      bits, for us ⌈log2 (|fS |)⌉ bits suffice. We show this reduction
+                                                                             transferring to derived treewidth and runtime upper bounds.
+  3    Which Cycles are Bad? – An Overview                                      The basis of our idea is to assign the binary counter the
+While for ASP the complexity of the decision problem, in                     length of a shortest derivation, however considering a modi-
+terms of treewidth has been established (Hecher 2022), for                   fied definition of length. Namely, instead of naı̈vely unfold-
+problems involving the computation of more than one an-                      ing the graph as in Example 3, we consider an advanced un-
+swer set, e.g., counting all answer sets, there is still a gap.              folding technique called TP -Unfolding from (Eiter, Hecher,
+The reason for this gap is that existing approaches utiliz-                  and Kiesel 2021). Intuitively, it can exploit low cyclicity of
+ing structural dependencies (treewidth) are based on com-                    the dependency graph to produce a more succinct unfolding.
+puting local (relative) orderings on atom subsets, which are                    We do so by using the observation that if the dependency
+insufficient for bijectively preserving all the answer sets. In-             graph is a polytree, then we can fix a root v arbitrarily, first
+stead, these approaches then obtain duplicates, i.e., for one                consider all derivations towards the root and then consider
+answer set, several solutions might be computed. As an al-                   all derivations away from the root. This means that using
+ternative to reduce the cyclicity of a program, one could use                the strategy of copy atoms, we only need two copies for each
+global orderings, e.g., (Janhunen and Niemelä 2011), where                  atom. However, dependency graphs are not polytrees, thus,
+atoms are ordered globally, thereby precisely preserving the                 we need to reduce the general case to the case of polytrees.
+answer sets. This approach, however, may arbitrarily worsen                     To achieve this, we observe that if F is a FVS of the undi-
+the structure in case of large cycles, since in the worst case               rected version of the dependency graph DΠ , then DΠ \ F
+the resulting treewidth is increased by a factor that is log-                is a polytree. Now, we can alternatingly consider all deriva-
+arithmic in the largest cycle (SCC size). As a result, this                  tions of those atoms that are not in F and those that are in F .
+increase is not bounded in the treewidth of the original pro-                By doing this |F | + 1 times, we can be sure that we covered
+gram, since cycles might involve all the program’s atoms.                    every derivation. To cover all derivations of atoms not in F
+This is not surprising, as even current state-of-the-art ASP                 we only need to consider derivations in a polytree. Thus, to-
+solvers involve the dynamic addition of constraints (cf. (Lin                gether with the previous observation this means that we only
+and Zhao 2004b)) over major parts of potential answer sets                   need to introduce 2 · (|F | + 1) copies of the atoms that are
+and are therefore not expected to be restricted to local parts.              not in F and |F | atoms that are in F .
+   The observations above motivate a deeper study on the                        While our example graph has high cyclicity and TP -
+different strategies for solving #ASP when considering the                   Unfolding does not provide a benefit on it for that reason, it
+
+
+
+                                                                      347
+                      Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                     Main Track
+
+
+
+Classification    SCC Size s = |S|                             Solving Approach                             Upper Bound Lower Bound (ETH)
+                                                                                                           O(k)
+No Cycles                     s=0     TW-Aware Compl. (Hecher 2022)                                      2     · poly(n)         2o(k) · poly(n)
+Tiny Cycles                s = O(1) TW-Aw. C. + Ords. (Janhunen 2004)                                    2O(k) · poly(n)         2o(k) · poly(n)
+Small Cycles  s ∈ [Ω(1), k O(1) ]          TW-Aw. C. + Orderings, Section 4 2O(k·log(min(k,|fS |))) · poly(n) 2o(k·log(k)) · poly(n)
+                              o(k)
+Medium Cycles s ∈ [k Ω(1) , 22 ]           TW-Aw. C. + Orderings, Section 4       2O(k·log(|fS |)) · poly(n) 2o(k·log(k)) · poly(n)
+                              Ω(k)
+Large Cycles∗         s = 22                Disjunctive Encoding, Section 5                           poly(n)                poly(n)
+Table 1: Classification of the complexity of #ASP according to the largest SCC size of the program’s dependency graph. Π is a normal (HCF)
+program of size n, k is the treewidth of GΠ , S is the largest SCC of DΠ , and fS is a smallest feedback vertex set of S. New contributions
+providing improvements over existing results are highlighted in bold-face. ∗ : This construction immediately works for disjunctive programs.
+
+
+still serves well to illustrate the idea behind TP -Unfolding.                where n ∈ N and f ∈ {0, 1}. The values signal the follow-
+Example 4 (cont.). As the set F we can choose {i(2)}, since                   ing: if we are considering derivations in the polytree and f
+the dependency graph reduced to the vertices i(0), i(1) is a                  is 0 the derivations are towards the root; if f is 1, then we
+polytree. For the polytree we choose the root i(1). Then, we                  are considering derivations in the polytree away from the
+start by covering all derivations of atoms that are not in F                  root. For vertices not in the polytree or the root of the poly-
+(i.e. that are not i(2)) by adding                                            tree, f = 1 does not make sense, which is why we always
+                                                                              assign f = 0 here. The second counter n tells us how many
+       i(0)(0,0) ← t(0)                                                       times we included atoms from F in any derivation branch.
+       i(1)(0,0) ← t(1)       i(1)(0,0) ← i(0)(0,0) , t(0, 1)                    We define the enhanced cycle breaking formally. Assume
+       i(0)(0,1) ← t(0)       i(0)(0,1) ← i(1)(0,0) , t(1, 0)                 that FS is a feedback vertex set of S for each SCC S of the
+                                                                              positive dependency graph of the given program Π. Then,
+Next we cover the derivations of i(2) by adding the rules
+                                                                              we can make due with only c(i) = ⌈log2 (|FS | + 1)⌉ + 1 bits
+i(2)(1,0) ← t(2)                  i(2)(1,0) ← i(0)(0,0) , t(0, 2)             for each atom a such that S(a) = S, as follows. Let:
+     (1,0)        (0,1)
+i(2)       ← i(0)       , t(0, 2) i(2)(1,0) ← i(1)(0,0) , t(1, 2)             • S(.) be the function that assigns an atom a the SCC S(a)
+Again we cover all derivations of atoms different from i(2)                     such that a ∈ S(a),
+by adding the rules                                                           • ≻top be a topological ordering of the condensation of the
+i(0)(1,2) ← t(0)                  i(0)(1,2) ← i(1)(0,0) , t(1, 0)               dependency graph of Π,
+     (1,2)        (1,0)
+i(0)       ← i(2)       , t(2, 0) i(1)(1,0) ← t(1)                            • RS be an arbitrary but fixed set of vertices from S \ FS
+i(1)(1,0) ← i(0)(1,2) , t(0, 1) i(1)(1,0) ← i(2)(1,0) , t(2, 1)                 such that every vertex in S \ FS has a path to exactly one
+                                                                                vertex in RS , and
+i(0)(1,3) ← t(0)                  i(0)(1,3) ← i(1)(1,0) , t(1, 0)
+                                                                              • ≻S be a topological order induced by S \ FS when every
+i(0)(1,3) ← i(2)(1,0) , t(2, 0)                                                 edge is directed away from RS .
+This covers all derivations. Consider the dependency graph                    Note that our cycle breaking only changes the definition of
+                                                                              ltb,a and succa,b . Namely, ltb,a and succa,b can still hold
+                       i(0)(0,0)                                              if the binary counters of a and b have the same value. In-
+   Der. outside F                                                             deed, in our definition succa,b only requires an increase of
+   Towards root                                                               the counter when we are traveling from within the FVS to
+                                                 i(1)(0,0)
+                                                                              outside the FVS or from a vertex outside the FVS to a root.
+  Der. outside F                                                              Conceptually, we model the two counters from Example 4
+  Away from root       i(0)(0,1)
+                                                                                                                  (1)
+                                                                              by using the least significant bit ba to tell us whether were
+    Der. inside F                                        i(2)(1,0)            going towards a root or away from one (or whether we are
+                                                                              in the FVS), and the rest of the bits to tell us how often we
+                       i(0)(1,0)                                              have visited the FVS any branch of our derivation.
+   Der. outside F
+   Towards root                                                                  Formally, we adapt the rules that define “less than” and
+                                                 i(1)(1,0)                    “successor” to the following:
+  Der. outside F                                                                            ← not a, b(i)
+                                                                                                        a for i = 1, . . . , c(a)        (8)
+  Away from root       i(0)(1,1)
+                                                                              if a ∈ FS(a) ∪ RS(a)
+Figure 3: TP -Unfolding of the dependency graph of Πg reduced                                 ← b(i)
+                                                                                                   a for i = 1, . . . , c(a)                (9)
+to atoms of the form i(x) for x = 0, . . . , 2.
+                                                                              if S(a) ≻top S(b)
+                                                                                  ltb,a ←    succa,b ← not b(1)              (c(a))
+                                                                                                            a , . . . , not ba             (10)
+of the TP -Unfolded program in Figure 3. We see that we
+again introduce copies of atoms with a counter. However,                      if S(b) ≻top S(a) we cannot derive ltb,a or succa,b , but if
+contrary to before our counter is now a pair of values (n, f ),               S(a) = S(b), we add for i = 1, . . . , c(a) − 1 the rules
+
+
+
+                                                                       348
+                      Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                     Main Track
+
+
+                                                                                 Additionally, we however need to take care of the auxil-
+                            (i)                                               iary variables succa,b , ltb,a , [ba = bb ]≥i , [ba = bb + 1]≥i .
+             ltb,a ← b(i)
+                      a , ¬bb , [ba = bb ]≥i+1 .                 (11)         If we naı̈vely apply the same idea and add all of them,
+If in addition to S(a) = S(b), we have a ∈ FS(a) , we add                     whenever a, b ∈ χ(t), the resulting TD has a width in
+                 succa,b ← [ba = bb + 1]≥2 ,           (12)                   Ω(k 2 · log(|fS |)). Instead, we need to make use of one
+                                                                              copy v (r) of each of these auxiliary variables v for each
+or, if in addition a ̸∈ FS(a) , b ∈ FS(a) , we add                            rule r such that Hr = {a} and b ∈ Br+ . Then, we can
+       ltb,a ← succa,b      succa,b ← [ba = bb ]≥1               (13)         create copies t(r) for a node t ∈ T and rule r such that
+or, if in addition a, b ̸∈ FS(a) , a ≻S(a) b, we add                          Hr ∪ Br ⊆ χ(t) and add the variables for the rule r only to
+    ltb,a ← succa,b succa,b ← b(1)                                            the bag of t(r) . This way, χ(t(r) ) only contains these auxil-
+                                       a , [ba = bb ]≥2          (14)
+                                                                              iary variables for a fixed a and r. Using this limitation, there
+or, if in addition a, b ̸∈ FS(a) , b ≻S(a) a, we add                          are only O(k log(|fS |)) additional variables and the bound
+  ltb,a ← succa,b succa,b ← not b(1)     a , [ba = bb ]≥1 (15)
+                                                                              on the width holds. Further, by inspecting the rules, the con-
+                                                                              structed object is indeed a tree decomposition.
+As expected, we see that ltb,a and succa,b hold if they hold
+for the original cycle breaking by Janhunen and Niemelä but                  Theorem 4 (Runtime for Normal Answer Set Counting).
+they can hold more often, due to Rules (12)–(15).                             Let Π be a normal program such that the treewidth of GΠ
+                                                                              is k and the FVS size of DΠ is |fS |. The number of answer
+Correctness, Treewidth-Awareness, and Runtimes.                               sets of Π can be computed in time 2O(k·log(|fS |)) · poly(n).
+First, we establish correctness. Here, we denote by                           Proof. First, we compute a TD of GΠ of width 5k in
+Clark(ΠF V S ) the Clark Completion (Fages 1994) of the                       time 2O(k) · (|A(Π)| + |Π|) (Bodlaender et al. 2016). By
+cycle breaking ΠF V S of a program Π, as specified in Rules                   Theorem 2, the reduction is correct, i.e., #ASP(Π) =
+(2)–(7) and (8)–(15).                                                         #SAT(Clark(ΠF V S )). By Theorem 3, the treewidth
+Theorem 2 (Correctness). Let Π be a normal program. For                       of ΠF V S is in O(k · log(|fS |)) and by (Hecher 2022), we
+every model I of Π there exists exactly one model Iext of                     can modify Clark(.) to ensure that also the treewidth of
+Clark(ΠF V S ) such that Iext ∩ A(Π) = I, and vice versa.                     Clark(ΠF V S ) is in O(k · log(|fS |)).
+                                                                                 Finally, we compute #SAT(Clark(ΠF V S )) in time
+   This implies that the number of models of Π and
+Clark(ΠF V S ) are equal, which implies that we can use                       2O(k·log(|fS |)) ·poly(|A(Π)|) (Samer and Szeider 2010).
+Clark(ΠF V S ) as a proxy for model counting of Π.
+                                                                              4.1    The Challenge of Medium-Sized Cycles
+Proof (Sketch). We obtain the result by combining the re-
+                                                                              While (Janhunen and Niemelä 2011)’s cycle breaking and
+sults of (Janhunen and Niemelä 2011) and (Eiter, Hecher,
+                                                                              our improved version of it come with good treewidth upper-
+and Kiesel 2021). (Eiter, Hecher, and Kiesel 2021) showed
+                                                                              bounds, the bounds are not only in terms of the program’s
+that TP -Unfolding satisfies the bijective preservation of
+                                                                              treewidth but also have a logarithmic factor that depends
+models. Additionally, we can use the same strategy as in
+                                                                              on the cyclicity of the program. Thus, when program has
+(Janhunen and Niemelä 2011) to show that the encoding
+                                                                              low treewidth but high cyclicity, the treewidth of the pro-
+Clark(ΠF V S ) determines a unique extended Iext such that
+                                                                              duced SAT encodings is dominated by the logarithmic fac-
+Iext ∩ A(Π) = I, if I is a model of Π but has no models I ′
+                                                                              tor, rather c than the treewidth of the program. E.g., for
+such that I ′ ∩ A(Π) is not a model of Π.
+                                                                              |fS | = 2k , where k is the treewidth and c is a constant,
+   In order to establish treewidth-awareness we establish                     the binary counter cycle breaking leads to a runtime upper
+                                                                                               c+1
+treewidth-awareness for the cycle breaking ΠF V S .                           bound of 2O(k ) · poly(|A(Π)|), however, the lower bound
+                                                                                                                            c
+Theorem 3 (Treewidth-Awareness). Let Π be a normal pro-                       of 2Ω(k·log(k)) ·poly(|A(Π)|) = 2Ω(k·log(k)+k ) shows a gap.
+gram of treewidth k. Then, the treewidth of ΠF V S is in                      This is undesirable, and poses the question whether there is
+O(k log(|fS |)), where |fS | is the FVS size.                                 an encoding into SAT that comes with a treewidth upper-
+   Note that we still need to be careful: by applying the stan-               bound of O(k b ), where k is the treewidth of the program
+dard version of Clark’s Completion, we may observe an ar-                     and b ∈ N is a constant not depending on the cyclicity.
+bitrary increase of the treewidth. However, by making use                        This question has been open for a while and work on the
+of the ideas in (Hecher 2022), we can avoid this. Thus,                       fixed parameter tractability of answer set program has only
+treewidth-awareness follows for the whole translation from                    been able to prove that a satisfiability preserving encoding
+Π to Clark(ΠF V S ), as long as Hecher’s treewidth-aware                      with a treewidth upper-bound of O(k·log(k)) exists (Hecher
+version of Clark’s Completion is used.                                        2022) but to the best of our knowledge no progress has been
+                                                                              made for a parsimonious encoding.
+Proof (Sketch). Let T = (T, χ) be a TD for Π of width k.                         On the other hand, it may be possible that such an en-
+We construct a TD for ΠF V S satisfying the desired bound.                    coding does not exist. In this section, we consider this pos-
+   The idea here is to add to every node t ∈ T whose bag                      sibility and recall a key result that may be useful in prov-
+χ(t) contains a variable a all related auxiliary variables, i.e.,             ing a lower bound. For this, we briefly explain current
+                 (i)
+justa , nexta , ba . Since there are O(log(|fS |)) for every                  techniques (Wallon and Mengel 2020) for treewidth lower
+original variable a, this is okay.                                            bounds of SAT encodings with auxiliary variables, which
+
+
+
+                                                                        349
+                     Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                    Main Track
+
+
+make use of size lower bounds for so-called structured (d)-                  as projected model counting (PMC), which runs in polyno-
+DNNFs that are tractable circuit representations of Boolean                  mial time in the instance size due to the large cycles. After-
+functions (Darwiche and Marquis 2002).                                       wards, we show a different approach that focuses on directly
+Theorem 5. Let f be a Boolean function over the set of                       counting answer sets by means of a reduction to #SAT that
+variables X and C be a CNF with auxiliary variables Y                        even works for disjunctive programs.
+such that f ≡ ∃Y C and such that the treewidth of C is k.                       In the following, we assume a program Π that might be
+(i) Then there exists a structured DNNF D of size |C| · 2O(k)                disjunctive and a tree decomposition T = (T, χ) of GΠ of
+such that D ≡ f . (ii) If additionally C has the same number                 width k. Further, we let Π contain a large cycle, i.e., we let S
+                                                                                                                   k
+of satisfying assignments as f , then there exists a structured              be an SCC of DΠ such that |S| ≥ 22 . The reductions of the
+d-DNNF D of size |C| · 2O(k) such that D ≡ f .                               next two subsections carefully take care that the treewidth
+                                                                             increase of the constructed Boolean formulas is bounded in
+   This implies that size lower bounds for structured DNNFs                  order to guarantee polynomial-time solvability. For the ease
+(resp. d-DNNFs) translate to treewidth lower bounds for sat-                 of presentation we assume for every TD node t in T a bag
+isfiability preserving (resp. parsimonious) encodings.                       program Πt , which is a S subset of {r ∈ Π | A(r) ⊆ χ(t)}
+Proof (Sketch). (i) is known (Oztok and Darwiche 2017).                      with |Πt | ≤ 1 and Π = t in T Πt . This is not a restriction,
+For (ii), we observe that in this case the truth values of the               since it is achievable by adding auxiliary copy TD nodes
+variables in X are functionally determined by the assign-                    such that each bag program contains (at most) one rule.
+ment to the remaining variables in every model. This implies
+that the structured DNNF constructed in the proof by (Oztok                  5.1    Counting Inverse Answer Sets via PMC
+and Darwiche 2017) is also a structured d-DNNF.                              In order to ensure that the answer sets of Π containing large
+                                                                             cycles, can be counted in polynomial time, one has to take
+  Current techniques for lower-bounds use so-called com-                     care the treewidth increase is bounded. In the following, we
+munication complexity of the considered Boolean function.                    design two reductions. One of these reductions constructs
+                                                                             the formula Funsat , whose models precisely capture those
+Theorem 6 (Wallon and Mengel 2020). Let f be a Boolean
+                                                                             interpretations of Π that are not models of Π. The second
+function with non-deterministic (resp. deterministic) com-
+                                                                             reduction aims at constructing Fsmaller , whose models re-
+munication complexity cc. Then any DNNF (resp. d-DNNF)
+                                                                             stricted to A(Π) correspond to those models of Π, which are
+D such that D ≡ f has size Ω(2cc ).
+                                                                             not answer sets of Π. Overall, these two formulas allow us
+   If we want to show that there is no parsimonious encoding                 to indirectly count the number of answer sets by computing
+for normal answer set programs that comes with a treewidth                   |2A(Π) | − #SAT(Funsat ) − PMC(Fsmaller , A(Π)).
+                       b
+upper-bound of 2O(k ) , we need to use deterministic com-
+munication complexity. Namely, since there is a satisfiabil-                 Computing non-models of Π via formula Funsat . For
+ity preserving encoding with treewidth in O(k · log(k)), any                 computing those interpretations of Π that are not models,
+lower bound provided by non-deterministic communication                      we use variables A(Π), as well as usatt (usat≤t ) for every
+complexity cannot be higher than O(k · log(k)).                              node t in T to indicate that a rule in Πt (a rule in Π≤t ) is un-
+   While this result may be of use, proving lower-bounds                     satisfied, respectively. Then, we define unsatisfiability of a
+for the communication complexity of a function is a noto-                    rule in a node t by Formulas (16). If Πt = ∅, this is not given
+riously challenging task (Lee and Shraibman 2009). Addi-                     by Formulas (17). Then, this information is propagated from
+tionally, we know from the previous section that a double                    nodes to parent nodes with the help of Formulas (18). Fi-
+exponential lower bound w.r.t. the treewidth of the program                  nally, to compute non-models, we enforce unsatisfiability up
+is not possible on a broad range of programs, i.e., those that               to the root node of T , by Formulas (19).
+have small SCCs or FVSs compared to their treewidth. This                    Define Unsatisfiability
+                                                                                        ^      ^
+means that even if there is a family of programs, whose de-                  usatt ↔        a     ¬b           for every t in T, Πt = {r}
+terministic communication complexity grows exponentially                                                                                  (16)
+                                                                                      a∈Br+ b∈Hr ∪Br−
+in their treewidth, these programs need to be unusual.
+   Summarizing, both a better lower bound and a better up-                   ¬usatt                                 for every t in T, Πt =∅ (17)
+per bound are likely very hard to derive in this context.
+                                                                                     _
+                                                                             usat≤t ↔ usat≤t′ ∨ usatt               for every t in T       (18)
+While we consider this problem a pressing matter, we there-
+                                                                                      t′ ∈chld(t)
+fore restrict ourselves to this short discussion of a possible
+point of attack for better lower bounds but leave it open.                   Enforce Unsatisfiability
+                                                                             usat≤n                                 for root node n of T   (19)
+  5    Polynomial Encodings for Large Cycles                                 Example 5. Consider the program Π = {a ∨ b ←
+For programs with large cycles in its dependency graph, it                   ; c ∨ e ← d; d ∨ e ← b}. Then, {a}, {b, e} {b, c, d}
+turns out that one can count the number of answer sets in                    are answer sets of Π. Figure 4 (left) depicts the primal
+polynomial time. First, we present a reduction that counts                   graph of Π and Figure 4 (right) shows a TD T = (T, χ)
+answer sets via counting interpretations that are not models                 of GΠ . Formula Funsat is as follows: For t1 , we construct
+of the program, as well as by counting those models that are                 {usatt1 ↔ d ∧ ¬c ∧ ¬e, usat≤t1 ↔ usatt1 }; for t2 , we
+not answer sets. To this end, we utilize both #SAT as well                   create {usatt2 ↔ ¬a ∧ ¬b, usat≤t2 ↔ usatt2 }; finally,
+
+
+
+                                                                      350
+                               Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                              Main Track
+
+
+
+                                            t3 {b, d, e}                               Proof. Without loss of generality,                 we assume
+                  e        a                                                           that | chld(t)| ≤ 2 for every node t in T , which can
+           c           d         b   t1 {c, d, e}       {a, b} t2                      be achieved by adding O(|A(Π)|) many intermediate
+                                                                                       copy nodes, resulting in a normalized (nice) representative
+   Figure 4: Primal graph GΠ (left) and a TD T of GΠ (right).                          of T (Kloks 1994)[Lem. 13.1.2]. Observe that both Funsat
+                                                                                       and Fsmaller can be converted to CNF without additional
+                                                                                       auxiliary variables. Then, we construct a TD T ′ = (T, χ′ )
+for t3 , this results in {usatt3 ↔ b ∧ ¬d ∧ ¬e, usat≤t3 ↔                              of GFunsat and a TD T ′′ = (T, χ′′ ) of GFsmaller ,
+usat≤t1 ∨ usat≤t2 , usat≤t3 }. It is easy to see that the mod-                         where χ′ , χ′′ are constructed as follows. For every node t
+els of Funsat restricted to A(Π) are not models of Π; further,                         in T , we let χ′ (t) = χ(t) ∪ {usatt , usatt′ | t′ ∈ chld(t)}.
+#SAT(Funsat ) gives the number of non-models of Π.                                     Further, for every t in T , we define χ′′ (t) = χ(t) ∪ {ȧ | a ∈
+                                                                                       χ(t)} ∪ {st , s≤t , s≤t′ | t′ ∈ chld(t)}. Indeed, T ′ and T ′′
+Fsmaller : Compute models of Π that are not answer sets.                               is a TD of GFunsat and GFsmaller , respectively. Since
+For computing models of Π that are not answer sets, we use                             | chld(t)| ≤ 2 for every node t in T , |χ′ (t)| is in O(k).
+variables A(Π) as well as duplicates {ȧ | a ∈ A(Π)} (for
+computing reduct models). Further, for every node t in T ,                                These results yield the following runtime consequences.
+variable st (s≤t ) indicates that the reduct model at node t
+                                                                                       Theorem 9 (Runtime for Answer Set Counting, ⋆). Let Π be
+(up to t) is strictly ⊆-smaller than the model over vari-
+                                                                                       a program such that the treewidth of GΠ is k and the largest
+ables A(Π), respectively. Then, Formulas (20) and (21) en-                                                  Ω(k)
+sure that rules and reduct rules are satisfied, respectively. By                       SCC size of DΠ is 22      . Then, the number of answer sets
+Formulas (22), reduct models are ⊆-smaller than the com-                               of Π can be computed in time poly(|A(Π)|).
+puted models over A(Π). Formulas (23) and (24) compute                                   Below we present a different method that has a similar
+whether the reduct model is strictly ⊆-smaller in t and up to                          runtime behavior, but even works for disjunctive programs.
+t, respectively. Finally, Formula (25) ensures that the reduct
+model is strictly ⊆-smaller than the model (up to the root n).                         5.2    Counting Answer Sets with #SAT
+Satisfiability
+  _          _of Rules                                                                 For programs with large cycles, it turns out that one can al-
+      ¬a ∨       b                   for every r ∈ Π        (20)                       ternatively design a reduction to #SAT, running in polyno-
+a∈Br+       b∈Br− ∪Hr                                                                  mial time in the instance size. This approach has the advan-
+Define                                                                                 tage that indeed only one #SAT solver call is enough to di-
+ _ Satisfiability
+           _    _ of Reduct                                                            rectly count the answer sets. While this reduction increases
+     ¬ȧ ∨   b ∨ ċ         for every r ∈ Π                               (21)         the treewidth exponentially (compared to the treewidth of
+a∈Br+          b∈Br−   c∈Hr                                                            the program’s primal graph), it turns out that due to the large
+Define ⊆-Smaller Relation                                                              cycles, we can still count the satisfying assignments of the
+ȧ → a                                         for every a ∈ A(Π) (22)                 resulting formula in polynomial time in the program size.
+     _                                                                                    For the ease of presentation, we additionally assume for
+st ↔ a ∧ ¬ȧ                                   for every t in T           (23)         every TD node t that there is a fresh auxiliary atom ⊂t ∈
+       a∈χ(t)                                                                          χ(t). Greek letters α and β are constants that are available
+                                                                                       during the generation of the Boolean formula. So, expres-
+     _
+s≤t ↔ s≤t′ ∨ st                                for every t in T           (24)
+                                                                                       sions over these constants can be evaluated and simplified at
+    t′ ∈chld(t)
+                                                                                       formula compile time. These constants simplify the presen-
+Enforce Strict ⊆-Inclusion                                                             tation and enable a compact notation of case distinctions.
+s≤n                                            for root node n of T (25)                  In the reduction, we construct a formula Fdisj using as
+Correctness, Treewidth-Awareness, and Runtimes.                                        variables the program atoms A(Π) as well as usatJt , usatJ<t ,
+First, we establish correctness as follows.                                            and usatJ≤t to indicate that interpretation J ∈ 2χ(t) dissat-
+                                                                                       isfies a rule r ∈ Πt in a node t below t, and up to t, re-
+Lemma 7 (Correctness, ⋆1 ). Let Π be a program and T =                                 spectively. To this end, we use auxiliary variables usatJ<t,t′ ,
+(T, χ) be a TD of GΠ . Then, every model of formula Funsat
+is not a model of Π, and vice versa. Further, every model M                            with t′ ∈ chld(t) as well as compJ,K to indicate compatibil-
+                                                                                                                                           ′
+of Fsmaller when restricted to A(Π) corresponds to a model                             ity of two assignments J ∈ 2χ(t) and K ∈ 2χ(t ) for a child
+of Π such that there exists a model M ′ ⊊ M ∩ A(Π) that is                             node t′ ∈ chld(t). Then, the reduction uses auxiliary vari-
+a model of ΠM ∩A(Π) (and vice versa). As a result, |2A(Π) |−                           ables sJt to indicate that in node t, interpretation J is strictly
+#SAT(Funsat )−PMC(Fsmaller , A(Π)) corresponds to the                                  ⊆-smaller than the model over A(Π).
+number of answer sets of Π.                                                               Formulas (26) take care that we compute models over
+                                                                                       variables A(Π). Then, Formulas (27) define whether J ∈
+   Indeed, the reductions linearly preserve treewidth.
+                                                                                       2χ(t) is strictly ⊆-smaller than the model over A(Π). Fur-
+Lemma 8 (Treewidth-Awareness). Let Π be a program                                      ther, Formulas (28) define compatibility between mod-
+and T = (T, χ) be a TD of GΠ of width k. Then, the                                                                   ′
+                                                                                       els J ∈ 2χ(t) and K ∈ 2χ(t ) for a child node t′ ∈ chld(t).
+treewidths of GFunsat and GFsmaller are linear in k.
+                                                                                          Unsatisfiability of J in node t is defined by Formulas (29),
+   1
+       Statements marked with “⋆” are proven in the appendix.                          which is the case whenever J is not a model of the GL reduct
+
+
+
+                                                                                 351
+                       Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                      Main Track
+
+
+                                                                                                                              ′
+of Πt with respect to the interpretation over χ(t), or there                   t′ ∈ chld(t), J ∈ 2χ(t)∪{⊂t } , K ∈ 2χ(t )∪{⊂t′ } , J ∩ χ(t′ ) =
+is an atom b ∈ J that is set to false in this interpretation                   K ∩ χ(t)}. Indeed T ′ is a TD of GFunsat , i.e., variables of
+(which implies that J is not even a subset). Then, Formu-                      every instance of Formulas (26)–(33) are covered by a bag
+las (30) propagate this information to parent nodes by means                   in T ′ . Further, for every t in T , we have |χ(t′ )| ≤ 2|χ(t)| . As
+of auxiliary Formulas (31) and (32).                                           a result, the treewidth of GFunsat is bounded by 2O(k) .
+   In the end, Formulas (33) ensure that for the root node n
+of T , those assignments J ∈ 2χ(n) that are strictly ⊆-smaller                    However, unfortunately one cannot significantly decrease
+(containing ⊂n ) dissatisfy at least one rule in Π.                            this blowup, unless the exponential time hypothesis fails.
+Satisfiability                                                                 Proposition 12. Let Π be a program and T = (T, χ) be a
+ _           _of Rules                                                         TD of GΠ of width k. Then, unless ETH fails, there cannot
+     ¬a ∨      b                       for every r ∈ Π            (26)         be a reduction to a Boolean formula that runs in polynomial
+a∈Br+     b∈Br− ∪Hr                                                            time in A(Π) such that the treewidth increase is in 2o(k) .
+       _ ⊆-Smaller Reduct Interpretations
+Define Strict                                                                  Proof. Assume hat a polynomial-time reduction to SAT
+ J
+st ↔        a             for every t in T, J ∈ 2χ(t)                          with treewidth increase in 2o(k) exists. Then, we could de-
+     a∈χ(t)\J
+                                                (27)                                                            o(k)
+                                                                               cide the resulting formula in 2(2 ) · poly(| A(Π)|), which
+compJ,K ↔ (α ↔ (sJt ∨ β))       for every t in T, t′ ∈ chld(                   contradicts the known double-exponential lower bound for
+    t                                                     ′                    deciding consistency of Π (Fichte et al. 2017).
+                                t), J ∈ 2χ(t) , K ∈ 2χ(t ) ,
+                                        ′
+                                J ∩ χ(t ) = K ∩ χ(t),                             These findings result in the following runtimes.
+                                α=(⊂t ∈J), β=(⊂t′ ∈K)
+                                                                               Theorem 13 (Polynomial Runtime for Answer Set Count-
+                                                        (28)
+Define Unsatisfiability of Reduct                                              ing). Let Π be a program such that the width of GΠ is k and
+                                                                                                                Ω(k)
+                                                                               the largest SCC size of DΠ is 22
+        ^
+usatJt ↔ (α ∧¬a) ∨¬b            for every t in T, J∈2χ(t) ,                                                          . Then, formula Fdisj al-
+ Πt ={r},a∈Br− ,b∈J             α=(J̸|={Hr ← Br+ })                            lows us to count the answer sets of Π in time poly(|A(Π)|).
+                                                        (29)
+                                                                                          6    Conclusion and Future Work
+usatJ≤t ↔ (usatJ<t ∨ usatJt )          for every t in T, J∈2χ(t)
+                                                             (30)              Our work provides new insights into the tractability of
+             ^                                                                 #ASP in terms of the structure (treewidth) of the rules. We
+usatJ<t,t′ ↔ (usatK     ≤t′ ∨          for every t in T, t′ ∈                  saw that while it is limited by cyclic dependencies, often-
+                             J,K
+           K∈2 χ(t′ ) ¬compt     )     chld(t), J ∈ 2χ(t) (31)                 times we are able to overcome the limitations by adapting to
+        J∩χ(t′ )=K∩χ(t)                                                        the SCC size in relation to its structural density (treewidth).
+         _                                                                        For low cyclicity, we provide a new approach for small
+usatJ<t ↔ usatJ<t,t′                   for every t in T, J ∈ 2χ(t)             cycles based on a more fine-grained structural analysis using
+         t′ ∈chld(t)
+                                                              (32)
+                                                                               feedback vertex sets. This approach reduces the problem to
+Enforce Unsatisfiability of Strictly ⊆-Smaller Models                          counting models of a propositional formula (#SAT), where
+α → usatJ≤n                      for root node n of T, J ∈                     significant advances have been presented recently (Korho-
+                                 2χ(n) , α=(⊂n ∈ J) (33)                       nen and Järvisalo 2021; Soos and Meel 2022).
+                                                                                  Additionally, we introduced new #SAT encodings for
+                                                                               large cyclic dependencies, which surprisingly allow for a
+Correctness, Treewidth-Awareness, and Runtimes. The                            polynomial runtime. To the best of our knowledge, such a
+correctness demonstrates a bijective correspondence be-                        direct reduction that enables utilizing the efficiency of mod-
+tween models of the formula and answer sets of the program.                    ern #SAT solvers has not been considered before.
+Lemma 10 (Correctness, ⋆). Let Π be a program and T =                             While both approaches work for medium-sized cycles,
+(T, χ) be a TD of GΠ . Then, every model of formula Fdisj                      unfortunately, our results leave a gap. However, we give
+restricted to A(Π) is an answer set of Π. Vice versa, every                    compelling arguments why closing this gap is beyond chal-
+answer set of Π can be extended to a model of Fdisj .                          lenging and outline a methodology we expect to be of use.
+  This reduction cause an exponential increase of treewidth.                      So, how hard are cycles for counting? Our theoreti-
+                                                                               cal findings might reveal phase transitions for #ASP from
+Lemma 11 (Treewidth-Awareness). Let Π be a program                             small over medium to large cycles. Indeed, we expect an
+and T = (T, χ) be a TD of GΠ of width k. Then, the                             easy-hard-easy pattern, since small cycles admit decent run-
+treewidth of GFdisj is bounded by 2O(k) .                                      time guarantees that do not carry over to medium-sized cy-
+                                                                               cles, while large cycles again come with polynomial run-
+Proof. Without loss of generality, we assume | chld(t) ≤ 2|                    time. For the future, we are interested in empirically com-
+for every node t in T , achieved by adding O(|A(Π)|) in-                       paring our new techniques for answer set counting to ex-
+termediate copy nodes (Kloks 1994)[Lem. 13.1.2]. For-                          isting approaches. There, we also expect to observe such
+mula Fdisj can be easily converted to CNF. We construct                        an easy-hard-easy pattern. For this, we are currently col-
+a TD T ′ = (T, χ′ ) of GFdisj where χ′ is defined as fol-                      lecting and compiling a large set of reasonable benchmarks
+lows. For every node t in T , we let χ′ (t) = χ(t) ∪ {sJt ,                    for #ASP, since competition instances do not capture chal-
+               J\{⊂t }
+compJ,K
+      t  , usatt       , usatJt′ , usatJ<t , usatJ<t,t′ , usatJ≤t |            lenges of quantitative approaches beyond consistency.
+
+
+
+                                                                         352
+                    Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                   Main Track
+
+
+                 Acknowledgements                                           Fichte, J. K.; Hecher, M.; Morak, M.; Thier, P.; and Woltran,
+This work has been supported by the Austrian Science                        S. 2023. Solving Projected Model Counting by Utilizing
+Fund (FWF) grants P32830, W1255-N23, and J4656, by                          Treewidth and its Limits. Artif. Intell. 314:103810.
+the Society for Research Funding in Lower Austria (GFF,                     Fichte, J. K.; Hecher, M.; and Hamiti, F. 2021. The
+Gesellschaft für Forschungsfr̈derung NÖ) grant ExzF-0004,                 model counting competition 2020. ACM J. Exp. Algorith-
+as well as by the Vienna Science and Technology Fund                        mics 26:13:1–13:26.
+(WWTF) grant ICT19-065. Part of the work was carried                        Gelfond, M., and Lifschitz, V. 1988. The stable model se-
+out while Hecher was visiting the Simons Institute for the                  mantics for logic programming. In Kowalski, R. A., and
+Theory of Computing.                                                        Bowen, K. A., eds., Logic Programming, Proceedings of
+                                                                            the Fifth International Conference and Symposium, Seattle,
+                       References                                           Washington, USA, August 15-19, 1988 (2 Volumes), 1070–
+Bodlaender, H. L.; Drange, P. G.; Dregi, M. S.; Fomin,                      1080. MIT Press.
+F. V.; Lokshtanov, D.; and Pilipczuk, M. 2016. A ck n                       Hecher, M. 2022. Treewidth-aware reductions of normal
+5-Approximation Algorithm for Treewidth. SIAM Journal                       ASP to SAT - is normal ASP harder than SAT after all? Artif.
+on Computing 45(2):317–378.                                                 Intell. 304:103651.
+Darwiche, A., and Marquis, P. 2002. A knowledge compi-                      Huang, J., and Darwiche, A. 2005. DPLL with a trace: From
+lation map. J. Artif. Intell. Res. 17:229–264.                              SAT to knowledge compilation. In Kaelbling, L. P., and Saf-
+Darwiche, A. 2004. New advances in compiling CNF                            fiotti, A., eds., IJCAI-05, Proceedings of the Nineteenth In-
+into decomposable negation normal form. In de Mántaras,                    ternational Joint Conference on Artificial Intelligence, Ed-
+R. L., and Saitta, L., eds., Proceedings of the 16th Eureo-                 inburgh, Scotland, UK, July 30 - August 5, 2005, 156–162.
+pean Conference on Artificial Intelligence, ECAI’2004, in-                  Professional Book Center.
+cluding Prestigious Applicants of Intelligent Systems, PAIS                 Jakl, M.; Pichler, R.; and Woltran, S. 2009. Answer-set
+2004, Valencia, Spain, August 22-27, 2004, 328–332. IOS                     programming with bounded treewidth. In IJCAI 2009, 21st
+Press.                                                                      International Joint Conference on Artificial Intelligence,
+Eiter, T., and Gottlob, G. 1995. On the computational cost                  Pasadena, California, USA, July 11-17, 2009, volume 2,
+of disjunctive logic programming: Propositional case. Ann.                  816–822.
+Math. Artif. Intell. 15(3–4):289–323.                                       Janhunen, T., and Niemelä, I. 2011. Compact transla-
+Eiter, T.; Hecher, M.; and Kiesel, R. 2021. Treewidth-aware                 tions of non-disjunctive answer set programs to proposi-
+cycle breaking for algebraic answer set counting. In Bien-                  tional clauses. In Balduccini, M., and Son, T. C., eds., Logic
+venu, M.; Lakemeyer, G.; and Erdem, E., eds., Proceed-                      Programming, Knowledge Representation, and Nonmono-
+ings of the 18th International Conference on Principles of                  tonic Reasoning - Essays Dedicated to Michael Gelfond on
+Knowledge Representation and Reasoning, KR 2021, Online                     the Occasion of His 65th Birthday, volume 6565 of Lecture
+event, November 3-12, 2021, 269–279.                                        Notes in Computer Science, 111–130. Springer.
+Eiter, T.; Ianni, G.; and Krennwallner, T. 2009. Answer set                 Janhunen, T. 2004. Representing normal programs with
+programming: A primer. In Reasoning Web International                       clauses. In de Mántaras, R. L., and Saitta, L., eds., Pro-
+Summer School, 40–110. Springer.                                            ceedings of the 16th Eureopean Conference on Artificial In-
+Fages, F. 1994. Consistency of Clark’s completion and ex-                   telligence, ECAI’2004, including Prestigious Applicants of
+istence of stable models. Journal of Methods of logic in                    Intelligent Systems, PAIS 2004, Valencia, Spain, August 22-
+computer science 1(1):51–60.                                                27, 2004, 358–362. IOS Press.
+Fandinno, J., and Hecher, M. 2021. Treewidth-aware com-                     Kloks, T. 1994. Treewidth. Computations and Approxima-
+plexity in ASP: not all positive cycles are equally hard.                   tions, volume 842 of LNCS. Springer.
+In Thirty-Fifth AAAI Conference on Artificial Intelligence,                 Korhonen, T., and Järvisalo, M. 2021. Integrating tree de-
+AAAI 2021, Virtual Event, February 2-9, 2021, 6312–6320.                    compositions into decision heuristics of propositional model
+AAAI Press.                                                                 counters. In 27th International Conference on Princi-
+Fichte, J. K.; Hecher, M.; Morak, M.; and Woltran, S. 2017.                 ples and Practice of Constraint Programming (CP 2021).
+Dynasp2. 5: Dynamic programming on tree decompositions                      Schloss Dagstuhl-Leibniz-Zentrum für Informatik.
+in action. In International Symposium on Parameterized
+and Exact Computation (IPEC), volume 89 of LIPIcs, 17:1–                    Lagniez, J., and Marquis, P. 2017. An improved decision-
+17:13. Schloss Dagstuhl - Leibniz-Zentrum für Informatik.                  dnnf compiler. In Sierra, C., ed., Proceedings of the Twenty-
+                                                                            Sixth International Joint Conference on Artificial Intelli-
+Fichte, J. K.; Gaggl, S. A.; Hecher, M.; and Rusovac, D.                    gence, IJCAI 2017, Melbourne, Australia, August 19-25,
+2022. IASCAR: incremental answer set counting by any-                       2017, 667–673. ijcai.org.
+time refinement. In Gottlob, G.; Inclezan, D.; and Maratea,
+M., eds., Logic Programming and Nonmonotonic Reason-                        Lampis, M., and Mitsou, V. 2017. Treewidth with a quan-
+ing - 16th International Conference, LPNMR 2022, Genova,                    tifier alternation revisited. In IPEC’17, volume 89, 26:1–
+Italy, September 5-9, 2022, Proceedings, volume 13416 of                    26:12. Dagstuhl Publishing.
+Lecture Notes in Computer Science, 217–230. Springer.                       Lee, T., and Shraibman, A. 2009. Lower bounds in com-
+
+
+
+                                                                     353
+                     Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning
+                                                                    Main Track
+
+
+munication complexity. Found. Trends Theor. Comput. Sci.                     Thurley, M. 2006. sharpsat - counting models with advanced
+3(4):263–398.                                                                component caching and implicit BCP. In Biere, A., and
+Lee, J., and Yang, Z. 2017. Lpmln, weak constraints, and                     Gomes, C. P., eds., Theory and Applications of Satisfiability
+p-log. In Singh, S., and Markovitch, S., eds., Proceedings of                Testing - SAT 2006, 9th International Conference, Seattle,
+the Thirty-First AAAI Conference on Artificial Intelligence,                 WA, USA, August 12-15, 2006, Proceedings, volume 4121
+February 4-9, 2017, San Francisco, California, USA, 1170–                    of Lecture Notes in Computer Science, 424–429. Springer.
+1177. AAAI Press.                                                            Wallon, R., and Mengel, S. 2020. Revisiting graph width
+                                                                             measures for cnf-encodings. J. Artif. Intell. Res. 67:409–
+Lifschitz, V., and Razborov, A. A. 2006. Why are there so
+                                                                             436.
+many loop formulas? ACM Trans. Comput. Log. 7(2):261–
+268.                                                                         Yang, Z.; Ishay, A.; and Lee, J. 2020. Neurasp: Embracing
+                                                                             neural networks into answer set programming. 29th Inter-
+Lin, F., and Zhao, X. 2004a. On odd and even cycles in nor-                  national Joint Conference on Artificial Intelligence (IJCAI
+mal logic programs. In McGuinness, D. L., and Ferguson,                      2020).
+G., eds., Proceedings of the Nineteenth National Conference
+on Artificial Intelligence, Sixteenth Conference on Innova-
+tive Applications of Artificial Intelligence, July 25-29, 2004,
+San Jose, California, USA, 80–85. AAAI Press / The MIT
+Press.
+Lin, F., and Zhao, Y. 2004b. ASSAT: computing answer
+sets of a logic program by SAT solvers. Artif. Intell. 157(1-
+2):115–137.
+Manhaeve, R.; Dumancic, S.; Kimmig, A.; Demeester, T.;
+and Raedt, L. D. 2019. Deepproblog: Neural probabilis-
+tic logic programming. In Beuls, K.; Bogaerts, B.; Bon-
+tempi, G.; Geurts, P.; Harley, N.; Lebichot, B.; Lenaerts,
+T.; Louppe, G.; and Eecke, P. V., eds., Proceedings of the
+31st Benelux Conference on Artificial Intelligence (BNAIC
+2019) and the 28th Belgian Dutch Conference on Machine
+Learning (Benelearn 2019), Brussels, Belgium, November
+6-8, 2019, volume 2491 of CEUR Workshop Proceedings.
+CEUR-WS.org.
+Oztok, U., and Darwiche, A. 2017. On compiling dnnfs
+without determinism. CoRR abs/1709.07092.
+Pichler, R.; Rümmele, S.; Szeider, S.; and Woltran, S. 2014.
+Tractable answer-set programming with weight constraints:
+bounded treewidth is not enough. Theory Pract. Log. Pro-
+gram. 14(2):141–164.
+Raedt, L. D.; Kimmig, A.; and Toivonen, H. 2007. Problog:
+A probabilistic prolog and its application in link discov-
+ery. In Veloso, M. M., ed., IJCAI 2007, Proceedings of
+the 20th International Joint Conference on Artificial Intel-
+ligence, Hyderabad, India, January 6-12, 2007, 2462–2467.
+Robertson, N., and Seymour, P. D. 1986. Graph minors II:
+Algorithmic aspects of tree-width. J. Algorithms 7:309–322.
+Samer, M., and Szeider, S. 2010. Algorithms for proposi-
+tional model counting. J. Discrete Algorithms 8(1):50–64.
+Skryagin, A.; Stammer, W.; Ochs, D.; Dhami, D. S.; and
+Kersting, K. 2021. SLASH: embracing probabilistic circuits
+into neural answer set programming. CoRR abs/2110.03395.
+Soos, M., and Meel, K. S. 2022. Arjun: An efficient inde-
+pendent support computation technique and its applications
+to counting and sampling. In Mitra, T.; Young, E. F. Y.;
+and Xiong, J., eds., Proceedings of the 41st IEEE/ACM In-
+ternational Conference on Computer-Aided Design, ICCAD
+2022, San Diego, California, USA, 30 October 2022 - 3
+November 2022, 71:1–71:9. ACM.
+
+
+
+                                                                      354
+

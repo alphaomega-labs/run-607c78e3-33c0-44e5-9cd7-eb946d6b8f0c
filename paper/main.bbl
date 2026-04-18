@@ -1,0 +1,402 @@
+\begin{thebibliography}{48}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Acharya \& Song(2025)Acharya and Song]{src_041}
+Kamal Acharya and Houbing Song.
+\newblock A comprehensive review of neuro-symbolic ai for robustness,
+  uncertainty quantification, and intervenability.
+\newblock Arabian Journal for Science and Engineering, 2025.
+\newblock URL \url{https://doi.org/10.1007/s13369-025-10887-3}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Barbiero et~al.(2023)Barbiero, Ciravegna, Giannini, Zarlenga,
+  Magister, Tonda, Lio, and Precioso]{src_024}
+Pietro Barbiero, Gabriele Ciravegna, Francesco Giannini, Mateo~Espinosa
+  Zarlenga, Lucie~Charlotte Magister, Alberto Tonda, Pietro Lio, and Frederic
+  Precioso.
+\newblock Interpretable neural-symbolic concept reasoning.
+\newblock arXiv (Cornell University), 2023.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2304.14068}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Bodlaender(1993)]{src_001}
+Hans~L. Bodlaender.
+\newblock A linear time algorithm for finding tree-decompositions of small
+  treewidth, 1993.
+\newblock URL \url{https://doi.org/10.1145/167088.167161}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Chavira et~al.(2008)Chavira, Darwiche, and den Broeck]{src_004}
+Mark Chavira, Adnan Darwiche, and Guy~Van den Broeck.
+\newblock On probabilistic inference by weighted model counting.
+\newblock Artificial Intelligence 172(6-7), 772-799, 2008.
+\newblock URL \url{https://doi.org/10.1016/j.artint.2007.11.002}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Colelough \& Regli(2025)Colelough and Regli]{src_044}
+Brandon~Curtis Colelough and William~C. Regli.
+\newblock Neuro-symbolic ai in 2024: A systematic review.
+\newblock arXiv (Cornell University), 2025.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2501.05435}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Cropper \& Dumancic(2022)Cropper and Dumancic]{src_017}
+Andrew Cropper and Sebastijan Dumancic.
+\newblock Inductive logic programming at 30: A new introduction.
+\newblock Journal of Artificial Intelligence Research, 2022.
+\newblock URL \url{https://doi.org/10.1613/jair.1.13507}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Cunnington et~al.(2023)Cunnington, Law, Lobo, and Russo]{src_023}
+Daniel Cunnington, Mark Law, Jorge Lobo, and Alessandra Russo.
+\newblock Ffnsl: Feed-forward neural-symbolic learner.
+\newblock Machine Learning, 2023.
+\newblock URL \url{https://doi.org/10.1007/s10994-022-06278-6}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Darwiche et~al.(2002)Darwiche, Marquis, Darwiche, and
+  Marquis]{src_002}
+A.~Darwiche, P.~Marquis, Adnan Darwiche, and Pierre Marquis.
+\newblock A knowledge compilation map.
+\newblock Journal of Artificial Intelligence Research, 2002.
+\newblock URL \url{https://doi.org/10.1613/jair.989}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[dAvila Garcez \& Lamb(2023)dAvila Garcez and Lamb]{src_029}
+Artur dAvila Garcez and Luis~C. Lamb.
+\newblock Neurosymbolic ai: the 3rd wave.
+\newblock Artificial Intelligence Review, 2023.
+\newblock URL \url{https://doi.org/10.1007/s10462-023-10448-w}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[den Broeck et~al.(2011)den Broeck, Taghipour, Meert, Davis, and
+  Raedt]{src_005}
+Guy~Van den Broeck, Nima Taghipour, Wannes Meert, Jesse Davis, and Luc~De
+  Raedt.
+\newblock Lifted probabilistic inference by first-order knowledge compilation.
+\newblock Lirias (KU Leuven), 2011.
+\newblock URL \url{https://doi.org/10.5591/978-1-57735-516-8/ijcai11-363}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Dubray et~al.(2023)Dubray, Schaus, and Nijssen]{src_022}
+Alexandre Dubray, Pierre Schaus, and Siegfried Nijssen.
+\newblock Anytime weighted model counting with approximation guarantees for
+  probabilistic inference.
+\newblock DROPS (Schloss Dagstuhl Leibniz Center for Informatics), 2023.
+\newblock URL \url{https://doi.org/10.4230/lipics.cp.2023.15}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Eiter et~al.(2021)Eiter, Hecher, Kiesel, and Kiesel]{src_045}
+Thomas Eiter, Markus Hecher, Rafael Kiesel, and Roland Kiesel.
+\newblock Treewidth-aware cycle breaking for algebraic answer set counting.
+\newblock Proceedings of KR 2021, 2021.
+\newblock URL
+  \url{https://proceedings.kr.org/2021/26/kr2021-0026-eiter-et-al.pdf}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Eiter et~al.(2024)Eiter, Hecher, and Kiesel]{src_039}
+Thomas Eiter, Markus Hecher, and Rafael Kiesel.
+\newblock aspmc: New frontiers of algebraic answer set counting.
+\newblock Artificial Intelligence 330, 2024.
+\newblock URL
+  \url{https://repositum.tuwien.at/bitstream/20.500.12708/209319/1/Eiter-2024-Artificial%20Intelligence-vor.pdf}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Fierens et~al.(2012)Fierens, den Broeck, Thon, Gutmann, and
+  Raedt]{src_007}
+Daan Fierens, Guy~Van den Broeck, Ingo Thon, Bernd Gutmann, and Luc~De Raedt.
+\newblock Inference in probabilistic logic programs using weighted cnf's.
+\newblock arXiv (Cornell University), 2012.
+\newblock URL \url{https://doi.org/10.48550/arxiv.1202.3719}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[FIERENS et~al.(2014)FIERENS, BROECK, RENKENS, SHTERIONOV, GUTMANN,
+  THON, JANSSENS, and RAEDT]{src_009}
+DAAN FIERENS, GUY VAN~DEN BROECK, JORIS RENKENS, DIMITAR SHTERIONOV, BERND
+  GUTMANN, INGO THON, GERDA JANSSENS, and LUC~DE RAEDT.
+\newblock Inference and learning in probabilistic logic programs using weighted
+  boolean formulas.
+\newblock Theory and Practice of Logic Programming, 2014.
+\newblock URL \url{https://doi.org/10.1017/s1471068414000076}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Geh et~al.(2024)Geh, Goncalves, Silveira, Maua, and Cozman]{src_040}
+Renato~Lui Geh, Jonas Goncalves, Igor~C. Silveira, Denis~Deratani Maua, and
+  Fabio~Gagliardi Cozman.
+\newblock dpasp: A probabilistic logic programming environment for
+  neurosymbolic learning and reasoning, 2024.
+\newblock URL \url{https://doi.org/10.24963/kr.2024/69}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Gibaut et~al.(2023)Gibaut, Pereira, Grassiotto, Osorio, Gadioli,
+  Munoz, Gomes, and dos Santos]{src_028}
+Wandemberg Gibaut, Leonardo Pereira, Fabio Grassiotto, Alexandre Osorio, Eder
+  Gadioli, Amparo Munoz, Sildolfo Gomes, and Claudio dos Santos.
+\newblock Neurosymbolic ai and its taxonomy: a survey.
+\newblock arXiv (Cornell University), 2023.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2305.08876}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Hamilton et~al.(2022)Hamilton, Nayak, Bozic, and Longo]{src_018}
+Kyle Hamilton, Aparna Nayak, Bojan Bozic, and Luca Longo.
+\newblock Is neuro-symbolic ai meeting its promises in natural language
+  processing? a structured review.
+\newblock Semantic Web, 2022.
+\newblock URL \url{https://doi.org/10.3233/sw-223228}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Hecher et~al.(2021)Hecher, Kiesel, Morak, Fichte, and
+  Szeider]{src_046}
+Markus Hecher, Roland Kiesel, Michael Morak, Johannes~K. Fichte, and Stefan
+  Szeider.
+\newblock Treewidth-aware reductions of normal asp to sat - is normal asp
+  harder than sat after all?
+\newblock Artificial Intelligence, 2021.
+\newblock URL \url{https://doi.org/10.1016/j.artint.2021.103651}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Hecher et~al.(2023{\natexlab{a}})Hecher, Kiesel, Kiesel, Roos, and
+  Szeider]{src_048}
+Markus Hecher, Rafael Kiesel, Roland Kiesel, Georg~I. Roos, and Stefan Szeider.
+\newblock The impact of structure in answer set counting: Fighting cycles and
+  its limits.
+\newblock Proceedings of KR 2023, 2023{\natexlab{a}}.
+\newblock URL
+  \url{https://proceedings.kr.org/2023/34/kr2023-0034-hecher-et-al.pdf}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Hecher et~al.(2023{\natexlab{b}})Hecher, Roos, Kiesel, and
+  Szeider]{src_047}
+Markus Hecher, Georg~I. Roos, Roland Kiesel, and Stefan Szeider.
+\newblock Characterizing structural hardness of logic programs: What makes
+  cycles and reachability hard for treewidth?
+\newblock arXiv preprint cs.LO, 2023{\natexlab{b}}.
+\newblock URL \url{https://arxiv.org/abs/2301.07472}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Huang et~al.(2005)Huang, Darwiche, Dechter, and Mateescu]{src_003}
+Jinbo Huang, Adnan Darwiche, Rina Dechter, and Roni Mateescu.
+\newblock Dpll with a trace: From sat to knowledge compilation.
+\newblock IJCAI 2005, 2005.
+\newblock URL \url{https://www.ijcai.org/Proceedings/05/Papers/0876.pdf}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Jha \& Suciu(2012)Jha and Suciu]{src_008}
+Abhay~K. Jha and Dan Suciu.
+\newblock Knowledge compilation meets database theory: Compiling queries to
+  decision diagrams.
+\newblock Theory of Computing Systems, 2012.
+\newblock URL \url{https://doi.org/10.1007/s00224-012-9392-5}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Jung et~al.(2024)Jung, Marra, and Kuzelka]{src_037}
+Peter Jung, Giuseppe Marra, and Ondrej Kuzelka.
+\newblock Quantified neural markov logic networks.
+\newblock International Journal of Approximate Reasoning, 2024.
+\newblock URL \url{https://doi.org/10.1016/j.ijar.2024.109172}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Li et~al.(2023)Li, Huang, and Naik]{src_034}
+Ziyang Li, Jiani Huang, and Mayur Naik.
+\newblock Scallop: A language for neurosymbolic programming.
+\newblock Proceedings of the ACM on Programming Languages, 2023.
+\newblock URL \url{https://doi.org/10.1145/3591280}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Liang et~al.(2025)Liang, Wang, and Tong]{src_043}
+Baoyu Liang, Yuchen Wang, and Chao Tong.
+\newblock Ai reasoning in deep learning era: From symbolic ai to neuralsymbolic
+  ai.
+\newblock Mathematics, 2025.
+\newblock URL \url{https://doi.org/10.3390/math13111707}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Liu et~al.(2023)Liu, Xu, den Broeck, and Liang]{src_031}
+Anji Liu, Hongming Xu, Guy~Van den Broeck, and Yitao Liang.
+\newblock Out-of-distribution generalization by neural-symbolic joint training.
+\newblock Proceedings of the AAAI Conference on Artificial Intelligence, 2023.
+\newblock URL \url{https://doi.org/10.1609/aaai.v37i10.26444}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Manginas et~al.(2025)Manginas, Manginas, Stevinson, Varghese,
+  Katzouris, and Lomuscio]{src_042}
+Vasileios Manginas, Nikolaos Manginas, Edward Stevinson, Sherwin Varghese,
+  Nikos Katzouris, and Alessio Lomuscio.
+\newblock A scalable approach to probabilistic neuro-symbolic robustness
+  verification.
+\newblock ArXiv.org, 2025.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2502.03274}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Manhaeve et~al.(2018)Manhaeve, Dumancic, Kimmig, Demeester, and
+  Raedt]{src_011}
+Robin Manhaeve, Sebastijan Dumancic, Angelika Kimmig, Thomas Demeester, and
+  Luc~De Raedt.
+\newblock Deepproblog: Neural probabilistic logic programming.
+\newblock ORCA Online Research @Cardiff (Cardiff University), 2018.
+\newblock URL \url{https://doi.org/10.48550/arxiv.1805.10872}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Manhaeve et~al.(2021{\natexlab{a}})Manhaeve, Dumancic, Kimmig,
+  Demeester, and Raedt]{src_014}
+Robin Manhaeve, Sebastijan Dumancic, Angelika Kimmig, Thomas Demeester, and
+  Luc~De Raedt.
+\newblock Neural probabilistic logic programming in deepproblog.
+\newblock Artificial Intelligence, 2021{\natexlab{a}}.
+\newblock URL \url{https://doi.org/10.1016/j.artint.2021.103504}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Manhaeve et~al.(2021{\natexlab{b}})Manhaeve, Marra, and
+  Raedt]{src_013}
+Robin Manhaeve, Giuseppe Marra, and Luc~De Raedt.
+\newblock Approximate inference for neural probabilistic logic programming,
+  2021{\natexlab{b}}.
+\newblock URL \url{https://doi.org/10.24963/kr.2021/45}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Marconato et~al.(2023{\natexlab{a}})Marconato, Bontempo, Ficarra,
+  Calderara, Passerini, and Teso]{src_027}
+Emanuele Marconato, Gianpaolo Bontempo, Elisa Ficarra, Simone Calderara, Andrea
+  Passerini, and Stefano Teso.
+\newblock Neuro-symbolic continual learning: Knowledge, reasoning shortcuts and
+  concept rehearsal.
+\newblock arXiv (Cornell University), 2023{\natexlab{a}}.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2302.01242}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Marconato et~al.(2023{\natexlab{b}})Marconato, Teso, Vergari, and
+  Passerini]{src_030}
+Emanuele Marconato, Stefano Teso, Antonio Vergari, and Andrea Passerini.
+\newblock Not all neuro-symbolic concepts are created equal: Analysis and
+  mitigation of reasoning shortcuts.
+\newblock arXiv (Cornell University), 2023{\natexlab{b}}.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2305.19951}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Marra et~al.(2024)Marra, Dumancic, Manhaeve, and Raedt]{src_035}
+Giuseppe Marra, Sebastijan Dumancic, Robin Manhaeve, and Luc~De Raedt.
+\newblock From statistical relational to neurosymbolic artificial intelligence:
+  A survey.
+\newblock Artificial Intelligence, 2024.
+\newblock URL \url{https://doi.org/10.1016/j.artint.2023.104062}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Muise et~al.(2012)Muise, McIlraith, Beck, and Hsu]{src_006}
+Christian Muise, Sheila~A. McIlraith, J.~Christopher Beck, and Eric Hsu.
+\newblock Dsharp: Fast d-dnnf compilation with sharpsat.
+\newblock Lecture notes in computer science, 2012.
+\newblock URL \url{https://doi.org/10.1007/978-3-642-30353-1_36}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Raedt \& Kimmig(2015)Raedt and Kimmig]{src_010}
+Luc~De Raedt and Angelika Kimmig.
+\newblock Probabilistic (logic) programming concepts.
+\newblock Machine Learning, 2015.
+\newblock URL \url{https://doi.org/10.1007/s10994-015-5494-z}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Rajasekharan et~al.(2023)Rajasekharan, Zeng, Padalkar, and
+  Gupta]{src_032}
+Abhiramon Rajasekharan, Yankai Zeng, Parth Padalkar, and Gopal Gupta.
+\newblock Reliable natural language understanding with large language models
+  and answer set programming.
+\newblock Electronic Proceedings in Theoretical Computer Science, 2023.
+\newblock URL \url{https://doi.org/10.4204/eptcs.385.27}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Sen et~al.(2022)Sen, Carvalho, Riegel, and Gray]{src_020}
+Prithviraj Sen, Breno~W. Carvalho, Ryan Riegel, and Alexander Gray.
+\newblock Neuro-symbolic inductive logic programming with logical neural
+  networks.
+\newblock Proceedings of the AAAI Conference on Artificial Intelligence, 2022.
+\newblock URL \url{https://doi.org/10.1609/aaai.v36i8.20795}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Shakarian et~al.(2023)Shakarian, Baral, Simari, Xi, and
+  Pokala]{src_026}
+Paulo Shakarian, Chitta Baral, Gerardo~I. Simari, Bowen Xi, and Lahari Pokala.
+\newblock Neuro symbolic reasoning and learning.
+\newblock SpringerBriefs in computer science, 2023.
+\newblock URL \url{https://doi.org/10.1007/978-3-031-39179-8}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Shindo et~al.(2024)Shindo, Pfanschilling, Dhami, and
+  Kersting]{src_036}
+Hikaru Shindo, Viktor Pfanschilling, Devendra~Singh Dhami, and Kristian
+  Kersting.
+\newblock Learning differentiable logic programs for abstract visual reasoning.
+\newblock Machine Learning, 2024.
+\newblock URL \url{https://doi.org/10.1007/s10994-024-06610-2}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Skryagin et~al.(2022)Skryagin, Stammer, Ochs, Dhami, and
+  Kersting]{src_019}
+Arseny Skryagin, Wolfgang Stammer, Daniel Ochs, Devendra~Singh Dhami, and
+  Kristian Kersting.
+\newblock Neural-probabilistic answer set programming, 2022.
+\newblock URL \url{https://doi.org/10.24963/kr.2022/48}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Skryagin et~al.(2023)Skryagin, Ochs, Dhami, and Kersting]{src_033}
+Arseny Skryagin, Daniel Ochs, Devendra~Singh Dhami, and Kristian Kersting.
+\newblock Scalable neural-probabilistic answer set programming.
+\newblock Journal of Artificial Intelligence Research, 2023.
+\newblock URL \url{https://doi.org/10.1613/jair.1.15027}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Smet et~al.(2023)Smet, Martires, Manhaeve, Marra, Kimmig, and
+  Raedt]{src_025}
+Lennert~De Smet, Pedro Zuidberg~Dos Martires, Robin Manhaeve, Giuseppe Marra,
+  Angelika Kimmig, and Luc~De Raedt.
+\newblock Neural probabilistic logic programming in discrete-continuous
+  domains.
+\newblock arXiv (Cornell University), 2023.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2303.04660}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[van Krieken et~al.(2022)van Krieken, Thanapalasingam, Tomczak, van
+  Harmelen, and ten Teije]{src_015}
+Emile van Krieken, Thiviyan Thanapalasingam, Jakub~M. Tomczak, Frank van
+  Harmelen, and Annette ten Teije.
+\newblock A-nesi: A scalable approximate method for probabilistic neurosymbolic
+  inference.
+\newblock arXiv (Cornell University), 2022.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2212.12393}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Vermeulen et~al.(2023)Vermeulen, Manhaeve, and Marra]{src_021}
+Arne Vermeulen, Robin Manhaeve, and Giuseppe Marra.
+\newblock An experimental overview of neural-symbolic systems.
+\newblock Lecture notes in computer science, 2023.
+\newblock URL \url{https://doi.org/10.1007/978-3-031-49299-0_9}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Wan et~al.(2024)Wan, Liu, Yang, Li, You, Fu, Wan, and
+  Krishna]{src_038}
+Zishen Wan, Che-Kai Liu, Hanchen Yang, Chaojian Li, Haoran You, Yonggan Fu,
+  Cheng Wan, and Tushar Krishna.
+\newblock Towards cognitive ai systems: a survey and prospective on
+  neuro-symbolic ai.
+\newblock arXiv (Cornell University), 2024.
+\newblock URL \url{https://doi.org/10.48550/arxiv.2401.01040}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Winters et~al.(2022)Winters, Marra, Manhaeve, Raedt, and
+  Kassa]{src_016}
+Thomas Winters, Giuseppe Marra, Robin Manhaeve, Luc~De Raedt, and Yonas Kassa.
+\newblock Deepstochlog: Neural stochastic logic programming.
+\newblock Proceedings of the AAAI Conference on Artificial Intelligence, 2022.
+\newblock URL \url{https://doi.org/10.1609/aaai.v36i9.21248}.
+\newblock Accessed: 2026-04-17.
+
+\bibitem[Yang et~al.(2020)Yang, Ishay, and Lee]{src_012}
+Zhun Yang, Adam Ishay, and Joohyung Lee.
+\newblock Neurasp: Embracing neural networks into answer set programming, 2020.
+\newblock URL \url{https://doi.org/10.24963/ijcai.2020/243}.
+\newblock Accessed: 2026-04-17.
+
+\end{thebibliography}

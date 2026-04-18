@@ -1,0 +1,179 @@
+{
+  "retrieval_date_utc": "2026-04-17",
+  "records": [
+    {
+      "alias": "mnist_sum_k_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/examples/mnistAdd/data",
+      "sample_count": 2,
+      "checksum": "a22f934fbbf6bd51a0b95f552d69fa9e5f02bfa584966694296cdbd61b7582a8",
+      "provenance": {
+        "repo_url": "https://github.com/azreasoners/NeurASP",
+        "commit": "06943a3e1142fe5c7d50090f6fccdd5ff63f7039",
+        "license_note": "MIT (declared in upstream repository metadata)",
+        "license_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/README.md"
+      }
+    },
+    {
+      "alias": "sudoku_4x4_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/examples/sudoku/data",
+      "sample_count": 3,
+      "checksum": "e566d65c2de7caa2a418c1f9552e6702e905f1729c52d0e61527b73844caeed4",
+      "provenance": {
+        "repo_url": "https://github.com/azreasoners/NeurASP",
+        "commit": "06943a3e1142fe5c7d50090f6fccdd5ff63f7039",
+        "license_note": "MIT (declared in upstream repository metadata)",
+        "license_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/README.md"
+      }
+    },
+    {
+      "alias": "formula_eval_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/datasets/formula_eval_v1",
+      "sample_count": 120,
+      "checksum": "eb76cc06b578c2215528f05a4f4b26063e31208e88c0192b3f433818738a764e",
+      "provenance": {
+        "source_type": "workspace_generator",
+        "generator": "autotw_validation/acquisition.py",
+        "seed": "1000"
+      }
+    },
+    {
+      "alias": "ordering_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/datasets/ordering_v1",
+      "sample_count": 120,
+      "checksum": "d84f0c2c3a76a95f31399eb6386e5739b8eb0b73cbb0dc7e812075fe29b1dc46",
+      "provenance": {
+        "source_type": "workspace_generator",
+        "generator": "autotw_validation/acquisition.py",
+        "seed": "1001"
+      }
+    },
+    {
+      "alias": "counting_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/datasets/counting_v1",
+      "sample_count": 120,
+      "checksum": "10702e679358eae0d631b158b32e33cf7f5806b84639ef249b3a29774e93c5e4",
+      "provenance": {
+        "source_type": "workspace_generator",
+        "generator": "autotw_validation/acquisition.py",
+        "seed": "1002"
+      }
+    },
+    {
+      "alias": "shortest_path_v1",
+      "status": "materialized",
+      "local_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/datasets/shortest_path_v1",
+      "sample_count": 120,
+      "checksum": "608affa2fcfa7b9180875cd0de5d2611574dfe65001408b45b61e92e4631e041",
+      "provenance": {
+        "source_type": "workspace_generator",
+        "generator": "autotw_validation/acquisition.py",
+        "seed": "1003"
+      }
+    }
+  ],
+  "provenance": {
+    "repo_url": "https://github.com/azreasoners/NeurASP",
+    "commit": "06943a3e1142fe5c7d50090f6fccdd5ff63f7039",
+    "license_note": "MIT (declared in upstream repository metadata)",
+    "license_path": "/app/outputs/runs/607c78e3-33c0-44e5-9cd7-eb946d6b8f0c/workspace/experiments/autotw_validation/external/NeurASP/README.md"
+  },
+  "design_dataset_resolution_plan": [
+    {
+      "alias": "mnist_sum_k_v1",
+      "candidate_sources": [
+        {
+          "label": "NeurASP official repository",
+          "source_type": "repo",
+          "source_url": "https://github.com/azreasoners/NeurASP",
+          "version": "pinned_commit_for_validation"
+        }
+      ],
+      "descriptor": "MNIST-based sum-k arithmetic constraints used in NeurASP-style symbolic tasks.",
+      "loader_strategy": "Use pinned benchmark generator scripts from NeurASP examples with fixed split manifests.",
+      "local_path": "experiments/datasets/mnist_sum_k_v1",
+      "recovery_notes": "Materialize final checksums during validation_simulation artifact generation.",
+      "retrieval_status": "resolved_real"
+    },
+    {
+      "alias": "sudoku_4x4_v1",
+      "candidate_sources": [
+        {
+          "label": "NeurASP Sudoku tasks",
+          "source_type": "repo",
+          "source_url": "https://github.com/azreasoners/NeurASP",
+          "version": "pinned_commit_for_validation"
+        }
+      ],
+      "descriptor": "4x4 Sudoku symbolic benchmark slices compatible with neural-symbolic logic encoding.",
+      "loader_strategy": "Use repository benchmark loader with canonical puzzle manifest and deterministic seed split.",
+      "local_path": "experiments/datasets/sudoku_4x4_v1",
+      "recovery_notes": "Finalize split/version hashes during validation_simulation.",
+      "retrieval_status": "resolved_real"
+    },
+    {
+      "alias": "formula_eval_v1",
+      "candidate_sources": [
+        {
+          "label": "Workspace formula generator",
+          "source_type": "resource",
+          "source_url": "workspace/experiments/generators/formula_eval"
+        }
+      ],
+      "descriptor": "Synthetic formula-evaluation benchmark family for solver-routing and regime analysis.",
+      "loader_strategy": "Materialize from experiment generator with explicit grammar version and checksum snapshot.",
+      "local_path": null,
+      "recovery_notes": "Pending benchmark manifest materialization in validation_simulation.",
+      "retrieval_status": "candidate_identified"
+    },
+    {
+      "alias": "ordering_v1",
+      "candidate_sources": [
+        {
+          "label": "Workspace ordering generator",
+          "source_type": "resource",
+          "source_url": "workspace/experiments/generators/ordering"
+        }
+      ],
+      "descriptor": "Ordering constraints family used for structure-sensitive routing tests.",
+      "loader_strategy": "Generate instances from fixed-seed ordering generator and publish manifest.",
+      "local_path": null,
+      "recovery_notes": "Pending materialization and checksum recording.",
+      "retrieval_status": "candidate_identified"
+    },
+    {
+      "alias": "counting_v1",
+      "candidate_sources": [
+        {
+          "label": "Workspace counting generator",
+          "source_type": "resource",
+          "source_url": "workspace/experiments/generators/counting"
+        }
+      ],
+      "descriptor": "Constraint counting benchmark family for exact versus compiled execution paths.",
+      "loader_strategy": "Generate and cache counting tasks with solver-agnostic JSON manifest.",
+      "local_path": null,
+      "recovery_notes": "Pending materialization and split pinning.",
+      "retrieval_status": "candidate_identified"
+    },
+    {
+      "alias": "shortest_path_v1",
+      "candidate_sources": [
+        {
+          "label": "Workspace shortest-path generator",
+          "source_type": "resource",
+          "source_url": "workspace/experiments/generators/shortest_path"
+        }
+      ],
+      "descriptor": "Shortest-path logic benchmark slices for routing calibration and tail-risk analysis.",
+      "loader_strategy": "Generate graph families with fixed distributions and deterministic split IDs.",
+      "local_path": null,
+      "recovery_notes": "Pending materialization and license/checksum documentation.",
+      "retrieval_status": "candidate_identified"
+    }
+  ]
+}

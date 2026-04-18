@@ -1,0 +1,1102 @@
+                                               Characterizing Structural Hardness of Logic Programs: What
+                                                   makes Cycles and Reachability Hard for Treewidth?
+                                                                                            Markus Hecher
+arXiv:2301.07472v1 [cs.LO] 18 Jan 2023
+
+
+
+
+                                                                                           January 19, 2023
+
+
+                                         Abstract                                                           get language for solving problems in that area effectively,
+                                                                                                            e.g., Balduccini, Gelfond, and Nogueira (2006); Niemelä,
+                                         Answer Set Programming (ASP) is a problem modeling                 Simons, and Soininen (1999); Nogueira et al. (2001); Guzi-
+                                         and solving framework for several problems in KR with              olowski et al. (2013); Schaub and Woltran (2018); Abels
+                                         growing industrial applications. Also for studies of com-          et al. (2019). Such problems are thereby encoded in a logic
+                                         putational complexity and deeper insights into the hard-           program, which is a set of rules describing its solutions
+                                         ness and its sources, ASP has been attracting researchers          by means of so-called answer sets – an approach that goes
+                                         for many years. These studies resulted in fruitful charac-         beyond satisfying a set of clauses (rules) as in SAT, but
+                                         terizations in terms of complexity classes, fine-grained           additionally requires justifications for variables (atoms)
+                                         insights in form of dichotomy-style results, as well as de-        that are claimed to hold. Considerable effort has been put
+                                         tailed parameterized complexity landscapes. Recently, this         into providing extensions and a rich modeling language
+                                         lead to a novel result establishing that for the measure           that can be efficiently evaluated by solvers like clasp Geb-
+                                         treewidth, which captures structural density of a program,         ser, Kaufmann, and Schaub (2009) or wasp Alviano et al.
+                                         the evaluation of the well-known class of normal programs          (2019).
+                                         is expected to be slightly harder than deciding satisfia-
+                                                                                                            Example 1 (Encoding with ASP). The classical way of
+                                         bility (SAT). However, it is unclear how to utilize this
+                                                                                                            encoding satisfiability (SAT) of a formula F is to guess
+                                         structural power of ASP. This paper deals with a novel
+                                                                                                            for each variable v ∈ at(F ) its truth value via the two
+                                         reduction from SAT to normal ASP that goes beyond well-
+                                                                                                            rules v ← ¬v̂ and v̂ ← ¬v. Then, for every clause l1 ∨
+                                         known encodings: We explicitly utilize the structural power
+                                                                                                            l2 ∨ . . . ∨ ln in F , an additional constraint ensures the
+                                         of ASP, whereby we sublinearly decrease the treewidth,
+                                                                                                            clause: ⊥ ← l¯1 , l¯2 , . . . , l¯n with l¯i being vi , if li = ¬vi ,
+                                         which probably cannot be significantly improved. Then,
+                                                                                                            and ˆli otherwise.
+                                         compared to existing results, this characterizes hardness in
+                                         a fine-grained way by establishing the required functional            The computational complexity of ASP is fairly well stud-
+                                         dependency of the dependency graph’s cycle length (SCC             ied, where for the consistency problem of deciding whether
+                                         size) on the treewidth.                                            a so-called normal logic program admits an answer set is
+                                                                                                            NP-complete Bidoı́t and Froidevaux (1991); Marek and
+                                                                                                            Truszczyński (1991). This result also extends to the class of
+                                         1    Introduction                                                  head-cycle-free (HCF) programs Ben-Eliyahu and Dechter
+                                                                                                            (1994), but if full disjunctions are allowed in the heads of
+                                         Answer Set Programming (ASP) Brewka, Eiter, and                    a rule, the complexity increases to ΣP 2 -completeness Eiter
+                                         Truszczyński (2011); Gebser et al. (2012) is a declarative        and Gottlob (1995). Over the time, studying the complex-
+                                         problem modeling and solving framework for knowledge               ity of ASP raised further attention. There is a wide range
+                                         representation and reasoning and artificial intelligence in        of more fine-grained studies Truszczynski (2011) for ASP,
+                                         general. This makes ASP a key formalism and suitable tar-          also in the context of parameterized complexity Cygan
+
+
+                                                                                                        1
+et al. (2015); Niedermeier (2006); Downey and Fellows                  • Can we draw further runtime consequences and lower
+(2013); Flum and Grohe (2006), where certain parame-                     bounds for other fragments or related extensions of
+ters Lackner and Pfandler (2012) are taken into account.                 ASP?
+In parameterized complexity, the “hardness” of a problem
+is classified according to the effort required to solve the         Contributions. We address these questions via a novel
+problem, e.g., runtime dependency, in terms of a certain            reduction that closes the gap to existing complexity results
+parameter. For ASP there is growing research on the well-           and lower bounds. Concretely, we provide the following
+studied and prominent structural parameter treewidth Jakl,          results.
+Pichler, and Woltran (2009); Bichler, Morak, and Woltran
+(2020); Bliem et al. (2020). Intuitively, treewidth yields             • First, we establish a novel reduction from SAT to nor-
+a tree decomposition, which is a structural representation               mal ASP that in contrast to existing transformations
+that can be used for solving numerous combinatorially hard               fully utilizes the power of reachability along cycles,
+                                                                                                                            k
+problems in parts; the treewidth indicates the maximum                   thereby decreasing treewidth from k to O( log(k)      ).
+number of variables of these parts one has to investigate                Unless ETH fails, it is not expected that this reduc-
+during problem solving.                                                  tion can be significantly improved, i.e., further major
+   Recently, it has been shown that when assuming the                    treewidth decreases are unexpected. To the best of our
+Exponential Time Hypothesis (ETH) Impagliazzo, Paturi,                   knowledge, this is the first reduction fully utilizing
+and Zane (2001), which implies that SAT cannot be                        the structural power of normal ASP. Then, we also
+solved in time better than single-exponential in the num-                study the largest cycles (SCC sizes) of the dependency
+ber of variables in the worst case, normal ASP seems                     graph of the constructed program.
+to be slightly harder Hecher (2022) for treewidth than                 • Interestingly, the constructed cycles (SCC sizes) of
+SAT. More precisely, (i) normal ASP can be solved                        the dependency graph are of size at most 2O(k·log(k)) .
+in time 2O(k·log(k)) · poly(n) for any logic program of                  This is a major improvement compared to the largest
+treewidth k with n variables (atoms) and under ETH this                  SCC sizes of the recent hardness result, which is
+dependency on the treewidth can not be significantly im-                 unbounded in the treewidth. Then, we show that for
+proved. The reason for the hardness lies in very large cy-               the class of ι-tight programs, the SCC sizes can be
+cles (strongly connected components, SCCs) of the pro-                   even decreased to 2O(k·log(ι)) , while still preserving
+gram’s dependency graph; the hardness proof requires cy-                 hardness for treewidth.
+cle lengths that are unbounded in the treewidth, i.e., cycles
+involve instance-size many atoms. Interestingly, this is               • Finally, we show that our reduction has immediate fur-
+in stark contrast to (ii) SAT, which can be decided in                   ther implications in terms of computational complex-
+time 2O(k) · poly(n). The classical reduction of SAT to                  ity. We establish for the class of ι-tight programs a
+ASP, while preserving treewidth, does not introduce any                  corresponding ETH-tight lower bound. Further, count-
+cycles in the encoding (see Example 1). Thus, the question               ing answer sets of a normal program with respect to a
+arises if one can construct cyclic programs to reduce SAT                projection of interest is expected to be slightly harder
+while decreasing treewidth. In more details, this paper                  than counting answer sets of disjunctive programs.
+asks:                                                                    Notably, both problems are complete for the same
+   • How can we encode SAT in (normal) ASP, thereby                      (classical) complexity class, but are surprisingly of
+     decreasing the treewidth by the amount that reflects                different hardness for treewidth.
+     the runtime difference between (i) and (ii)?
+                                                                    Related Work. Programs of bounded even or odd cycles
+   • Given the gap between unbounded cycle lenghts in (i)           have been analyzed Lin and Zhao (2004). Further, the
+     and no cycles in (ii), what is the difference in cycle         feedback width has been studied, which depends on the
+     length (SCC size) of the complexity between normal             atoms required to break large SCCs Gottlob, Scarcello,
+     ASP and SAT? Can we bound the cycle length in the              and Sideri (2002). There have been improvements for
+     treewidth that still makes normal ASP hard?                    so-called ι-tight programs Fandinno and Hecher (2021)
+
+
+                                                                2
+with ι being smaller than treewidth k, which allow for               G. For a node t of T , we say that type(t) is leaf if t has
+runtimes of 2O(k·log(ι)) · poly(n). For normal and HCF               no children; join if t has exactly two children t0 and t00
+programs, slightly superexponential algorithms in the                with t0 6= t00 ; inner if t has a single child. If for every node
+treewidth Fichte and Hecher (2019) for solving consis-               t of T , type(t) ∈ {leaf, join, inner}, the TD is called nice.
+tency are known. For disjunctive ASP algorithms have                 A TD can be turned into a nice TD Kloks (1994)[Lem.
+been proposed Jakl, Pichler, and Woltran (2009); Pichler             13.1.3] without width-increase in linear time. Without loss
+et al. (2014) running in time linear in the instance size, but       of generality, we assume that bags of nice TDs are distinct.
+double exponential in the treewidth. Hardness of further
+problems has been studied by means of runtime depen-                 Answer Set Programming (ASP). We assume familiarity
+dency in the treewidth, e.g., levels of exponentiality, where        with propositional satisfiability (SAT) Biere et al. (2009);
+triple-exponential algorithms are known Marx and Mitsou              Kleine Büning and Lettman (1999), where we use clauses,
+(2016); Fichte, Hecher, and Pfandler (2020).                         formulas, and assignments in the usual meaning. Two
+   Numerous reductions from ASP to SAT are                           assignments I : X → {0, 1}, I 0 : X 0 → {0, 1} are
+known Clark (1977); Ben-Eliyahu and Dechter (1994);                  compatible, whenever for every x ∈ X ∩ X 0 we have
+Lin and Zhao (2003); Janhunen (2006); Alviano and                    that I(x) = I 0 (x).
+Dodaro (2016); Bomanson and Janhunen (2013); Bo-                        We follow standard definitions of propositional
+manson (2017). These reductions focus on the resulting               ASP Brewka, Eiter, and Truszczyński (2011); Janhunen
+formula size and number of auxiliary variables, where                and Niemelä (2016). Let `, m, n be non-negative integers
+a sub-quadratic blow-up is unavoidable Lifschitz and                 such that ` ≤ m ≤ n, a1 , . . ., an be distinct propositional
+Razborov (2006). Unless ETH fails, a sub-quadratic                   atoms. Moreover, we refer by literal to an atom or the
+blow-up in the treewidth cannot be circumvented as                   negation thereof. A program Π is a set of rules of the
+well Hecher (2022). For SAT, empirical results Atserias,             form a1 ∨ · · · ∨ a` ← a`+1 , . . . , am , ¬am+1 , . . . , ¬an .
+Fichte, and Thurley (2011) involving resolution-width and            For a rule r, we let Hr := {a1 , . . . , a` }, Br+ :=
+treewidth yield efficient SAT solver runs on instances of            {a`+1 , . . . , am }, and Br− := {am+1 , . . . , an }. We denote
+small treewidth.                                                     the sets of atoms occurring in a rule r or in a S    program Π
+                                                                     by at(r) := Hr ∪ Br+ ∪ Br− and at(Π) := r∈Π at(r).
+                                                                     Program Π is normal if |Hr | ≤ 1 for every r ∈ Π.
+2    Preliminaries                                                   The dependency graph DS        Π of Π is the directed graph
+                                                                     defined on the atoms from r∈Π Hr ∪ Br+ , where for ev-
+We assume familiarity with graph terminology, cf., Dies-             ery rule r ∈ Π two atoms a ∈ Br+ and b ∈ Hr are joined
+tel (2012). Let G = (V, E) be a directed graph. Then, a              by an edge (a, b).
+set C ⊆ V of vertices of G is a strongly-connected com-                 An interpretation I is a set of atoms. I satisfies a rule r
+ponent (SCC) of G if C is a ⊆-largest set such that for              if (Hr ∪ Br− ) ∩ I 6= ∅ or Br+ \ I 6= ∅. I is a model
+every two distinct vertices u, v in C there is a directed path       of Π if it satisfies all rules of Π, in symbols I |= Π. For
+from u to v in G.                                                    brevity, we view propositional formulas as sets of formulas
+Tree Decompositions (TDs). A tree decomposition                      (e.g., clauses) that need to be satisfied, and use the notion
+(TD) Robertson and Seymour (1986) of a given                         of interpretations, models, and satisfiability analogously.
+graph G=(V, E) is a pair T =(T, χ) where T is a tree                 The Gelfond-Lifschitz (GL) reduct of Π under I is the
+rooted at root(T ) and χ assigns to each node  S t of T a            program ΠI obtained from Π by first removing all rules r
+set χ(t) ⊆ V , called bag, such that (i) V = t of T χ(t),            with Br− ∩ I 6= ∅ and then removing all ¬z where z ∈ Br−
+(ii) E ⊆ {{u, v} | t in T, {u, v} ⊆ χ(t)}, and (iii) for             from the remaining rules r Gelfond and Lifschitz (1991).
+each r, s, t of T , such that s lies on the path from r to           I is an answer set of a program Π, denoted I |= Π, if I is
+t, we have χ(r) ∩ χ(t) ⊆ χ(s). For every node t of T ,               a minimal model of ΠI . The problem of deciding whether
+we denote by chldr(t) the set of child nodes of t in T .             an ASP program has an answer set is called consistency,
+We let width(T ) := maxt of T |χ(t)| − 1. The treewidth              which is ΣP2 -complete Eiter and Gottlob (1995). If the input
+tw (G) of G is the minimum width(T ) over all TDs T of               is restricted to normal programs, the complexity drops to
+
+
+                                                                 3
+NP-complete Marek and Truszczyński (1991).                                                             t3 {b, d, e}
+                                                                                   e       a
+   The following characterization of answer sets is of-
+ten invoked for normal programs Lin and Zhao (2003).                         c         d       b   t1 {c, d, e}    {a, b} t2
+Let A ⊆ at(Π) be a set of atoms. Then, a function ϕ :
+                                                                          Figure 1: Graph G (left) and a TD T of G (right).
+A → {0, . . . , |A| − 1} is an ordering over dom(ϕ) := A.
+Let I be a model of a normal program Π and ϕ be an order-
+ing over I. An atom a ∈ I is proven if there is a rule r ∈ Π
+                                                                      3    Decreasing Treewidth of SAT via
+proving a, where a ∈ Hr with (i) Br+ ⊆ I, (ii) I ∩Br− = ∅                  ASP
+and I ∩ (Hr \ {a}) = ∅, and (iii) ϕ(b) < ϕ(a) for ev-
+ery b ∈ Br+ . Then, I is an answer set of Π if (i) I is a model       In this section we show how to translate a Boolean formula
+of Π, and (ii) I is proven, i.e., every a ∈ I is proven. For an       into a logic program, thereby decreasing the treewidth and
+ordering ϕ and two atoms a, b ∈ at(Π), we write a ≺ϕ b                explicitly utilizing the structural power of ASP. Thereby,
+whenever b directly succeeds a, i.e., ϕ(b) = ϕ(a) + 1. The            in contrast to the standard translation as sketched in Ex-
+empty ordering ϕ with dom(ϕ) = ∅ is abbreviated by ∅.                 ample 1, we explicitly utilize cycles and the power of
+                                                                      reachability the ASP formalism provides.
+Primal Graph. We need graph representations to use
+                                                                        The concrete decrease of treewidth of our reduction of
+treewidth for ASP Jakl, Pichler, and Woltran (2009). The
+                                                                      the next subsection will be tightly linked to the follow-
+primal graph GΠ of program Π has the atoms of Π as
+                                                                      ing observation, which expresses that the factorial k! of a
+vertices and an edge {a, b} if there exists a rule r ∈ Π
+                                                                      number k ∈ N is bounded from below by k Ω(k) .
+and a, b ∈ at(r). The primal graph GF of a Boolean
+Formula F (in CNF) uses variables of F as vertices                    Observation 1. Let k ∈ N. Then, k! is in 2Ω(k·log(k)) .
+and adjoins two vertices a, b by an edge, if there is a
+clause in F containing a, b. Let T = (T, χ) be a TD                   Proof. We have kk!k = e−O(k) by using Stirling’s for-
+of GF . Then, for every node t of T , we define the bag               mula, see, e.g., Lokshtanov, Marx, and Saurabh (2011).
+                                                                                                                     k·log(k)
+clauses Ft := {c ∈ F | at(c) ⊆ χ(t)}.                                 As a result, we derive that k! corresponds to 2 eO(k) =
+                                                                        2k·log(k)
+                                                                      2log(e)·O(k)
+                                                                                   = 2k·log(k)−log(e)·O(k) = 2Ω(k·log(k)) .
+Example 2. Consider formula F := {c1 , c2 , c3 }, where
+c1 := (a ∨ ¬b), c2 := (¬a ∨ c ∨ d), c3 := (¬c ∨ ¬d).          This observation immediately implies that k! is of the
+Figure 1 (left) depicts the primal graph GF and Figure 1   same   order of magnitude as k Θ(k) , as obviously k! is
+                                                                O(k)
+(right) shows a TD of GF . Then, observe that Ft1 = {c1 }, in k      .
+Ft2 = {c2 , c3 }, and Ft3 = ∅.
+                                             Decreasing Treewidth by the Power of Reach-
+ι-Tightness. For a program Π and an atom a ∈ ability
+at(Π) we denote the SCC of atom a in DΠ by scc(a).           The idea of our main reduction R is as follows. We take
+Then, given a TD T = (T, χ) of GΠ , the tightness            an instance F of SAT, i.e., a Boolean formula and a
+width is maxt of T maxx∈χ(t) |χ(t) ∩ scc(x)|. The tight-     nice tree decomposition T = (T, χ) of GF of width k.
+ness treewidth ι of Π is the smallest tightness width among  Then, we simulate for each node of T , the up to 2k
+every TD of width in O(tw (GΠ )); in this case we say Π      many assignments via k 0 ! many orderings, where k 0 shall
+is ι-tight.                                                  be sufficiently smaller than k. More precisely, we de-
+                                                             crease the treewidth from k to k 0 such that k 0 ! ≥ 2k .
+Proposition 1 (Fandinno and Hecher (2021)). Assume Then, since k 0 ! is in 2Ω(k0 ·log(k0 )) (see Observation 1), we
+a normal, ι-tight program Π; the treewidth of GΠ is k. have that 2Ω(k0 ·log(k0 )) is at least 2k and therefore k 0 =
+Then, consistency of Π can be decided in time 2O(k·log(ι)) · O( k 0 ) = O( k ). As a result, our approach allows
+                                                                 log(k )        log(k)
+poly(|at(Π)|).                                               us to slightly reduce treewidth, thereby efficiently utilizing
+                                                             the power of ASP and positive cycles in order to solve
+
+
+                                                                  4
+SAT with less structural overhead. While this seems sur-               in T 0 we chain copy nodes t1 , . . . , t` below t, where for
+prising, it is in line with the known hardness result of ASP,          every 1 ≤ i ≤ `, χ0 (ti ) :=χ(t), ϕti :=αi , ψti :=∅.
+cf., Proposition 1 for ι = k.
+   Formally, we determine k 0 by taking the smallest in-                  Observe that this definition provides the basis to analyze
+teger k 0 such that k 0 ! ≥ 2k . We define such a value for            assignments in the form of different orderings, individually
+every node t of T , where kt0 is the smallest integer such             and one-by-one. Further, by comparing every pair of or-
+that kt0 ! ≥ 2|χ(t)| . Then, we define a set Vt of ordering ver-       derings of neighboring TD nodes, our reduction will later
+tices consisting of kt0 many fresh vertices that are uniquely          synchronize neighboring orderings and ensure compatibil-
+determined by the bag χ(t), i.e., for any TD nodes t, t0               ity.
+we have χ(t) = χ(t0 ) if and only if Vt = Vt0 . Using
+                                                                       Example 4. Recall formula F and TD T = (T, χ) from
+this set Vt , we refer to the resulting set of at least 2|χ(t)|
+                                                                       the previous example. Then, TD T can be turned into
+many orderings among elements in Vt by ord(t). Further,
+                                                                       an ordering-augmented TD T 0 = (T 0 , χ0 , ϕ, ψ) accord-
+for every node t of T , we refer to the bijective mapping
+                                                                       ing to Definition 1. Thereby we add a sequence (path)
+from a subset X ⊆ ord(t) of orderings to assignments
+                                                                       of child nodes to t1 ; each of these nodes ti handles one
+by It : X → 2χ(t) . More precisely, for every node t and
+                                                                       ordering ϕti over Vt1 . Similarly, this is carried out for
+ordering ϕ ∈ ord(t), the corresponding unique assignment
+                                                                       node t2 . Between t3 and t1 we also add a path of fresh
+of ϕ over atoms in χ(t) is given by It (ϕ) (if exists). Note
+                                                                       nodes, where each node covers a combination (pair) of
+that It is any arbitrary, but fixed bijection, i.e., it might be
+                                                                       orderings ϕt3 , ψt1 , which will be essentially used for syn-
+undefined for some unused orderings in ord(t).
+                                                                       chronization. Analogously, this is done between t3 and t2 .
+Example 3. Recall formula F and TD T = (T, χ) of
+Example 2. By definition, we require that |Vt1 |! ≥ 22 ,               Involved Atoms. In order to guess among those |ord(t)|
+|Vt2 |! ≥ 23 , and |Vt3 |! ≥ 2. As a result, we need to                many orderings per node t of T , we characterize each or-
+choose |Vt1 | = 3, |Vt2 | = 4, and |Vt3 | = 2. Conse-                  dering α ∈ ord(t) by means of atoms modeling ordering
+quently, there are orderings α ∈ ord(t1 ), β ∈ ord(t2 ),               edges of the form ex,y (and its negation êx,y ) to indicate
+where It1 (α) and It2 (β) is not defined. By convention, we            whether for every two different vertices x, y ∈ Vt , we
+refer to the elements in Vt1 by v1j , to those in Vt2 by v2j and       have x ≺α y. Further, we require atoms of the form rx for
+to those in Vt3 by v3j .                                               every x ∈ Vt , which stores whether x is reached or not.
+                                                                       For Vt itself (which might span over several TD nodes)
+Ordering-Augmented Tree Decompositions. Let T =                        and y ∈ Vt we require an additional (source) reachabil-
+(T, χ) be a nice tree decomposition of GΠ . In order to                ity atom of the form rsVt and edge atom esVt ,y . Then,
+decouple the k 0 ! many assignments, we need to get access             we also use (destination) reachability atom rdVt and edge
+to any of the simulated orderings one-by-one. To this end,             atoms ey,dVt for every y ∈ Vt .
+we define an ordering-augmented tree decomposition.                       We will check, whether for every x ∈ Vt of every node t
+                                                                       of T , there is at most one outgoing edge, i.e., an atom ex,y
+Definition 1. Let F be a Boolean formula and T = (T, χ)                contained in an answer set. To ensure this, we guide in-
+be a nice TD of GF . Then, we construct an ordering-                   formation of at most one outgoing edge along the tree
+augmented TD T 0 = (T 0 , χ0 , ϕ, ψ) of GF from T as fol-              decomposition, whereby for every node t of T and x ∈ Vt ,
+lows, where (T 0 , χ0 ) is a TD and ϕ, ψ are mappings from             we use an auxiliary atom oxt . This is also required for the
+                                                                                                                        s
+nodes to orderings. For every t of T , let χ0 (t) :=χ(t),              source sVt , i.e., we also use auxiliary atom ot Vt for every
+                                                                                                                    sVt
+ϕt :=∅, ψt :=∅. For every two neighboring nodes t,                     node t. Observe that this includes atoms ot0 for nodes t0 ,
+t0 of T with t0 ∈ chldr(t) and ord(t) × ord(t0 ) =                     if Vt = Vt0 .
+{(α1 , β1 ), . . . , (α` , β` )}, we add a sequence of fresh              In order to compare orderings, for every tree decompo-
+nodes t1 , . . . , t` between t and t0 , such that for every 1 ≤       sition node t of T and element x contained in ordering α
+i ≤ ` we define χ0 (ti ) :=χ(t), ϕti :=αi , and ψti :=βi .             with α ∈ {ϕt , ψt }, we use an additional ordering query
+For every leaf node t of T with ord(t) = {α1 , . . . , α` },           atom qtx . If this query atom holds, the ordering α is at
+
+
+                                                                   5
+least fulfilled starting from the first atom contained in α                    block of Formulas (11)–(13) ensures that testing points are
+up to the atom x. Intuitively, if qty holds for the last atom y                maintained. This then allows us to properly define ordering
+contained in α, we will ultimately be able to determine                        queries in the forth block of Formulas (14)–(16). Finally,
+whether α holds.                                                               the last block of Formulas (17)–(19) takes care that chosen
+   These query atoms are supported by means of addi-                           orderings are compatible and that every clause in F is
+tional testing points pxt as well as initial testing points px ,              satisfied.
+which we use for every atom x contained in every α ∈
+{ϕt , ψt } for every node t of T . The testing points al-                      Block 1: Choice of Orderings, Formulas (1)–(7). The
+low us to check orderings with queries in every node.                          first block concerns choosing orderings. Note that the dis-
+For every node t of T and atom x ∈ Vt , we refer by                            junction of Formulas (3) is head-cycle-free and can be
+prev(x, t) to the testing points of x preceding t. For-                        simply converted to normal rules by shifting Ben-Eliyahu
+mally, prev(x, t) := chldr(t) if x ∈ Vt0 for some t0 ∈                         and Dechter (1994). Then, Formulas (1) set reachability of
+chldr(t), otherwise {}.                                                       source vertices and Formulas (2) ensure reachability of all
+                                                                               the vertices in Vt as well as the destination vertex for Vt ,
+The Reduction. The reduction R takes a Boolean for-                            for every node t of T . Formulas (3) require to choose
+mula F and an ordering-augmented TD T = (T, χ, ϕ, ψ).                          outgoing edges (at least one by Formulas (2)) from every
+Before we commence with the description of R, we re-                           reachable vertex y to some vertex x. This then yields initial
+quire the following definition. For every node t of T , we                     testing points for x by Formulas (4). For the destination
+let the set Et of ordering edges be any arbitrary fixed sub-                   vertices of sets Vt , such testing points are not needed, so
+set of direct successors of ϕt . More precisely, for the first                 we immediately obtain reachability by Formulas (5). The
+element a ∈ dom(ϕt ) and the last element b ∈ dom(ϕt ),                        connection and propagation between testing points will
+i.e., a has no ≺ϕt predecessor and b has no ≺ϕt successor,                     be achieved by Block 3. In the end, the last testing point
+Et is the largest subset with Et ⊆ {ex,y | x ≺ϕt y} ∪                          for a vertex x yields reachability of x. This is ensured by
+{esVt ,a , eb,dVt } such that for any node t0 of T with t0 6= t                Formulas (6), whenever x does not appear in an ordering
+we have Et ∩ Et0 =∅.                                                           for a successor node of t0 , or by Formulas (7), if x appears
+                                                                               in an ordering of the root node.
+Example 5. Consider again formula F and ordering-
+augmented TD T 0 = (T 0 , χ0 , ϕ, ψ) from above. Observe            Block 2: ≤ 1 Outgoing Edge, Formulas (8)–(10). This
+that the definition of Et is rather open, but it essentially        block ensures at most one outgoing edge per vertex y,
+requires that every ordering edge is encountered in exactly         where y can be also the source vertex sVt for a set Vt of or-
+one node of T 0 . For example, the ordering ϕt∗ = {v11 7→           dering vertices. The information of whether y has decided
+0, v12 7→ 1, v12 7→ 2} is handled in a node t∗ below t1 .           an outgoing edge up to a node is propagated from a node t0
+                                                                    to its parent node t by Formulas (8). Then, whenever in
+We could set Et∗ = {esVt ,v11 , ev11 ,v12 , ev12 ,v13 , ev13 ,dVt }. As-
+                                 1
+                                              1        3
+                                                             1
+                                                               2    a node t an outgoing edge for y is chosen, oyt has to hold
+sume a different ordering ϕt0 = {v1 7→ 0, v1 7→ 1, v1 →          7
+                                                                    by Formulas (9). Finally, Formulas (10) prevent choosing
+2} over Vt1 in the child node t0 of t∗ . Then, consider-
+                                                                    outgoing edges for an atom y in a node t, if already chosen
+ing Et∗ , i.e., avoiding overlapping edges, we could set
+                                                                    in a child node t0 .
+Et0 = {ev11 ,v13 , ev13 ,v12 , ev12 ,dVt }. Similarly every remain-
+                                        1
+ing edge is covered uniquely in a node.                             Block 3: Propagate Testing Points, Formulas (11)–(13).
+                                                                    The third block concerns about propagation of testing
+   Overall, the reduction R as given in Figure 2 consists points, if certain queries do not hold. For the case of the
+of five blocks, where the first block of Formulas (1)–(7) empty ordering, i.e., ϕt = ∅, in a node t, Formulas (11) di-
+concerns the choice of orderings (via edge atoms ey,x ) and rectly propagate testing points for every atom x ∈ Vt from
+enforces that every reachability atom rx holds. Then, the the evidence of testing points for x in every child node
+second block of Formulas (8)–(10) takes care that for every of t (or from px if prev(x, t) = {}). Further, whenever
+node y ∈ Vt of every node t of T , there is at most one a certain ordering relation y ≺α x for either α = ϕt or
+outgoing edge of the form ey,x in an answer set. The third predecessor α = ψt does not hold, we still need to derive
+
+
+                                                                           6
+the corresponding testing point, see Formulas (12), as this          (1) rsVt∗ ←
+testing point is required for further queries or for deriving        (2) ← rv11 ; ← rv12 ; ← rv13 ; ← ¬rVdV ∗
+reachability in the end, cf., Formulas (6), (7). This also                                                                t
+                                                                     (3) esV ∗ ,v11 ∨ êsV ∗ ,v11 ← rsVt∗ ; ev11 ,v12 ∨ êv11 ,v12 ← rv11 ;
+holds for the very last element of α, see Formulas (13).                      t               t
+
+The reason why we need to cover both orderings ϕt as well                ev12 ,v13 ∨ êv12 ,v13 ← rv12 ; ev13 ,dV ∗ ∨ êv13 ,dV ∗ ← rv13
+                                                                                                                         t              t
+                                                                              v1                         v2                        v3
+as ψt , is that neighboring orderings require compatibility,         (4) p 1 ← esV ∗ ,v11 ; p 1 ← ev11 ,v12 ; p 1 ← ev12 ,v13
+                                                                                     t
+which will be discussed below Block 5.                               (5) rv13 ← ev13 ,dV ∗
+                                                                                              t
+
+                                                                           v1       v1        v2  v2    v3          v3  dV           dV
+                                                                     (8) ot∗1 ← ot01 ; ot∗1 ← ot01 ; ot∗1 ← ot01 ; ot∗ t∗ ← ot0 t∗
+                                                                           sV                     v1                   v2
+                                                                     (9) ot∗ t∗ ← esV ∗ ,v11 ; ot∗1 ← ev11 ,v12 ; ot∗1 ← ev12 ,v13 ;
+Block 4: Define Ordering Queries, Formulas (14)–(16).                                     t
+                                                                           v3
+This block focuses on deriving query atoms, which ensure                  ot∗1 ← ev13 ,dV ∗
+                                                                                            t
+that certain orderings hold. The first element of any or-                      sV                    v1                    v2
+                                                                     (10) ← ot0 t∗ , esV ∗ ,v11 ; ← ot01 , ev11 ,v12 ; ← ot01 , ev12 ,v13 ;
+dering α ∈ {ϕt , ψt } is derived from the previous testing                     v3
+                                                                                           t
+
+point, as given by Formulas (14). Then, whenever y ≺α x                   ← ot01 , ev13 ,dV ∗
+                                                                                             t
+is met, Formulas (15) enable to derive query atom qtx ,                       v1        v1         v2         v2        v3         v3
+                                                                     (11) pt∗1 ← pt01 ; pt∗1 ← pt01 ; pt∗1 ← pt01
+which depends on the previous testing point for x as well                     v2        v2        v1       v3       v3            v2
+as on qty . This thereby ensures that the order y ≺α x is            (12) pt∗1 ← pt01 , ¬qt∗1 ; pt∗1 ← pt01 , ¬qt∗1
+                                                                              v3        v3        v3
+indeed preserved, which is in contrast to Formulas (12)              (13) pt∗1 ← pt01 , ¬qt∗1
+and (13) above. Finally, Formulas (16) immediately yield                      v1        v1
+the corresponding testing point pxt in case query atom qtx           (14) qt∗1 ← pt01
+                                                                            v12         v2    v1         v3        v3        v2
+holds.                                                               (15) q t∗     ← pt01 , qt∗1 ;      qt∗1 ← pt01 , qt∗1
+                                                                            v11         v1         v2         v2        v3         v3
+                                                                     (16) p t∗     ← qt∗1 ; pt∗1 ← qt∗1 ; pt∗1 ← qt∗1
+                                                                     Note that if It∗ (ϕt∗ ) 6|= Ft∗ or It∗ (ϕt∗ ) is undefined (un-
+Block 5: Compatibility of Orderings & Satisfiability,                                                                                       v3
+                                                                     used ordering), Formulas (18) and (19) generate ← qt∗1 .
+Formulas (17)–(19). The last block takes care of com-
+patibility and satisfiability of every clause of the for-
+mula F by excluding orderings, whose corresponding as-
+signments do not satisfy some clause. To this end, Formu-
+                                                                     Properties and Consequences of the Reduc-
+las (17) excludes those cases of incompatible ϕt and ψt ,            tion
+i.e., to prevent inconsistencies, it is prohibited that query        Next, we show that the reduction indeed utilizes the struc-
+atoms qtx , qty for the last element x of ϕt and the last ele-       tural parameter treewidth, i.e., the treewidth is decreased.
+ment y of ψt hold. Most importantly, Formulas (18) ensure
+that the corresponding assignment of ordering ϕt satisfy             Theorem 1 (Treewidth-Awareness). The reduction from
+clauses in Ft , in case the query atom qtx for the last el-          a Boolean formula F and an ordering-augmented
+ement x of ϕt holds. Finally, Formulas (19) avoids cor-              TD T =(T, χ, ϕ, ψ) of GF to normal program Π consist-
+ner cases, where unused orderings could be taken, which              ing of Formulas (1) to (19) slightly decreases treewidth.
+would enable bypassing satisfiability.                               Precisely, if k is the width of T , the treewidth of GΠ is
+                                                                              k
+                                                                     in O( log(k) ).
+                                                           Proof (Sketch). We construct a TD T 0 = (T, χ0 ) of GΠ
+                                                           to show that the width of T 0 increases only slightly
+                                                           (compared to k). To this end, let t be a node of T
+Example 6. Recall formula F , ordering-augmented TD with chldr(t) = ht1 , . . . , t` i and let t̂ be the parent
+T 0 =(T 0 , χ0 , ϕ, ψ), as well as ϕt∗ and Et∗ from Exam- of t (if exists). We define (i) R(t) := {rx | x ∈
+ple 5. We briefly sketch the rules generated for node t∗ . Vt } ∪ {rx | x ∈ Vt0 , t0 ∈ chldr(t)} ∪ {rsVt , rdVt },
+
+
+                                                                 7
+(ii) E(t) := {ex,y , êx,y | ex,y ∈ Et }, (iii) P (t) := 4 Further Insights Into Hardness of
+{qtx , pxt , pxt0 , px | x ∈ dom(ϕt ) ∪ dom(ψt ), t0 ∈
+                                             s
+prev(x, t)}, and (iv) O(t) := {oxt , ot Vt | x ∈ Vt } ∪
+                                                                   ASP
+          sV
+{oxt0 , ot0 t | t0 ∈ chldr(t), x ∈ Vt0 ∩ Vt }. Then, we let
+             0
+
+                                                             In this section, we provide deeper insights into the charac-
+χ0 (t) := R(t) ∪ E(t) ∪ P (t) ∪ O(t). Observe that T 0
+                                                             terization of hardness for normal logic programs. First, we
+is a TD of GΠ and by construction |χ0 (t)| is in O(|Vt |).
+                                                             discuss consequences on the length of the largest SCC.
+By definition of Vt , |Vt | ≤ k 0 , where k 0 ! ≥ 2k . Then,
+                            0   0
+since k 0 ! is in 2Ω(k ·log(k )) (see Observation 1), we
+                       0  0
+have that 2Ω(k ·log(k )) is at least 2k and therefore k 0 =
+         k                    k
+O( log(k0 ) ) = O( log(k)−log(log(k                k
+                                    0 )) ) = O( log(k) ).    Are Unbounded Cycles (SCCs) Vital for
+                                                                  Hardness?
+   Interestingly, our reduction cannot be significantly im- By the construction of the reduction in Section 3 and the
+proved, making further treewidth decreases unlikely.               observation that R causes cycles (SCCs) in the program’s
+                                                                   dependency graph of size 2O(k·log(k)) , we obtain the fol-
+Theorem 2 (Treewidth Decrease is Optimal). Assume a lowing new hardness and precise lower bound result for
+reduction from a formula F to a normal program Π, run- deciding the consistency of normal programs.
+ning in time 2o(k) · poly(|at(F )|), where k = tw (GF ).
+Then, unless ETH fails, the treewidth of GΠ cannot be
+         k
+in o( log(k) ).                                                    Corollary 1 (LB Largest SCC). Let Π be a normal logic
+                                                                   program, where the treewidth of GΠ is k such that the
+Proof. Assume towards a contradiction that such a re- largest SCC size of DΠ is in 2O(k·log(k)) . Then, unless
+duction, call it R∗ , exists. Then, we apply this reduc- ETH fails, the consistency of Π can not be decided in
+tion on any F , resulting in program Π = R∗ (F ). time 2o(k·log(k)) · poly(|at(Π)|).
+Then, we know that Π can be decided Hecher (2022) in
+           0    0
+time 2O(k ·log(k )) · poly(|at(F )|), where k 0 is in o( log(k)
+                                                            k
+                                                                ).    Corollary 1 gives insights into the SCC size required
+As a result, we have that Π and therefore F can be de- for hardness, which is in contrast to known lower bounds,
+                       k
+cided in time 2o( log(k) ·log(k)) · poly(|at(F )|), which is which could not bound the cycle length or SCC size in the
+in 2o(k) · poly(|at(F )|), contradicting the ETH.                  treewidth Hecher (2022). Interestingly, this corollary is in
+                                                                   line with the corresponding upper bound of Proposition 1
+                                                                   (for ι = k). We do not expect that Corollary 1 can be sig-
+   Correctness establishes that the reduction R encoded
+                                                                   nificantly strengthened, but we show below how for ι-tight
+by Formulas (1) to (19) indeed characterizes the satisfying
+                                                                   programs the SCC size can be decreased to 2o(k·log(ι)) .
+assignments of a Boolean formula.
+                                                                      This also provides the corresponding lower bound for
+Theorem 3 (Correctness). The reduction from a Boolean              projected   answer set counting, which was left open Fichte
+formula F and a TD T = (T, χ) of GΠ to a logic pro-                and  Hecher   (2019). Our reduction allows us to close the
+gram Π, consisting of Formulas (1) to (19), is correct.            gap  to the upper bound, showing that it is expected for the
+Concretely, for every model of F , there is an answer set          problem    to be harder than plain counting on disjunctive
+of Π. Vice versa, for every answer set of Π, there is a            programs.
+unique model of F .
+                                                                  Theorem 4 (LB Projected Counting). Let Π be a
+Example 7. Figure 3 sketches the dependency graph over            normal logic program, P ⊆at(Π) be atoms, and k be
+the rules of Blocks 1,3, and 4 on two simple TD nodes;            the treewidth of GΠ , such that the largest SCC size
+showing how incompatible queries would cause cyclic               of DΠ is in 2O(k·log(k)) . Then, under ETH, the car-
+dependencies that are unproven, which can therefore not           dinality |{M ∩ P | M |= Π}| cannot be computed in
+                                                                         o(k·log(k))
+occur.                                                            time 22            · poly(|at(Π)|).
+
+
+                                                              8
+An ETH-Tight Lower Bound for ι-Tight Pro- Theorem 5 (LB ι-Tightness). Let Π be a ι-tight logic
+grams                                     program, where the treewidth of GΠ is k such that the
+                                                                         largest SCC size of DΠ is in 2O(k·log(ι)) . Then, under ETH,
+Recall the fragment of ι-tight programs, which is motivated              the consistency of Π cannot be decided in 2o(k·log(ι)) ·
+by the idea of providing almost tight programs that are                  poly(|at(Π)|).
+simpler to solve than normal programs. Every formula F
+can be compiled into a (1-)tight program, cf., Example 1.
+   As a result, in the following, we generalize our reduc-               5    Discussion and Conclusion
+tion R of the previous section from ι = k to the case ι ≥ 2,
+resulting in R0 . Intuitively, this reduction R0 allows us to            The complexity of ASP has already been studied in dif-
+decrease the treewidth k, but not necessarily to the max-                ferent facets and flavors. Recently, it has been shown that
+                 k
+imum of O( log(k)    ) of normal programs. Instead, ι pro-               under the exponential time hypothesis (ETH), the evalu-
+vides a precise handle on the tightness, thereby decreasing              ation of normal logic programs is expected to be slightly
+                    k
+treewidth to O( log(ι) ).                                                harder for the structural parameter treewidth, than decid-
+                                                                         ing satisfiability (SAT) of Boolean formulas. However, the
+Adapted Reduction. We adapt the construction of re-                      hardness proof relies on large cycles (SCCs), unbounded
+duction R and obtain R0 . To this end, we take an in-                    in the treewidth. Further, compared to standard reductions,
+stance F of SAT, i.e., a Boolean formula, and an ordering-               see Example 1, utilizing the “hardness” of normal ASP
+augmented TD T = (T, χ, ϕ, ψ) of GF of width k. Then,                    remained unclear.
+we simulate for each node of T , the up to 2k many                          In this paper, we address both shortcomings. The idea
+                         k0                                              is to reduce from SAT to normal ASP, thereby actively
+assignments via (ι!) ι many orderings, where ι is any
+                                                                         decreasing structural dependency in the form of treewidth.
+fixed 2 ≤ ι ≤ k 0 . So we decrease the treewidth from k
+                       k0                                                We design such a reduction that reduces treewidth from k
+to k 0 such that (ι!) ι ≥ 2k , where the special case of                       k
+                                                                         to log(k) . We show that under ETH, this decrease cannot
+the previous section corresponds to ι = k 0 . Consequently,
+                                                                         be significantly improved. Even further, with the help of
+since there are still up to k 0 many elements per bag, but
+                                               0                         the reduction, the existing hardness result for normal pro-
+we only have ι many positions, we require kι many SCCs
+                                                                         grams and treewidth can be improved: The constructed
+per bag. As a result, the orderings ord(t) for a node t are
+                                                                         cycles (SCCs) are not required to be unbounded in the
+not total. So, instead of one source and destination vertex
+                                         0                               treewidth; indeed, hardness is preserved in case of a single-
+for ordering set Vt , we require up to kι reachability atoms
+                                             0                           exponential bound in the treewidth. Then, we further im-
+of the form rsj , rdj for every 1 ≤ j ≤ kι . This requires               prove this bound for the class of ι-tight programs, which
+                Vt    Vt
+minor adaptions in the definition of Et , Formulas (1), (2),             allows us to close the gap to the known upper bound, which
+(5), as well as (8) and (10), as sketched in the appendix.               our results render ETH-tight.
+One can show a generalization of Observation 1, where ι <                   Finally, we apply our reduction for establishing fur-
+k.                                                                       ther ETH-tight lower bounds on normal logic programs.
+                                                                         We hope that the reduction of this work enables further
+                                                            k
+Observation 2. Let 2 ≤ ι ≤ k. Then, (ι!) ι is                            consequences and insights on hardness for problems on
+in 2Ω(k·log(ι)) .                                                        normal logic programs. In the light of a known result At-
+                             k0            0                             serias, Fichte, and Thurley (2011) on the correspondence
+   By Observation 2, (ι!) ι is in 2Ω(k ·log(ι)) , so we have             of treewidth and resolution width applied in SAT solving,
+         0
+that 2Ω(k ·log(ι)) is at least 2k and therefore k 0 = O( log(ι)
+                                                           k
+                                                                ).       this might pave the way towards such insights for ASP.
+As a result, R0 slightly reduces treewidth to O( log(ι) ). k
+                                                                         Currently, we are working on the comparison of different
+Consequently, for the result as given in Proposition 1 it                reductions from SAT to ASP and how they perform in
+is unexpected that it can be significantly improved (un-                 practice. Given the unsuccessful application of directed
+der ETH). More precisely, we obtain the following lower                  measures for ASP Bliem, Ordyniak, and Woltran (2016),
+bound result.                                                            structural parameters between treewidth and directed vari-
+
+
+                                                                     9
+ants could lead to new insights.
+
+
+
+
+                                   10
+Block 1: Orderings & Reachability
+rsVt ←                                                                                             for every t in T    (1)
+← ¬ry                                                                            for every t in T, y ∈ Vt ∪ {dVt }     (2)
+ey,x ∨ êy,x ← ry                                                                      for every t in T, ey,x ∈ Et     (3)
+px ← ey,x                                                               for every t in T, ey,x ∈ Et , {x, y} ⊆ Vt     (4)
+rdVt ← ey,dVt                                                                        for every t in T, ey,dVt ∈ Et     (5)
+                                                                         0
+rx ← pxt0                                    for every t in T, ϕt = ∅, t ∈ chldr(t), x ∈ dom(ψt0 ) \ dom(ϕt0 ) (6)
+rx ← pxroot(T )                                                                             for every x ∈ Vroot(T )    (7)
+Block 2: ≤1 Outgoing Edge
+oyt ← oyt0                                    for every t in T, t0 ∈ chldr(t), y ∈ (Vt ∩ Vt0 ) ∪ {sVt | Vt = Vt0 }     (8)
+oyt ← ey,x                                                                     for every t in T, ey,x ∈ Et , y ∈ Vt    (9)
+ ← oyt0 , ey,x                                                          0
+                                          for every t in T, ey,x ∈ Et , t ∈ chldr(t), y ∈ Vt0 ∪ {sVt | Vt = Vt0 } (10)
+Block 3: Testing Points
+pxt ← pxt1 , . . . , pxto                          for every t in T, x ∈ Vt , ϕt = ∅, prev(x, t) = {t1 , . . . , to }, (11)
+pxt ← pxt0 , ¬qty                 for every t in T, α ∈ {ϕt , ψt }, prev(x, t) = {t0 }, {x, y} ⊆ dom(α), y ≺α x (12)
+pxt ← pxt0 , ¬qtx                    for every t in T, α ∈ {ϕt , ψt }, prev(x, t) = {t0 }, x has no ≺α successor (13)
+Block 4: Ordering Queries
+qtx ← pxt0         for every t in T, prev(x, t) = {t0 }, α ∈ {ϕt , ψt }, x ∈ dom(α), x has no ≺α predecessor (14)
+qtx ← pxt0 , qty                  for every t in T, α ∈ {ϕt , ψt }, prev(x, t) = {t0 }, {x, y} ⊆ dom(α), y ≺α x (15)
+pxt ← qtx                                                           for every t in T, α ∈ {ϕt , ψt }, x ∈ dom(α) (16)
+Block 5: Compatibility & SAT
+← qtx , qty                                  for every t in T, α ∈ {ϕt , ψt }, x ∈ dom(α) has no ≺α successor, (17)
+                                          y ∈ dom(ψt ) has no ≺ψt successor, It (ϕt ) and It (ψt ) incompatible
+← qtx                                       for every t in T, x ∈ dom(ϕt ) has no ≺ϕt successor, It (ϕt ) 6|= Ft (18)
+← qtx                                  for every t in T, x ∈ dom(ϕt ) has no ≺ϕt successor, It (ϕt ) not defined (19)
+
+Figure 2: The reduction R that takes a formula F and a corresponding ordering-augmented TD T = (T, χ, ϕ, ψ) of GF .
+
+
+
+
+                                                        11
+               rx        ry        pxt2   pyt2 qtx2   qty2
+                .
+
+                          .
+               ..
+
+                         ..
+
+
+
+
+     rd{x,y}
+                                   pxt1   pyt1 qtx1   qty1
+
+
+
+                                   px    py
+
+     rs{x,y}        ..        ..
+                     .         .
+
+Figure 3: Positive dependency graph of the reduc-
+tion for two TD nodes t1 , t2 over ordering ver-
+tices Vt1 =Vt2 ={x, y}. These blocks potentially cause cy-
+cles (larger SCCs). The parts highlighted in blue are the
+atoms in their order of derivation, assuming that y pre-
+cedes x, i.e., y ≺ϕt1 x. Edges highlighted in red can-
+not be taken, i.e., q2y cannot be derived, since this im-
+plies x ≺ϕt2 y, contradicting y ≺ϕt1 x; causing a cycle of
+unproven atoms involving ry .
+
+
+
+
+                                                             12
+Acknowledgments.                                          Bliem, B.; Morak, M.; Moldovan, M.; and Woltran, S.
+                                                            2020. The Impact of Treewidth on Grounding and Solv-
+This work has been supported by the Austrian Science        ing of Answer Set Programs. J. Artif. Intell. Res., 67:
+Fund (FWF), Grants J 4656 and P 32830, as well as the Vi-   35–80.
+enna Science and Technology Fund, Grant WWTF ICT19-
+065.                                                      Bliem, B.; Ordyniak, S.; and Woltran, S. 2016. Clique-
+                                                            Width and Directed Width Measures for Answer-Set
+                                                            Programming. In ECAI’16, volume 285 of FAIA, 1105–
+References                                                  1113. IOS Press.
+
+Abels, D.; Jordi, J.; Ostrowski, M.; Schaub, T.; Toletti, A.; Bomanson, J. 2017. lp2normal - A Normalization Tool
+  and Wanko, P. 2019. Train Scheduling with Hybrid ASP.         for Extended Logic Programs. In LPNMR’17, volume
+  In LPNMR, volume 11481 of LNCS, 3–17. Springer.              10377 of LNCS, 222–228. Springer.
+
+Alviano, M.; Amendola, G.; Dodaro, C.; Leone, N.; Bomanson, J.; and Janhunen, T. 2013. Normalizing Car-
+  Maratea, M.; and Ricca, F. 2019. Evaluation of Dis- dinality Rules Using Merging and Sorting Construc-
+  junctive Programs in WASP. In LPNMR’19, volume      tions. In LPNMR’13, volume 8148 of LNCS, 187–199.
+  11481 of LNCS, 241–255. Springer.                   Springer.
+
+Alviano, M.; and Dodaro, C. 2016. Completion of Dis- Brewka, G.; Eiter, T.; and Truszczyński, M. 2011. Answer
+  junctive Logic Programs. In IJCAI’16, 886–892. IJ-   set programming at a glance. Comm. of the ACM, 54(12):
+  CAI/AAAI Press.                                      92–103.
+
+Atserias, A.; Fichte, J. K.; and Thurley, M. 2011. Clause- Clark, K. L. 1977. Negation as Failure. In Logic and
+  Learning Algorithms with Many Restarts and Bounded-        Data Bases, Advances in Data Base Theory, 293–322.
+  Width Resolution. J. Artif. Intell. Res., 40: 353–373.     Plemum Press.
+
+Balduccini, M.; Gelfond, M.; and Nogueira, M. 2006. An- Cygan, M.; Fomin, F. V.; Kowalik, Ł.; Lokshtanov, D.;
+  swer set based design of knowledge systems. Ann. Math.  Dániel Marx, M. P.; Pilipczuk, M.; and Saurabh, S. 2015.
+  Artif. Intell., 47(1-2): 183–219.                       Parameterized Algorithms. Springer. ISBN 978-3-319-
+                                                          21274-6.
+Ben-Eliyahu, R.; and Dechter, R. 1994. Propositional
+  Semantics for Disjunctive Logic Programs. Ann. Math. Diestel, R. 2012. Graph Theory, 4th Edition, volume 173
+  Artif. Intell., 12(1): 53–87.                           of Graduate Texts in Mathematics. Springer. ISBN
+                                                          978-3-642-14278-9.
+Bichler, M.; Morak, M.; and Woltran, S. 2020. selp: A
+  Single-Shot Epistemic Logic Program Solver. Theory Downey, R. G.; and Fellows, M. R. 2013. Fundamentals of
+  Pract. Log. Program., 20(4): 435–455.                   Parameterized Complexity. Texts in Computer Science.
+                                                          Springer. ISBN 978-1-4471-5558-4.
+Bidoı́t, N.; and Froidevaux, C. 1991. Negation by default
+  and unstratifiable logic programs. Theo. Comput. Sci- Eiter, T.; and Gottlob, G. 1995. On the computational cost
+  ence, 78(1): 85–112.                                    of disjunctive logic programming: Propositional case.
+                                                          Ann. Math. Artif. Intell., 15(3–4): 289–323.
+Biere, A.; Heule, M.; van Maaren, H.; and Walsh, T., eds.
+  2009. Handbook of Satisfiability, volume 185 of Fron- Fandinno, J.; and Hecher, M. 2021. Treewidth-Aware
+  tiers in Artif. Intellig. and Applications. IOS Press.  Complexity in ASP: Not all Positive Cycles are Equally
+  ISBN 978-1-58603-929-5.                                 Hard. In AAAI’21, 6312–6320. AAAI Press.
+
+
+                                                        13
+Fichte, J. K.; and Hecher, M. 2019. Treewidth and Count- Janhunen, T. 2006. Some (in)translatability results for
+  ing Projected Answer Sets. In LPNMR’19, volume           normal logic programs and propositional theories. J. of
+  11481 of LNCS, 105–119. Springer.                        Applied Non-Classical Logics, 16(1-2): 35–86.
+
+Fichte, J. K.; Hecher, M.; and Pfandler, A. 2020. Lower Janhunen, T.; and Niemelä, I. 2016. The Answer Set
+  Bounds for QBFs of Bounded Treewidth. In LICS’20,       Programming Paradigm. AI Magazine, 37(3): 13–24.
+  410–424. Assoc. Comput. Mach.
+                                                        Kleine Büning, H.; and Lettman, T. 1999. Propositional
+Flum, J.; and Grohe, M. 2006. Parameterized Complex-      logic: deduction and algorithms. Cambridge University
+  ity Theory, volume XIV of Theo. Comput. Science.        Press. ISBN 978-0521630177.
+  Springer. ISBN 978-3-540-29952-3.                         Kloks, T. 1994. Treewidth. Computations and Approxi-
+                                                              mations, volume 842 of LNCS. Springer. ISBN 3-540-
+Gebser, M.; Kaminski, R.; Kaufmann, B.; and Schaub,
+                                                              58356-4.
+  T. 2012. Answer Set Solving in Practice. Morgan &
+  Claypool.                                                 Lackner, M.; and Pfandler, A. 2012. Fixed-Parameter
+                                                              Algorithms for Finding Minimal Models. In KR’12.
+Gebser, M.; Kaufmann, B.; and Schaub, T. 2009. Solution       AAAI Press.
+  Enumeration for Projected Boolean Search Problems.
+  In CPAIOR’09, volume 5547 of LNCS, 71–86. Springer. Lifschitz, V.; and Razborov, A. A. 2006. Why are there so
+  ISBN 978-3-642-01929-6.                                     many loop formulas? ACM Trans. Comput. Log., 7(2):
+                                                              261–268.
+Gelfond, M.; and Lifschitz, V. 1991. Classical Negation
+  in Logic Programs and Disjunctive Databases. New Lin, F.; and Zhao, J. 2003. On tight logic programs and
+  Generation Comput., 9(3/4): 365–386.                        yet another translation from normal logic programs to
+                                                              propositional logic. In IJCAI’03, 853–858. Morgan
+Gottlob, G.; Scarcello, F.; and Sideri, M. 2002. Fixed-       Kaufmann.
+  parameter complexity in AI and nonmonotonic reason-
+  ing. Artif. Intell., 138(1-2): 55–86.                     Lin, F.; and Zhao, Y. 2004. ASSAT: computing answer
+                                                              sets of a logic program by SAT solvers. Artif. Intell.,
+Guziolowski, C.; Videla, S.; Eduati, F.; Thiele, S.; Coke-    157(1-2):  115–137.
+  laer, T.; Siegel, A.; and Saez-Rodriguez, J. 2013. Ex-
+                                                            Lokshtanov, D.; Marx, D.; and Saurabh, S. 2011. Slightly
+  haustively characterizing feasible logic models of a sig-
+                                                              Superexponential Parameterized Problems. In SODA’11,
+  naling network using Answer Set Programming. Bioin-
+                                                              760–776. SIAM.
+  formatics, 29(18): 2320–2326. Erratum see Bioinfor-
+  matics 30, 13, 1942.                                      Marek, W.; and Truszczyński, M. 1991. Autoepistemic
+                                                              logic. J. of the ACM, 38(3): 588–619.
+Hecher, M. 2022. Treewidth-aware reductions of normal
+  ASP to SAT - Is normal ASP harder than SAT after all? Marx, D.; and Mitsou, V. 2016. Double-Exponential and
+  Artif. Intell., 304: 103651.                                Triple-Exponential Bounds for Choosability Problems
+                                                              Parameterized by Treewidth. In ICALP’16, volume 55
+Impagliazzo, R.; Paturi, R.; and Zane, F. 2001. Which         of LIPIcs, 28:1–28:15. Dagstuhl Publishing. ISBN 978-
+  Problems Have Strongly Exponential Complexity? J. of        3-95977-013-2.
+  Computer and System Sciences, 63(4): 512–530.
+                                                            Niedermeier, R. 2006. Invitation to Fixed-Parameter Al-
+Jakl, M.; Pichler, R.; and Woltran, S. 2009. Answer-Set       gorithms, volume 31 of Oxford Lecture Series in Math-
+  Programming with Bounded Treewidth. In IJCAI’09,            ematics and its Applications. Oxford University Press.
+  volume 2, 816–822.                                          ISBN 978-0-19-856607-6.
+
+
+                                                         14
+Niemelä, I.; Simons, P.; and Soininen, T. 1999. Stable
+  model semantics of weight constraint rules. In LP-
+  NMR’99, volume 1730 of LNCS, 317–331. Springer.
+  ISBN 3-540-66749-0.
+Nogueira, M.; Balduccini, M.; Gelfond, M.; Watson, R.;
+  and Barry, M. 2001. An A-Prolog Decision Support
+  System for the Space Shuttle. In PADL’01, volume 1990
+  of LNCS, 169–183. Springer. ISBN 978-3-540-45241-6.
+Pichler, R.; Rümmele, S.; Szeider, S.; and Woltran, S.
+  2014. Tractable answer-set programming with weight
+  constraints: bounded treewidth is not enough. Theory
+  Pract. Log. Program., 14(2).
+Robertson, N.; and Seymour, P. D. 1986. Graph minors
+  II: Algorithmic aspects of tree-width. J. Algorithms, 7:
+  309–322.
+
+Schaub, T.; and Woltran, S. 2018. Special Issue on Answer
+  Set Programming. KI, 32(2-3): 101–103.
+Truszczynski, M. 2011. Trichotomy and dichotomy results
+  on the complexity of reasoning with disjunctive logic
+  programs. Theory Pract. Log. Program., 11(6): 881–
+  904.
+
+
+
+
+                                                         15
+A     Proof of Correctness                                      followed by several applications of Formulas (15). This
+                                                                contradicts that t0 does not exist, since t0 = t∗ .
+Let t be a node of T . Then, we define Q(t) := {qtx | x ∈
+Vt } to be the complete set of query markers (for t).               Lemma 2 (Compatibility). The reduction from a Boolean
+                                                                    formula F and a TD T = (T, χ) of GΠ to a logic pro-
+Lemma 1 (Decidability). The reduction from a Boolean gram Π, consisting of Formulas (1) to (19) ensures com-
+formula F and a TD T = (T, χ) of GΠ to a logic pro- patibility: Let M be an answer set of Π. Then, for every
+gram Π, consisting of Formulas (1) to (19), ensures de- two nodes t, t0 of T with Q(t), Q(t0 ) ⊆ M , we have that
+cidability: For every answer set M of Π and every node t It (ϕt ) and It0 (ϕt0 ) are compatible.
+of T , there is at least one node t0 of T with Vt0 = Vt and
+Q(t0 ) ⊆ M .                                                        Proof. Case Vt 6= Vt0 : Assume towards a contradiction
+                                                                    that there exists such an answer set M of Π and two
+Proof (Sketch). Assume towards a contradiction that there nodes t, t0 of T with Q(t), Q(t0 ) ⊆ M , where It (ϕt ) and
+exists such an answer set M of Π and a node t of T such It0 (ϕt0 ) are incompatible. Then, however, by definition
+that there is no node t0 of T with Vt0 = Vt and Q(t0 ) ⊆ M . of incompatibility, both assignments must share at least
+   However, then, by Formulas (3), for every y ∈ Vt one common variable x with [It (ϕt )](x) 6= [It0 (ϕt0 )](x).
+(except destination vertex droot(T ) ) there has to exist Consequently, by construction of the nice TD T , there has
+some ey,x ∈ M . Formulas (8)–(10) ensure that (1) ev- to exist a node t∗ in T with ϕt∗ = ϕt and ψt∗ = ϕt0 or
+ery y ∈ Vt is allowed only one outgoing edge. Assume vice versa (ϕt∗ = ϕt0 and ψt∗ = ϕt ). But then, we have
+towards a contradiction that for y ∈ Vt there are two that Formulas (17) do not hold for t∗ , which contradicts
+edges ey,x , ey,x0 ∈ M . Then, without loss of generality that M is an answer set of Π.
+we encounter ey,x ∈ Et00 in a node t00 . By Formulas (9),              Case Vt = Vt0 : Assume towards a contradiction that
+we require oyt00 . Then, by Formulas (8), we require oyti ∈ M there exists such an answer set M of Π with an ordering α
+for every ti that is between t00 and the node, say t000 , where that proves M and two nodes t, t0 of T with Q(t), Q(t0 ) ⊆
+we encounter eyy,x0 ∈ Et000 . Observe that by the connected- M , where It (ϕt ) and It0 (ϕt0 ) are incompatible. Then,
+ness of tree decompositions, such a path from t00 to t000 has there exist at least two vertices x, y ∈ Vt with ϕt (x) >
+to exist. Finally, we arrive at a contradiction, since Formu- ϕt (y), but ϕt0 (y) > ϕt0 (x), since otherwise ϕt = ϕt0 .
+las (10) for t000 fail due to oyti ∈ M . Consequently, we con- By construction of R, in particular, Formulas (15), there
+clude (2) every y ∈ Vt (except destination vertex droot(T ) ) is a chain of rule dependencies from qty0 to qtx0 , requiring
+is admitted at most one outgoing edge. Combining (1) with that qty0 is used to derive qtx0 , i.e., α(qty0 ) < α(qtx0 ). On the
+(2) and by Formulas (2), we derive that every y ∈ Vt (ex- other hand, for t we have a chain of rule dependencies
+cept droot(T ) ) there is precisely one outgoing edge required from qtx to qty , i.e., α(qtx ) < α(qty ).
+in M .                                                                 Subcase ry is used to derive rx , i.e., α(ry ) < α(rx ):
+   So by construction of Π, there is a vertex among Vt that This subcase is is similar to the one in Figure 3 with
+is reached first, which is then used to reach the second, the red edges. So, the chain of dependencies indirectly
+and so on. We can arrange these vertices along a path in derives ry before derive px , which is required for deriv-
+the order of their reachability, say P = v1 , . . . , v|Vt | . How- ing rx , by Formulas (6) and (7). So we have that α(ry ) <
+ever, by construction of Π, there has to exist a node t∗ , α(px ) < α(rx ). Then, by Formulas (14) and (15), we re-
+where ϕt∗ precisely reflects the ordering of P . Observe quire that α(px ) < α(qtx ). Further, by construction, e.g.,
+that pvprev(t
+         1
+             ∗ ,v ) ∈ M , which is either derived by For-
+                 1
+                                                                    Formulas (16) and (11)–(13) we have that α(qty ) < α(ry )
+                                                                                                                       y
+mula (4) if prev(t∗ , v1 ) =  or by Formulas (11) if for and by assumption above we have α(qtx ) < α(qt ). As a
+the child node of t∗ , we have dom(ϕprev(t∗ ,v1 ) ) = ∅. If result, we arrive at the contradiction that α(ry ) < α(ry ).
+dom(ϕprev(t∗ ,v1 ) ) 6= ∅, we have that pvprev(t
+                                              1
+                                                     ∗ ,v ) ∈ M
+                                                         1
+                                                                       Subcase rx is used to derive ry , i.e., α(rx ) < α(ry ):
+is either by Formulas (16) or via Formulas (12) or (13). Here, the chain of dependencies indirectly derives rx be-
+In any case, we can derive Q(t∗ ) ⊆ M , which are de- fore derive py , which is required for deriving ry , by Formu-
+rived precisely in the order of P by using Formulas (14), las (6) and (7). So we have that α(rx ) < α(py ) < α(ry ).
+
+
+                                                             16
+Then, by Formulas (14) and (15), we require α(py ) <                 that A satisfies Formulas (3). By (v), A satisfies Formu-
+α(qty0 ). By construction, e.g., Formulas (16) and (11)–(13)          las (8), (9), and (10). Due to (iv), A satisfies Formulas (17)
+we have that α(qtx0 ) < α(rx ) and by assumption above                and (18), and (19) as well. By (iv), A satisfies those for-
+we have α(qty0 ) < α(qtx0 ). As a result, we arrive at the            mulas with variables of the form pxt in the head, which
+contradiction that α(rx ) < α(rx ).                                   are Formulas (11), (16), (12), and (13). Further, by (i), A
+                                                                      satisfies Formulas (6), (7). Finally, by (iv), we have that A
+Theorem 3 (Correctness). The reduction from a Boolean                 satisfies Formulas (14) and (15).
+formula F and a TD T = (T, χ) of GΠ to a logic pro-                      Part (2): Assume towards a contradiction that there is a
+gram Π, consisting of Formulas (1) to (19), is correct.               set B ( A that satisfies Formulas (1)–(18). Observe that
+Concretely, for every model of F , there is at least one an-          the difference between B and A cannot be due to (ii), (iii),
+swer set of Π. Vice versa, for every answer set of Π, there           or (vi), since otherwise B would not satisfy Formulas (3).
+is a unique model of F .                                              Further, Definition (i) is required for B to be an answer
+                                                                      set, due to Formulas (1) as well as Formulas (4), which
+Proof. “⇒”: Let I : at(F ) → {0, 1} be a model of F , i.e.,           can be only satisfied for every y ∈ Vt of every t in T , by
+I |= F . From this we construct an answer set A of Π as               requiring py ∈ B, see Formulas (6), (7). Then, Definition
+follows. For every t in T , we let αt := It−1 (I|Vt ) be the          (v) is required in order to satisfy Formulas (8) and (9).
+corresponding ordering of the assignment I restricted to              If B does not set at least some pxt to true, then B does not
+bag Vt . We construct A0 as follows:                                  satisfy some of the Formulas (11), (16), (12), or (13). If,
+                                                                      on the other hand, B does not set some qtx to true, then
+ (i) for every t in T with αt = ha1 , . . . , a` i and 1 ≤
+                                                                      either Formulas (14) or (15) are not satisfied by B.
+     i ≤ `, we require pa i ∈ A0 as well as rai ∈ A0 , and
+                                                                         “⇐”: Let M be an answer set of Π. Then, by Lemma 1,
+     additionally rst ∈ A0 if t is a leaf node
+                                                                      for every node t in T , there ist at least one node t0 of T ,
+(ii) for every t in T with αt = ha1 , . . . , a` i, we require        with Vt0 = Vt and Q(t0 ) ⊆ M . From this, we construct
+     eai ,ai+1 ∈ A0 for every 1 ≤ i < `,                              the following assignment I : at(F ) → {0, 1}, where for
+                                                                      every x ∈ at(F ), we define I(x) := v whenever there
+(iii) for every t in T with αt = ha1 , . . . , a` i, t0 ∈             is one t in T with Q(t) ⊆ M such that It (ϕt )(x) = v.
+      chldr(t), and αt0 = ha01 , . . . , a0`0 i s.t. αt 6= αt0 , we   Observe that by Lemma 1 every variable x ∈ at(F ) is
+      require ea0`0 ,a1 ∈ A0 ,                                        indeed addressed and finally by compatibility of Lemma 2,
+                                                                      I is well-defined. By construction of I and due to Formu-
+(iv) for every t in T , α ∈ {ϕt , ψt }, and α = ha1 , . . . , a` i    las (18) and (19), we have I |= F . To be more precise,
+     we need to have pat i ∈ A0 for every 1 ≤ i ≤ `.                  assume towards a contradiction that I 6|= F . Then, there
+     Further, for the largest sequence β = ha1 , . . . , a`0 i        is at least one clause c ∈ F with I 6|= {c}. By the prop-
+     of α (`0 ≤ `) that is compatible with αt , we also               erties of a TD, there has to exist at least one node t of T
+              a
+     require qt j ∈ A0 for every 1 ≤ j ≤ `0 .                         with c ∈ Ft . By Lemma 1 for every node t, there ist at least
+                                                                      one node t0 of T , with Vt0 = Vt and Q(t0 ) ⊆ M . Then,
+Then, we define A00 based on A0 , where (v) for every t in T          by Formulas (18) (and (19)) we have that It0 (αt0 ) |= Ft0 .
+with x, y ∈ Vt and ex,y ∈ A0 , we need to have oyt ∈ A00 .            Therefore, by construction of I and by compatibility of
+Further, for every parent and ancestor t∗ of t in T with y ∈          Lemma 2, we have that I |= Ft0 . This contradicts the
+Vt∗ , we require oyt∗ ∈ A00 .                                         assumption that I 6|= {c}.
+   Then, we define A based on S    A0 and A00 , where (vi)               Observe that I is uniquely defined for every different an-
+         0     00
+A := A ∪ A ∪ {êx,y | ex,y ∈ ( t in T Et \ A0 )}.                     swer set M . Assume towards a contradiction that there
+   We show that A is indeed an answer set of Π. First, we             were two different answer sets M, M 0 of Π, with the
+establish in Part (1) that A indeed satisfies every rule in Π         same I as defined and constructed above. But then, if
+and then, we show in Part (2) that A is indeed a subset-              both M and M 0 differ by variables of the form ey,x , it
+minimal model of Π. Part (1): By (i), A satisfies both                can be shown that there is a node t of T with Q(t) ⊆ M ,
+Formulas (1), (2), and (4). By (ii), (iii), and (vi), we have         but Q(t) 6⊆ M 0 . In the proof of Lemma 1, it is shown
+
+
+                                                                  17
+how Q(t) ∈ M precisely depends on these edges ey,x ,                 time 2o(k·log(k)) · |poly(at(Π))|. Then, we take an arbitrary
+reflecting the ordering y before x. As a result, M and M 0           Boolean formula F and an ordering-augmented TD T
+can not differ by variables of the form ey,x . Consequently,         of GF of width k 0 and construct Π by means of R. By
+since the remaining formulas are just propagating in-                Theorem 3, the reduction is correct, i.e., Π admits an an-
+formation (no further choice, except Formulas (3)), we               swer set if and only if there is a satisfying assignment of F .
+have M = M 0 , which contradicts our assumption.                     Further, the largest SCC of DΠ is bounded by 2O(k·log(k)) ,
+                                                                     according to Lemma 3. Then, the treewidth k of Π is
+                                                                                          k0
+                                                                     bounded by O( log(k     0 ) ) by Theorem 1. So assuming that Π
+B      Additional Proofs                                             can be decided in time 2o(k·log(k)) · poly(|at(Π)|), results
+                                                                                                   k0           k0
+                                                                                              o(        ·log(        ))
+Lemma 3 (Largest SCC Size). Let F be a Boolean for- in solving                       F in time 2 log(k0 )      log(k0 ) ·poly(|at(F )|) =
+                                                                         o(k0 )
+mula, and T = (T, χ, ϕ, ψ) be an ordering-augmented 2                           · poly(|at(F )|), which contradicts the ETH.
+TD of GF of width k. Then, the reduction R constructs
+a program with strongly connected components (SCCs)                       The following result for QBFs is known, where it turns
+of DΠ of size at most 2          O(k0 ·log(k0 ))          0
+                                                 with k = log(k) , k   out  that deciding QS AT remains `-fold exponential in the
+                                                                       treewidth     of the primal graph (even when restricting the
+which equals 2O(k) .                                                   graph to the variables of the inner-most quantifier block).
+Proof. Observe that the largest SCC of DΠ can only be
+                                                                       Proposition 2 (Fichte, Hecher, and Pfandler (2020)).
+due to Formulas (3)–(7) and (11)–(16), as these form the
+                                                                       Given a QBF Q = ∀V1 .∃V2 , . . . , ∃V` .F of quantifier
+only potentially cyclic rules. The SCC is constructed over
+                                                                       depth `, whose treewidth of GF is k + 1 such that k is
+variables of the form rx , ex,y , px , pxt , qtx with x, y ∈ Vt∗
+               ∗                                                       the treewidth of GF restricted to vertices in V` . Then,
+for some t, t of T such that Vt = Vt∗ . Thereby, in the SCC
+                       0                                             x under ETH, the validity of Q cannot be decided in
+we have at most k many variables of the form rx and p
+                                                                       time tow(`, o(k)) · poly(at(Q)).
+and at most k 02 many variables of the form ex,y . However,
+                          0 2                                        x
+there are at most (k !) many variables of the form pt                     This proposition will be used as the basis for deriving
+and qtx due to the fact that any potential combination of two the following result.
+orderings ϕt , ψt is analyzed by Formulas (12)–(16). While
+the variables constructed for the orderings ϕt and ψt are Theorem 4 (LB Projected Counting). Let Π be a
+by construction over different SCCs, cf., Definition 1, the normal logic program, P ⊆at(Π) be atoms, and k be
+combinations cause the investigation of duplicate orderings the treewidth of GΠ , such that the largest SCC size
+                                                                                             O(k·log(k))
+over variables of the form pxt , qtx , which still cannot exceed of DΠ is in 2                           . Then, under ETH, the car-
+                   0 2
+the number (k !) of combinations. Obviously, (k !) dom-     0 2        dinality    |{M    ∩  P  | M   |=  Π}| cannot be computed in
+                                                               0 2              2o(k·log(k))
+inates the SCC size, which is bounded by 2O(k ·log(k )) = time 2
+                                                         0
+                                                                                             · poly(|at(Π)|).
+  O(2·k0 ·log(k0 ))       O(k0 ·log(k0 ))           O(k0 ·log(k0 ))
+2                    = 2                  . Then, 2                  = Proof. The idea is to apply the result of Proposition 2,
+       k          0              k
+2O( log(k) ·log(k )) = 2O( log(k) ·(log(k)−log(log(k))) = 2O(k) where we reduce from Q = ∀V1 .∃V2 .F , whose treewidth
+establishes the claim.                                                 of GF is k 0 . In the proof of Proposition 2, the authors actu-
+                                                                       ally show an even stronger result for a restricted QBF, such
+Corollary 1 (LB Largest SCC). Let Π be a normal logic
+                                                                       that there exists a nice TD T = (T, χ) of GF , where for
+program, where the treewidth of GΠ is k such that the
+                                          O(k·log(k))                  every variable v ∈ V1 ∪ . . . ∪ V`−1 there is a unique node t
+largest SCC size of DΠ is in 2                        . Then, unless
+                                                                       in T with v ∈ χ(t), i.e., {v} = χ(t) ∩ (V1 ∪ . . . ∪ V`−1 ).
+ETH fails, it is not expected that the consistency of Π can
+                         o(k·log(k))                                   Assumption (A): We assume such a constructed nice
+be decided in time 2                  · poly(|at(Π)|).
+                                                                       TD T for ` = 2 and turn it into an ordering-augmented
+Proof. This result follows from the correctness of reduc- TD T 0 = (T 0 , χ0 , ϕ, ψ) of GF .
+tion R, see Theorem 3, the treewidth-awareness by The-                    Then, we set P := V1 and construct a program Π0
+orem 1, and the largest SCC size bound by Lemma 3. from F by using reduction R. Then, for every variable v ∈
+Assume towards a contradiction that one can solve Π in V1 , we construct the rules v ← ¬v̂ (20) and v̂ ← ¬v (21)
+
+
+                                                                  18
+                                                                                                   0
+                                                                                                  kt
+over fresh atoms v and v̂. These rules are responsible for          the smallest integer with (ι)! ι ≥ 2|χ(t)| . Analogously to
+guessing truth values over fresh variables. Further, we             above, Vt is uniquely defined by the bag χ(t) and consists
+construct Π by adding to Π0 the following rules. First, we          of kt0 many fresh elements.
+add compatibility rules, similar to Formulas (18), where we            In the context of reduction R0 , for every node t of T ,
+ensure that these truth values are reflected in the reduction,      we let ord(t) be the set of partial orderings over Vt , where
+as follows: ← v, qtx (22) for every node t in T 0 with x ∈          each element in Vt is totally ordered among the same block
+dom(ϕt ) having no ≺ϕt successor such that It (ϕt )[v] =            of ι many elements (less for remaining < ι elements). So,
+0. Analogously, we add ← v̂, qtx (23) for every node t              essentially, each ordering in ord(t) is the combination
+in T 0 with x ∈ dom(ϕt ) having no ≺ϕt successor such                         k0
+                                                                    of up to ιt many individual total orderings. Assume an
+that It (ϕt )[v] = 1.
+                                                                    arbitrary, but fixed total ordering among those blocks of
+   Given the correctness proof of Theorem 3 and the adap-           up to ι elements. For every v ∈ Vt we refer by bn(v, t) to
+tions above, it is easy to see that Q evaluates to true, when-                                    0
+                                                                    the block number 1 ≤ j ≤ kι of up to ι elements, where v
+ever we have that |{M ∩ P | M |= Π}| = 2|V1 | . Even
+                                                                    belongs to.
+further, since by Assumption (A), every variable v ∈ V1
+                                                                       For every node t of T , let Et be
+appears uniquely in a node t of T ; by Definition 1 no other
+                                                                    the largest subset s.t. Et ⊆ {ex,y | x                   ≺ϕt
+variable in V1 than v appears in assignments ϕti for ti on
+                                                                    y}      ∪      {esj ,a |a∈ dom(ϕt ) has no               ≺ϕt
+a path t1 , . . . , to of nodes below t in T 0 . As a result, we                      Vt
+
+can easily modify the TD constructed by Theorem 1, by               predecessor, j= bn(a, t)} ∪ {eb,dj |b∈ dom(ϕt ) has no ≺ϕt
+                                                                                                       Vt
+adding v and v̂ to previsely these bags χ(t1 ), . . . , χ(to ).     successor, j= bn(a, t)} such that for any node t0 of T
+Consequently, the treewidth compared to Theorem 1 in-               with t0 6= t we have Et ∩ Et0 =∅.
+creases at most by 2, i.e., the treewidth guarantee of k in            Figure 4 presents the slightly adapted reduction R0 taken
+      k0
+O( log(k 0 ) ) is preserved.                                        from R, where Formulas (1), (2), (5), (8), and (10), are
+   Now assume towards a contradiction that                          replaced by Formulas (1’), (2’), (5’), (8’), and (10’), re-
+|{M ∩ P | M |= Π}|               can     be    computed        in   spectively. With this reduction, we obtain the following
+       2o(k·log(k))                                                 result.
+time 2                · poly(|at(Π)|). Then, however, we can de-
+                  o(     k0     ·(log(k0 )−log(log(k0 ))))
+                       log(k0 )
+cide Q in time 2 2
+                                              · poly(|at(F )|) Theorem 6 (Treewidth-Awareness of R0 ). The reduc-
+= 22
+        0
+     o(k )
+           · poly(|at(F )|), which contradicts the ETH.        tion R0 from a Boolean formula F and an ordering-
+                                                               augmented TD T =(T, χ, ϕ, ψ) of GF of width k to nor-
+                                                                                                                k
+Observation 2. Let ι, k ∈ N with 2 ≤ ι ≤ k. Then, (ι!) ι mal program Π, using some fixed 2 ≤ ι ≤ log(ι) , slightly
+                                                            k
+
+
+is in 2Ω(k·log(ι)) .                                           decreases treewidth. Precisely, the treewidth of GΠ is at
+                                                                             k
+                                                               most O( log(ι)   ). Further, there is a TD showing that the
+Proof. By Observation 1, ι! is bounded by 2Ω(ι·log(ι)) . tightness width of Π is in O(ι).
+                                                   k
+                      k
+As a result, (ι!) ι is then in 2Ω(ι·log(ι)) ι , which                                                    0        0
+is in 2 ι ·Ω(ι·log(ι)) , yielding the result: (ι!) ι is Proof (Sketch). We construct a0 TD T = (T, χ ) of GΠ
+            k                                           k
+
+
+in 2Ω(k·log(ι)) .                                              to show that the width of T increases only slightly
+                                                               (compared to k). To this end, let t be a node of T
+                                                               with chldr(t) = ht1 , . . . , t` i and let t̂ be the parent
+                             0                                 of t (if exists). We define (i) R(t) := {rx | x ∈
+C Reduction R for ι-Tightness
+                                                               Vt } ∪ {rx | x ∈ Vt0 , t0 ∈ chldr(t)} ∪ {rsj , rdj | z ∈
+                                                                                                             Vt   Vt
+In the following, we describe the modifications of R re- Vt , j = bn(z, t)}, (ii) E(t) := {ex,y , êx,y | ex,y ∈
+quired for reduction R0 . Let F be a Boolean formula Et }, (iii) P (t) := {qtx , pxt , pxt0 , px | x ∈ dom(ϕt ) ∪
+and T = (T, χ, ϕt , ψt ) be an ordering-augmented TD                         0
+                                                                                                                        sj
+                                                               dom(ψ   t ), t  ∈ prev(x, t)},  and (iv) O(t) := {oxt , ot Vt |
+of GF of width k. Recall that we decrease the treewidth
+                                               k0                                                  sjV
+from k to the smallest k 0 such that (ι!) ι ≥ 2k for x ∈ Vt , j = bn(x, t)} ∪ {oxt0 , ot0 t0 | t0 ∈ chldr(t), x ∈
+fixed 2 ≤ ι ≤ k 0 . Then, for every node t of T , kt0 is Vt0 ∩ Vt }. Then, we let χ0 (t) := R(t) ∪ E(t) ∪ P (t) ∪
+
+
+                                                                19
+Block 1: Orderings & Reachability
+rsj ←                                                                              for every t in T, z ∈ Vt , j = bn(z, t) (1’)
+  Vt
+
+← ¬ry                                                            for every t in T, y ∈ Vt ∪ {djVt | z ∈ Vt , j = bn(z, t)}     (2’)
+rdj ← ey,dj                                                                                 for every t in T, ey,dj ∈ Et       (5’)
+  Vt            Vt                                                                                                Vt
+
+Block 2: ≤1 Outgoing Edge
+oyt ← oyt0             for every t in T, t0 ∈ chldr(t), y ∈ (Vt ∩ Vt0 ) ∪ {sjVt | Vt =Vt0 , z ∈ Vt , z ∈ bn(z, t)}             (8’)
+← oyt0 , ey,x            for every t in T, ey,x ∈ Et , t 0
+                                                             ∈ chldr(t), y ∈ Vt0 ∪ {sjVt | Vt =Vt0 , z ∈ Vt , z ∈ bn(z, t)}   (10’)
+
+Figure 4: The reduction R0 adapted from R, thereby replacing (1), (2), (5), (8), and (10) by (1’), (2’), (5’), (8’),
+and (10’), respectively. Reduction R0 takes a formula F and an ordering-augmented TD T = (T, χ, ϕ, ψ) of GF .
+
+
+O(t). Observe that T 0 is a TD of GΠ and by construc-               Lemma 4 (Largest SCC Size by R0 ). Let F be a Boolean
+tion |χ0 (t)| is in O(|Vt |). By definition of Vt , |Vt | ≤ k 0 ,   formula, and T = (T, χ, ϕ, ψ) be an ordering-augmented
+          k0                        k0               0
+where ι! ι ≥ 2k . Then, since ι! ι is in 2Ω(k ·log(ι)) (see         TD of GF of width k. Then, the reduction R0 constructs for
+Observation 2), we have that 2   Ω(k0 ·log(ι))
+                                               is at least 2k and   some fixed 2 ≤ ι ≤ k 0 , a program with strongly connected
+                                                                                                                        0
+             0         k
+therefore k = O( log(ι) ). Further, by construction of (i),         components (SCCs) of DΠ of size at most 2O(k ·log(ι))
+R(t) contains at most 2 · ι many elements of any SCC                with k 0 = log(ι)
+                                                                                 k
+                                                                                      , which equals 2O(k) .
+of DΠ ; (ii) E(t) has at most ι many elements of any SCC
+                                                                    Proof. Observe that the largest SCC of DΠ can only
+of DΠ ; (iii) P (t) intersects with at most 4 · ι many ele-
+                                                                    be due to Formulas (3), (4), (5’), (6), (7) and (11)–
+ments of any SCC of DΠ . Overall Π has a tightness width
+                                                                    (16), as these form the only potentially cyclic rules. The
+over T 0 of O(ι).
+                                                                    SCC is constructed over variables of the form rx , ex,y ,
+                                                                      x   x    x                                    ∗
+   Interestingly, reduction R cannot be significantly im- p , pt , qt with x, y ∈ Vt∗ for some t, t of T such
+                                 0
+
+proved either.                                                      that Vt = Vt∗ . Thereby, in the SCC we have at most k 0
+                                                                    many variables of the form rx and px and at most k 02
+                                            0
+Theorem 7 (Treewidth Decrease of R is Optimal). As- many variables of the form ex,y . However, there are at
+sume a reduction from a formula F to a normal logic                           k0 2
+                                 o(k)                               most (ι!) ι many variables of the form pxt and qtx due
+program Π running in time 2           · poly(|at(F )|), where k
+                                                                    to the fact that any potential combination of two order-
+is the treewidth of GF . Then, under ETH, the treewidth
+                        k                           k               ings ϕt , ψt is analyzed by Formulas (12)–(16). Obvi-
+of GΠ cannot be o( log(ι)   ) for fixed 2 ≤ ι ≤ log(ι)  .                       k0 2
+                                                                    ously, (ι!) ι dominates the SCC size, which is bounded
+Proof. Assume towards a contradiction that such a reduc- by 2O(k0 ·log(ι)) 2 = 2O(2·k0 ·log(ι)) = 2O(k0 ·log(ι)) . Then,
+tion, call it R∗ , exists. Then, we apply this reduction on O(k0 ·log(ι))                   k
+                                                                    2               = 2O( log(ι) ·log(ι)) = 2O(k) establishes the
+any F and for ι, resulting in program Π = R∗ (F ). We
+                                                                    claim.
+know that Π can be decided Fandinno and Hecher (2021)
+              0
+in time 2O(k ·log(ι)) ·poly(|at(F )|), where k 0 is in o( log(ι)
+                                                            k
+                                                                 ), Theorem 5 (LB ι-Tightness). Let Π be a ι-tight logic
+since Π admits tightness width ι on some TD of width k 0 by program, where the treewidth of GΠ is k such that the
+Theorem 6. As a result, we have that Π and therefore F can largest SCC size of DΠ is in 2O(k·log(ι)) . Then, under ETH,
+                            k
+be decided in time 2o( log(ι) ·log(ι)) · poly(|at(F )|), which the consistency of Π cannot be decided in time 2o(k·log(ι)) ·
+is in 2o(k) · poly(|at(F )|), contradicting the ETH.                poly(|at(Π)|).
+
+  Further, we show the following SCC bound, cf., Proof. The result follows from the treewidth-awareness by
+Lemma 3.                                         Theorem 6 and the largest SCC size bound by Lemma 4.
+
+
+                                                                  20
+Assume towards a contradiction that one can solve Π in
+time 2o(k·log(ι)) · |poly(at(Π))|. So, we take an arbitrary
+Boolean formula F and an ordering-augmented TD T
+of GF of width k 0 and construct Π by means of R0 on ι.
+Then, by Lemma 4, the largest SCC of DΠ is bounded
+by 2O(k·log(ι)) . Further, by Theorem 6, the treewidth k
+                            k0
+of Π is bounded by O( log(ι)   ) and there is a TD demon-
+strating tightness width O(ι) of Π. So assuming that Π
+can be decided in time 2o(k·log(ι)) · poly(|at(Π)|), results
+                             k0
+in solving F in time 2o( log(ι) ·log(ι)) · poly(|at(F )|) =
+    0
+2o(k ) · poly(|at(F )|), which contradicts the ETH.
+
+
+
+
+                                                           21
+

@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>aspmc.graph.treedecomposition API documentation</title>
+<meta name="description" content="Tree Decomposition module that introduces a tree decomposition class, a bag class and ways to construct tree decompositions." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aspmc.graph.treedecomposition</code></h1>
+</header>
+<section id="section-intro">
+<p>Tree Decomposition module that introduces a tree decomposition class, a bag class and ways to construct tree decompositions.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Tree Decomposition module that introduces a tree decomposition class, a bag class and ways to construct tree decompositions.
+&#34;&#34;&#34;
+
+import networkx as nx
+import subprocess
+import inspect
+import os
+import queue
+import logging
+import time
+
+src_path = os.path.abspath(os.path.realpath(inspect.getfile(inspect.currentframe())))
+src_path = os.path.realpath(os.path.join(src_path, &#39;../../external&#39;))
+
+logger = logging.getLogger(&#34;aspmc&#34;)
+
+class Bag(object):
+    &#34;&#34;&#34;A class for bags of tree decompositions.
+
+    Args:
+        idx (:obj:`int`): The unique ID of this bag in the tree decomposition.
+        vertices (:obj:`set`): The vertices in this bag.
+        children (:obj:`list`): The children (also bags) of this bag in the tree decomposition.
+
+    Attributes:
+        idx (:obj:`int`): The unique ID of this bag in the tree decomposition.
+        vertices (:obj:`set`): The vertices in this bag.
+        children (:obj:`list`): The children (also bags) of this bag in the tree decomposition.
+    &#34;&#34;&#34;
+    def __init__(self, idx, vertices, children):
+        self.idx = idx
+        self.vertices = vertices
+        self.children = children
+
+class TreeDecomposition(object):
+    &#34;&#34;&#34;A class for tree decompositions.
+
+    Allows manipulation and iteration in post order.
+
+    Args:
+        bags (:obj:`int`): The number of bags this tree decomposition has.
+        width (:obj:`int`): The width of this tree decomposition.
+        vertices (:obj:`int`): The number of vertices in this tree decomposition.
+        tree (:obj:`nx.Graph`): The graph representing the actual tree decomposition. 
+            Must have a node attribute &#34;bag&#34; that contains all the vertices in the bag of the node.
+        root (:obj:`int`, optional): Which node should be the root of the tree. Defaults to 1. 
+        The root is only set if this argument is not `None`.
+
+
+    Attributes:
+        bags (:obj:`int`): The number of bags this tree decomposition has.
+        width (:obj:`int`): The width of this tree decomposition.
+        vertices (:obj:`int`): The number of vertices in this tree decomposition.
+        tree (:obj:`nx.Graph`): The graph representing the actual tree decomposition. 
+            Has a node attribute &#34;bag&#34; that contains the bag object for the node. 
+            (Requires that `set_root` has been run already. This is typically done in the constructor if `root` is not `None`.)
+        root (:obj:`int`): Which node is the root of the tree. 
+    &#34;&#34;&#34;
+    def __init__(self, bags, width, vertices, tree, root = 1):
+        self.bags = bags
+        self.width = width
+        self.vertices = vertices
+        self.tree = tree
+        self.root = None
+        if root is not None:
+            self.set_root(root)
+
+    def get_root(self):
+        &#34;&#34;&#34;Return the bag of the root node.
+
+        Returns:
+            :obj:`Bag`: The bag of the root node.
+        &#34;&#34;&#34;
+        return self.tree.nodes[self.root][&#34;bag&#34;]
+
+    def get_bag(self, node):
+        &#34;&#34;&#34;Return the bag of given node.
+
+        Args:
+            node (:obj:`int`): The id of the node in the tree decomposition.
+
+        Returns:
+            :obj:`Bag`: The bag of the node.
+        &#34;&#34;&#34;
+        return self.tree.nodes[node][&#34;bag&#34;]
+
+    def set_root(self, root):
+        &#34;&#34;&#34;Sets the root of the tree decomposition.
+        Updates the &#34;bag&#34; attributes of the tree so that the bags have the correct children.
+
+        Args:
+            root (:obj:`int`): The id of the root to be.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        first = self.root is None
+        self.root = root
+        stack = queue.LifoQueue()
+        stack.put((-1, self.root, self.tree.neighbors(self.root)))
+        while not stack.empty():
+            parent, cur, neighbors = stack.get()
+            try:
+                neigh = next(neighbors)
+                if neigh == parent:
+                    neigh = next(neighbors)
+                stack.put((parent, cur, neighbors))
+                stack.put((cur, neigh, self.tree.neighbors(neigh)))
+            except:
+                if first:
+                    vertices = self.tree.nodes[cur][&#34;bag&#34;]
+                else:
+                    vertices = self.tree.nodes[cur][&#34;bag&#34;].vertices
+                self.tree.nodes[cur][&#34;bag&#34;] = Bag(cur, vertices, [ self.tree.nodes[x][&#34;bag&#34;] for x in self.tree.neighbors(cur) if x != parent ])
+
+    def find_centroid(self):
+        import sys
+        if self.root is None:
+            self.set_root(1)
+        if self.bags == 1:
+            return 1
+        stack = queue.LifoQueue()
+        stack.put((-1, self.root, self.tree.neighbors(self.root), 0))
+        while not stack.empty():
+            finished = True
+            while finished:
+                finished = False
+                parent, cur, neighbors, count = stack.get()
+                try:
+                    neigh = next(neighbors)
+                    if neigh == parent:
+                        neigh = next(neighbors)
+                    stack.put((parent, cur, neighbors, count))
+                    stack.put((cur, neigh, self.tree.neighbors(neigh), 0))
+                except StopIteration:
+                    finished = True
+                    here_count = len(self.get_bag(cur).vertices.difference(self.get_bag(parent).vertices))
+                    here_count += count
+                    pp, pc, pn, pcount = stack.get()
+                    if here_count + pcount &gt; self.vertices//2:
+                        return pc
+                    stack.put((pp, pc, pn, pcount + here_count))
+
+
+    def __iter__(self):
+        if self.root is None:
+            self.set_root(1)
+        stack = queue.LifoQueue()
+        stack.put((-1, self.root, self.tree.neighbors(self.root)))
+        while not stack.empty():
+            parent, cur, neighbors = stack.get()
+            try:
+                neigh = next(neighbors)
+                if neigh == parent:
+                    neigh = next(neighbors)
+                stack.put((parent, cur, neighbors))
+                stack.put((cur, neigh, self.tree.neighbors(neigh)))
+            except:
+                yield cur
+
+    def __str__(self):
+        res = f&#34;s tw {self.bags} {self.width} {self.vertices}\n&#34;
+        for bag in self.bag_iter():
+            res += f&#34;b {bag.idx} {&#39; &#39;.join([ str(v) for v in bag.vertices ])}\n&#34;
+        for bag in self.bag_iter():
+            for neigh in bag.children:
+                res += f&#34;{bag.idx} {neigh.idx}\n&#34;
+        return res
+
+    def bag_iter(self, order = &#34;post-order&#34;): 
+        &#34;&#34;&#34;Iterate over all the bags in post order.
+
+        Args:
+            order (:obj:`string`, optional): Which order the bags should be iterated over. 
+            Currently supported are &#34;post-order&#34; and &#34;pre-order&#34;. Defaults to &#34;post-order&#34;.
+
+        Returns:
+            :obj:`iterator`: Yields over the bags in the specified order.
+        &#34;&#34;&#34;    
+        if order == &#34;post-order&#34;:
+            for bag in self:
+                yield self.tree.nodes[bag][&#34;bag&#34;]
+        elif order == &#34;pre-order&#34;:
+            if self.root is None:
+                self.set_root(1)
+            stack = queue.LifoQueue()
+            stack.put((-1, self.root, self.tree.neighbors(self.root)))
+            yield self.get_bag(self.root)
+            while not stack.empty():
+                parent, cur, neighbors = stack.get()
+                try:
+                    neigh = next(neighbors)
+                    if neigh == parent:
+                        neigh = next(neighbors)
+                    stack.put((parent, cur, neighbors))
+                    stack.put((cur, neigh, self.tree.neighbors(neigh)))
+                    yield self.get_bag(neigh)
+                except:
+                    continue
+        else:
+            logger.error(f&#34;Unsupported order {order}.&#34;)
+            exit(-1)
+
+    def find_containing(self, vertices):
+        &#34;&#34;&#34;Find a bag containing all the vertices in `vertices`.
+
+        Args:
+            vertices (:obj:`set`): The vertices that should be contained in the desired bag.
+
+        Returns:
+            :obj:`Bag`: A bag containg all the vertices in `vertices` or `None` if there is no such bag.
+        &#34;&#34;&#34;
+        for t in self:
+            if self.tree.nodes[t][&#34;bag&#34;].vertices.issuperset(vertices):
+                return t
+
+    def remove(self, vertices):
+        &#34;&#34;&#34;Remove the vertices in `vertices` from all bags.
+
+        Args:
+            vertices (:obj:`set`): The vertices that should be removed.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        for t in self:
+            self.tree.nodes[t][&#34;bag&#34;].vertices.difference_update(vertices)
+                
+    def draw(self):
+        &#34;&#34;&#34;Visualizes this tree decompisition by showing a plot of it. 
+        Mostly useful for debugging.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        import matplotlib.pyplot as plt
+        from networkx.drawing.nx_pydot import graphviz_layout
+        labels = { v : str((v, self.tree.nodes[v][&#34;bag&#34;])) for v in self.tree.nodes }
+        pos = graphviz_layout(self.tree, prog=&#34;dot&#34;)
+        nx.draw(self.tree, pos)
+        nx.draw_networkx_labels(self.tree, pos, labels)
+        plt.tight_layout()
+        plt.axis(&#34;off&#34;)
+        plt.show()
+
+
+                
+
+
+def from_file(path):
+    &#34;&#34;&#34;Reads a tree decomposition from a file.
+
+    Args:
+        path (:obj:`string`): The path to the file containing the tree decomposition.
+
+    Returns:
+        :obj:`TreeDecomposition`: The tree decomposition specified in the file.
+    &#34;&#34;&#34;
+    with open(path, &#34;r&#34;) as input:
+        for line in input:
+            line = line.split()
+            if len(line) == 0: 
+                continue
+            if line[0] == &#39;s&#39;:
+                bags = int(line[2])
+                width = int(line[3])
+                vertices = int(line[4])
+                tree = nx.Graph()
+                tree.add_nodes_from(range(1,bags + 1))
+            elif line[0] == &#39;b&#39;:
+                tree.nodes[int(line[1])][&#34;bag&#34;] = set([ int(x) for x in line[2:] ])
+            else:
+                tree.add_edge(int(line[0]), int(line[1]))
+    return TreeDecomposition(bags, width, vertices, tree)
+
+def from_stream(stream):
+    &#34;&#34;&#34;Reads a tree decomposition from a stream.
+
+    Args:
+        stream (:obj:`string`): The stream with the tree decomposition. Must be binary.
+
+    Returns:
+        :obj:`TreeDecomposition`: The tree decomposition specified in the stream.
+    &#34;&#34;&#34;
+    for line in stream.read().decode().split(&#39;\n&#39;):
+        line = line.split()
+        if len(line) == 0: 
+            continue
+        if line[0] == &#39;s&#39;:
+            bags = int(line[2])
+            width = int(line[3])
+            vertices = int(line[4])
+            tree = nx.Graph()
+            tree.add_nodes_from(range(1,bags + 1))
+        elif line[0] == &#39;b&#39;:
+            tree.nodes[int(line[1])][&#34;bag&#34;] = set([ int(x) for x in line[2:] ])
+        else:
+            tree.add_edge(int(line[0]), int(line[1]))
+    return TreeDecomposition(bags, width, vertices, tree)
+
+def from_graph(graph, solver = &#34;flow-cutter&#34;, timeout = &#34;1&#34;):
+    &#34;&#34;&#34;Constructs a tree decomposition from a graph.
+
+    Args:
+        solver (:obj:`string`, optional): The solver to generate the tree decomposition. 
+        Currently supported is &#34;flow-cutter&#34;. Defaults to &#34;flow-cutter&#34;.
+        timeout (:obj:`string`, optional): After how much time to kill the solver in seconds. Defaults to &#34;1&#34;.
+
+    Returns:
+        :obj:`TreeDecomposition`: The tree decomposition output by the solver.
+    &#34;&#34;&#34;
+    timeout = float(timeout)
+    start = time.time()
+    node_map = dict()
+    map_node = dict()
+    idx = 1
+    for node in graph.nodes:
+        node_map[node] = idx
+        map_node[idx] = node
+        idx += 1
+    if solver == &#34;flow-cutter&#34;:
+        p = subprocess.Popen([os.path.join(src_path, &#34;flow-cutter/flow_cutter_pace17&#34;)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds = True)
+    else:
+        logger.error(f&#34;Unknown td-solver {solver}&#34;)    
+    # with open(&#34;debug.gr&#34;, &#34;wb&#34;) as debug_gr:
+    #    debug_gr.write(f&#34;p tw {len(graph.nodes)} {len(graph.edges)}\n&#34;.encode())
+    #    for (v,vp) in graph.edges:
+    #        debug_gr.write(f&#34;{node_map[v]} {node_map[vp]}\n&#34;.encode())
+    p.stdin.write(f&#34;p tw {len(graph.nodes)} {len(graph.edges)}\n&#34;.encode())
+    for (v,vp) in graph.edges:
+        p.stdin.write(f&#34;{node_map[v]} {node_map[vp]}\n&#34;.encode())
+    p.stdin.flush()
+    p.stdin.close()
+    first = False
+    while p.poll() is None and not first:
+        line = p.stdout.readline().decode()
+        first = line.startswith(&#34;c status&#34;)
+    time_left = timeout - (time.time() - start)
+    try:
+        p.wait(time_left)
+    except subprocess.TimeoutExpired:
+        p.terminate()
+    for line in p.stdout.read().decode().split(&#39;\n&#39;):
+        line = line.split()
+        if len(line) == 0: 
+            continue
+        if line[0] == &#39;s&#39;:
+            bags = int(line[2])
+            width = int(line[3])
+            vertices = int(line[4])
+            tree = nx.Graph()
+            tree.add_nodes_from(range(1,bags + 1))
+        elif line[0] == &#39;b&#39;:
+            tree.nodes[int(line[1])][&#34;bag&#34;] = set([ map_node[int(x)] for x in line[2:] ])
+        elif line[0] == &#39;c&#39;:
+            continue
+        else:
+            tree.add_edge(int(line[0]), int(line[1]))
+    p.stdout.close()
+    p.wait()
+    return TreeDecomposition(bags, width, vertices, tree)
+
+def from_hypergraph(hypergraph, solver = &#34;flow-cutter&#34;, timeout = &#34;1&#34;):
+    &#34;&#34;&#34;Constructs a tree decomposition from a hypergraph.
+
+    Args:
+        solver (:obj:`string`, optional): The solver to generate the tree decomposition. 
+        Currently supported is &#34;flow-cutter&#34;. Defaults to &#34;flow-cutter&#34;.
+        timeout (:obj:`string`, optional): After how much time to kill the solver in seconds. Defaults to &#34;1&#34;.
+
+    Returns:
+        :obj:`TreeDecomposition`: The tree decomposition output by the solver.
+    &#34;&#34;&#34;
+    if solver == &#34;flow-cutter&#34;:
+        return from_graph(hypergraph.to_graph(), solver = solver, timeout = timeout)
+    else:
+        logger.error(f&#34;Unknown td-solver {solver}&#34;)   </code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="aspmc.graph.treedecomposition.from_file"><code class="name flex">
+<span>def <span class="ident">from_file</span></span>(<span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reads a tree decomposition from a file.</p>
+<h2 id="args">Args</h2>
+<p>path (:obj:<code>string</code>): The path to the file containing the tree decomposition.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.graph.treedecomposition.TreeDecomposition" href="#aspmc.graph.treedecomposition.TreeDecomposition">TreeDecomposition</a></code>: The tree decomposition specified in the file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_file(path):
+    &#34;&#34;&#34;Reads a tree decomposition from a file.
+
+    Args:
+        path (:obj:`string`): The path to the file containing the tree decomposition.
+
+    Returns:
+        :obj:`TreeDecomposition`: The tree decomposition specified in the file.
+    &#34;&#34;&#34;
+    with open(path, &#34;r&#34;) as input:
+        for line in input:
+            line = line.split()
+            if len(line) == 0: 
+                continue
+            if line[0] == &#39;s&#39;:
+                bags = int(line[2])
+                width = int(line[3])
+                vertices = int(line[4])
+                tree = nx.Graph()
+                tree.add_nodes_from(range(1,bags + 1))
+            elif line[0] == &#39;b&#39;:
+                tree.nodes[int(line[1])][&#34;bag&#34;] = set([ int(x) for x in line[2:] ])
+            else:
+                tree.add_edge(int(line[0]), int(line[1]))
+    return TreeDecomposition(bags, width, vertices, tree)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.from_graph"><code class="name flex">
+<span>def <span class="ident">from_graph</span></span>(<span>graph, solver='flow-cutter', timeout='1')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a tree decomposition from a graph.</p>
+<h2 id="args">Args</h2>
+<p>solver (:obj:<code>string</code>, optional): The solver to generate the tree decomposition.
+Currently supported is "flow-cutter". Defaults to "flow-cutter".
+timeout (:obj:<code>string</code>, optional): After how much time to kill the solver in seconds. Defaults to "1".</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.graph.treedecomposition.TreeDecomposition" href="#aspmc.graph.treedecomposition.TreeDecomposition">TreeDecomposition</a></code>: The tree decomposition output by the solver.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_graph(graph, solver = &#34;flow-cutter&#34;, timeout = &#34;1&#34;):
+    &#34;&#34;&#34;Constructs a tree decomposition from a graph.
+
+    Args:
+        solver (:obj:`string`, optional): The solver to generate the tree decomposition. 
+        Currently supported is &#34;flow-cutter&#34;. Defaults to &#34;flow-cutter&#34;.
+        timeout (:obj:`string`, optional): After how much time to kill the solver in seconds. Defaults to &#34;1&#34;.
+
+    Returns:
+        :obj:`TreeDecomposition`: The tree decomposition output by the solver.
+    &#34;&#34;&#34;
+    timeout = float(timeout)
+    start = time.time()
+    node_map = dict()
+    map_node = dict()
+    idx = 1
+    for node in graph.nodes:
+        node_map[node] = idx
+        map_node[idx] = node
+        idx += 1
+    if solver == &#34;flow-cutter&#34;:
+        p = subprocess.Popen([os.path.join(src_path, &#34;flow-cutter/flow_cutter_pace17&#34;)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds = True)
+    else:
+        logger.error(f&#34;Unknown td-solver {solver}&#34;)    
+    # with open(&#34;debug.gr&#34;, &#34;wb&#34;) as debug_gr:
+    #    debug_gr.write(f&#34;p tw {len(graph.nodes)} {len(graph.edges)}\n&#34;.encode())
+    #    for (v,vp) in graph.edges:
+    #        debug_gr.write(f&#34;{node_map[v]} {node_map[vp]}\n&#34;.encode())
+    p.stdin.write(f&#34;p tw {len(graph.nodes)} {len(graph.edges)}\n&#34;.encode())
+    for (v,vp) in graph.edges:
+        p.stdin.write(f&#34;{node_map[v]} {node_map[vp]}\n&#34;.encode())
+    p.stdin.flush()
+    p.stdin.close()
+    first = False
+    while p.poll() is None and not first:
+        line = p.stdout.readline().decode()
+        first = line.startswith(&#34;c status&#34;)
+    time_left = timeout - (time.time() - start)
+    try:
+        p.wait(time_left)
+    except subprocess.TimeoutExpired:
+        p.terminate()
+    for line in p.stdout.read().decode().split(&#39;\n&#39;):
+        line = line.split()
+        if len(line) == 0: 
+            continue
+        if line[0] == &#39;s&#39;:
+            bags = int(line[2])
+            width = int(line[3])
+            vertices = int(line[4])
+            tree = nx.Graph()
+            tree.add_nodes_from(range(1,bags + 1))
+        elif line[0] == &#39;b&#39;:
+            tree.nodes[int(line[1])][&#34;bag&#34;] = set([ map_node[int(x)] for x in line[2:] ])
+        elif line[0] == &#39;c&#39;:
+            continue
+        else:
+            tree.add_edge(int(line[0]), int(line[1]))
+    p.stdout.close()
+    p.wait()
+    return TreeDecomposition(bags, width, vertices, tree)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.from_hypergraph"><code class="name flex">
+<span>def <span class="ident">from_hypergraph</span></span>(<span>hypergraph, solver='flow-cutter', timeout='1')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a tree decomposition from a hypergraph.</p>
+<h2 id="args">Args</h2>
+<p>solver (:obj:<code>string</code>, optional): The solver to generate the tree decomposition.
+Currently supported is "flow-cutter". Defaults to "flow-cutter".
+timeout (:obj:<code>string</code>, optional): After how much time to kill the solver in seconds. Defaults to "1".</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.graph.treedecomposition.TreeDecomposition" href="#aspmc.graph.treedecomposition.TreeDecomposition">TreeDecomposition</a></code>: The tree decomposition output by the solver.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_hypergraph(hypergraph, solver = &#34;flow-cutter&#34;, timeout = &#34;1&#34;):
+    &#34;&#34;&#34;Constructs a tree decomposition from a hypergraph.
+
+    Args:
+        solver (:obj:`string`, optional): The solver to generate the tree decomposition. 
+        Currently supported is &#34;flow-cutter&#34;. Defaults to &#34;flow-cutter&#34;.
+        timeout (:obj:`string`, optional): After how much time to kill the solver in seconds. Defaults to &#34;1&#34;.
+
+    Returns:
+        :obj:`TreeDecomposition`: The tree decomposition output by the solver.
+    &#34;&#34;&#34;
+    if solver == &#34;flow-cutter&#34;:
+        return from_graph(hypergraph.to_graph(), solver = solver, timeout = timeout)
+    else:
+        logger.error(f&#34;Unknown td-solver {solver}&#34;)   </code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.from_stream"><code class="name flex">
+<span>def <span class="ident">from_stream</span></span>(<span>stream)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reads a tree decomposition from a stream.</p>
+<h2 id="args">Args</h2>
+<p>stream (:obj:<code>string</code>): The stream with the tree decomposition. Must be binary.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.graph.treedecomposition.TreeDecomposition" href="#aspmc.graph.treedecomposition.TreeDecomposition">TreeDecomposition</a></code>: The tree decomposition specified in the stream.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_stream(stream):
+    &#34;&#34;&#34;Reads a tree decomposition from a stream.
+
+    Args:
+        stream (:obj:`string`): The stream with the tree decomposition. Must be binary.
+
+    Returns:
+        :obj:`TreeDecomposition`: The tree decomposition specified in the stream.
+    &#34;&#34;&#34;
+    for line in stream.read().decode().split(&#39;\n&#39;):
+        line = line.split()
+        if len(line) == 0: 
+            continue
+        if line[0] == &#39;s&#39;:
+            bags = int(line[2])
+            width = int(line[3])
+            vertices = int(line[4])
+            tree = nx.Graph()
+            tree.add_nodes_from(range(1,bags + 1))
+        elif line[0] == &#39;b&#39;:
+            tree.nodes[int(line[1])][&#34;bag&#34;] = set([ int(x) for x in line[2:] ])
+        else:
+            tree.add_edge(int(line[0]), int(line[1]))
+    return TreeDecomposition(bags, width, vertices, tree)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="aspmc.graph.treedecomposition.Bag"><code class="flex name class">
+<span>class <span class="ident">Bag</span></span>
+<span>(</span><span>idx, vertices, children)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class for bags of tree decompositions.</p>
+<h2 id="args">Args</h2>
+<p>idx (:obj:<code>int</code>): The unique ID of this bag in the tree decomposition.
+vertices (:obj:<code>set</code>): The vertices in this bag.
+children (:obj:<code>list</code>): The children (also bags) of this bag in the tree decomposition.</p>
+<h2 id="attributes">Attributes</h2>
+<p>idx (:obj:<code>int</code>): The unique ID of this bag in the tree decomposition.
+vertices (:obj:<code>set</code>): The vertices in this bag.
+children (:obj:<code>list</code>): The children (also bags) of this bag in the tree decomposition.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Bag(object):
+    &#34;&#34;&#34;A class for bags of tree decompositions.
+
+    Args:
+        idx (:obj:`int`): The unique ID of this bag in the tree decomposition.
+        vertices (:obj:`set`): The vertices in this bag.
+        children (:obj:`list`): The children (also bags) of this bag in the tree decomposition.
+
+    Attributes:
+        idx (:obj:`int`): The unique ID of this bag in the tree decomposition.
+        vertices (:obj:`set`): The vertices in this bag.
+        children (:obj:`list`): The children (also bags) of this bag in the tree decomposition.
+    &#34;&#34;&#34;
+    def __init__(self, idx, vertices, children):
+        self.idx = idx
+        self.vertices = vertices
+        self.children = children</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition"><code class="flex name class">
+<span>class <span class="ident">TreeDecomposition</span></span>
+<span>(</span><span>bags, width, vertices, tree, root=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class for tree decompositions.</p>
+<p>Allows manipulation and iteration in post order.</p>
+<h2 id="args">Args</h2>
+<p>bags (:obj:<code>int</code>): The number of bags this tree decomposition has.
+width (:obj:<code>int</code>): The width of this tree decomposition.
+vertices (:obj:<code>int</code>): The number of vertices in this tree decomposition.
+tree (:obj:<code>nx.Graph</code>): The graph representing the actual tree decomposition.
+Must have a node attribute "bag" that contains all the vertices in the bag of the node.
+root (:obj:<code>int</code>, optional): Which node should be the root of the tree. Defaults to 1.
+The root is only set if this argument is not <code>None</code>.</p>
+<h2 id="attributes">Attributes</h2>
+<p>bags (:obj:<code>int</code>): The number of bags this tree decomposition has.
+width (:obj:<code>int</code>): The width of this tree decomposition.
+vertices (:obj:<code>int</code>): The number of vertices in this tree decomposition.
+tree (:obj:<code>nx.Graph</code>): The graph representing the actual tree decomposition.
+Has a node attribute "bag" that contains the bag object for the node.
+(Requires that <code>set_root</code> has been run already. This is typically done in the constructor if <code>root</code> is not <code>None</code>.)
+root (:obj:<code>int</code>): Which node is the root of the tree.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TreeDecomposition(object):
+    &#34;&#34;&#34;A class for tree decompositions.
+
+    Allows manipulation and iteration in post order.
+
+    Args:
+        bags (:obj:`int`): The number of bags this tree decomposition has.
+        width (:obj:`int`): The width of this tree decomposition.
+        vertices (:obj:`int`): The number of vertices in this tree decomposition.
+        tree (:obj:`nx.Graph`): The graph representing the actual tree decomposition. 
+            Must have a node attribute &#34;bag&#34; that contains all the vertices in the bag of the node.
+        root (:obj:`int`, optional): Which node should be the root of the tree. Defaults to 1. 
+        The root is only set if this argument is not `None`.
+
+
+    Attributes:
+        bags (:obj:`int`): The number of bags this tree decomposition has.
+        width (:obj:`int`): The width of this tree decomposition.
+        vertices (:obj:`int`): The number of vertices in this tree decomposition.
+        tree (:obj:`nx.Graph`): The graph representing the actual tree decomposition. 
+            Has a node attribute &#34;bag&#34; that contains the bag object for the node. 
+            (Requires that `set_root` has been run already. This is typically done in the constructor if `root` is not `None`.)
+        root (:obj:`int`): Which node is the root of the tree. 
+    &#34;&#34;&#34;
+    def __init__(self, bags, width, vertices, tree, root = 1):
+        self.bags = bags
+        self.width = width
+        self.vertices = vertices
+        self.tree = tree
+        self.root = None
+        if root is not None:
+            self.set_root(root)
+
+    def get_root(self):
+        &#34;&#34;&#34;Return the bag of the root node.
+
+        Returns:
+            :obj:`Bag`: The bag of the root node.
+        &#34;&#34;&#34;
+        return self.tree.nodes[self.root][&#34;bag&#34;]
+
+    def get_bag(self, node):
+        &#34;&#34;&#34;Return the bag of given node.
+
+        Args:
+            node (:obj:`int`): The id of the node in the tree decomposition.
+
+        Returns:
+            :obj:`Bag`: The bag of the node.
+        &#34;&#34;&#34;
+        return self.tree.nodes[node][&#34;bag&#34;]
+
+    def set_root(self, root):
+        &#34;&#34;&#34;Sets the root of the tree decomposition.
+        Updates the &#34;bag&#34; attributes of the tree so that the bags have the correct children.
+
+        Args:
+            root (:obj:`int`): The id of the root to be.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        first = self.root is None
+        self.root = root
+        stack = queue.LifoQueue()
+        stack.put((-1, self.root, self.tree.neighbors(self.root)))
+        while not stack.empty():
+            parent, cur, neighbors = stack.get()
+            try:
+                neigh = next(neighbors)
+                if neigh == parent:
+                    neigh = next(neighbors)
+                stack.put((parent, cur, neighbors))
+                stack.put((cur, neigh, self.tree.neighbors(neigh)))
+            except:
+                if first:
+                    vertices = self.tree.nodes[cur][&#34;bag&#34;]
+                else:
+                    vertices = self.tree.nodes[cur][&#34;bag&#34;].vertices
+                self.tree.nodes[cur][&#34;bag&#34;] = Bag(cur, vertices, [ self.tree.nodes[x][&#34;bag&#34;] for x in self.tree.neighbors(cur) if x != parent ])
+
+    def find_centroid(self):
+        import sys
+        if self.root is None:
+            self.set_root(1)
+        if self.bags == 1:
+            return 1
+        stack = queue.LifoQueue()
+        stack.put((-1, self.root, self.tree.neighbors(self.root), 0))
+        while not stack.empty():
+            finished = True
+            while finished:
+                finished = False
+                parent, cur, neighbors, count = stack.get()
+                try:
+                    neigh = next(neighbors)
+                    if neigh == parent:
+                        neigh = next(neighbors)
+                    stack.put((parent, cur, neighbors, count))
+                    stack.put((cur, neigh, self.tree.neighbors(neigh), 0))
+                except StopIteration:
+                    finished = True
+                    here_count = len(self.get_bag(cur).vertices.difference(self.get_bag(parent).vertices))
+                    here_count += count
+                    pp, pc, pn, pcount = stack.get()
+                    if here_count + pcount &gt; self.vertices//2:
+                        return pc
+                    stack.put((pp, pc, pn, pcount + here_count))
+
+
+    def __iter__(self):
+        if self.root is None:
+            self.set_root(1)
+        stack = queue.LifoQueue()
+        stack.put((-1, self.root, self.tree.neighbors(self.root)))
+        while not stack.empty():
+            parent, cur, neighbors = stack.get()
+            try:
+                neigh = next(neighbors)
+                if neigh == parent:
+                    neigh = next(neighbors)
+                stack.put((parent, cur, neighbors))
+                stack.put((cur, neigh, self.tree.neighbors(neigh)))
+            except:
+                yield cur
+
+    def __str__(self):
+        res = f&#34;s tw {self.bags} {self.width} {self.vertices}\n&#34;
+        for bag in self.bag_iter():
+            res += f&#34;b {bag.idx} {&#39; &#39;.join([ str(v) for v in bag.vertices ])}\n&#34;
+        for bag in self.bag_iter():
+            for neigh in bag.children:
+                res += f&#34;{bag.idx} {neigh.idx}\n&#34;
+        return res
+
+    def bag_iter(self, order = &#34;post-order&#34;): 
+        &#34;&#34;&#34;Iterate over all the bags in post order.
+
+        Args:
+            order (:obj:`string`, optional): Which order the bags should be iterated over. 
+            Currently supported are &#34;post-order&#34; and &#34;pre-order&#34;. Defaults to &#34;post-order&#34;.
+
+        Returns:
+            :obj:`iterator`: Yields over the bags in the specified order.
+        &#34;&#34;&#34;    
+        if order == &#34;post-order&#34;:
+            for bag in self:
+                yield self.tree.nodes[bag][&#34;bag&#34;]
+        elif order == &#34;pre-order&#34;:
+            if self.root is None:
+                self.set_root(1)
+            stack = queue.LifoQueue()
+            stack.put((-1, self.root, self.tree.neighbors(self.root)))
+            yield self.get_bag(self.root)
+            while not stack.empty():
+                parent, cur, neighbors = stack.get()
+                try:
+                    neigh = next(neighbors)
+                    if neigh == parent:
+                        neigh = next(neighbors)
+                    stack.put((parent, cur, neighbors))
+                    stack.put((cur, neigh, self.tree.neighbors(neigh)))
+                    yield self.get_bag(neigh)
+                except:
+                    continue
+        else:
+            logger.error(f&#34;Unsupported order {order}.&#34;)
+            exit(-1)
+
+    def find_containing(self, vertices):
+        &#34;&#34;&#34;Find a bag containing all the vertices in `vertices`.
+
+        Args:
+            vertices (:obj:`set`): The vertices that should be contained in the desired bag.
+
+        Returns:
+            :obj:`Bag`: A bag containg all the vertices in `vertices` or `None` if there is no such bag.
+        &#34;&#34;&#34;
+        for t in self:
+            if self.tree.nodes[t][&#34;bag&#34;].vertices.issuperset(vertices):
+                return t
+
+    def remove(self, vertices):
+        &#34;&#34;&#34;Remove the vertices in `vertices` from all bags.
+
+        Args:
+            vertices (:obj:`set`): The vertices that should be removed.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        for t in self:
+            self.tree.nodes[t][&#34;bag&#34;].vertices.difference_update(vertices)
+                
+    def draw(self):
+        &#34;&#34;&#34;Visualizes this tree decompisition by showing a plot of it. 
+        Mostly useful for debugging.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        import matplotlib.pyplot as plt
+        from networkx.drawing.nx_pydot import graphviz_layout
+        labels = { v : str((v, self.tree.nodes[v][&#34;bag&#34;])) for v in self.tree.nodes }
+        pos = graphviz_layout(self.tree, prog=&#34;dot&#34;)
+        nx.draw(self.tree, pos)
+        nx.draw_networkx_labels(self.tree, pos, labels)
+        plt.tight_layout()
+        plt.axis(&#34;off&#34;)
+        plt.show()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition.bag_iter"><code class="name flex">
+<span>def <span class="ident">bag_iter</span></span>(<span>self, order='post-order')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Iterate over all the bags in post order.</p>
+<h2 id="args">Args</h2>
+<p>order (:obj:<code>string</code>, optional): Which order the bags should be iterated over.
+Currently supported are "post-order" and "pre-order". Defaults to "post-order".</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code>iterator</code>: Yields over the bags in the specified order.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bag_iter(self, order = &#34;post-order&#34;): 
+    &#34;&#34;&#34;Iterate over all the bags in post order.
+
+    Args:
+        order (:obj:`string`, optional): Which order the bags should be iterated over. 
+        Currently supported are &#34;post-order&#34; and &#34;pre-order&#34;. Defaults to &#34;post-order&#34;.
+
+    Returns:
+        :obj:`iterator`: Yields over the bags in the specified order.
+    &#34;&#34;&#34;    
+    if order == &#34;post-order&#34;:
+        for bag in self:
+            yield self.tree.nodes[bag][&#34;bag&#34;]
+    elif order == &#34;pre-order&#34;:
+        if self.root is None:
+            self.set_root(1)
+        stack = queue.LifoQueue()
+        stack.put((-1, self.root, self.tree.neighbors(self.root)))
+        yield self.get_bag(self.root)
+        while not stack.empty():
+            parent, cur, neighbors = stack.get()
+            try:
+                neigh = next(neighbors)
+                if neigh == parent:
+                    neigh = next(neighbors)
+                stack.put((parent, cur, neighbors))
+                stack.put((cur, neigh, self.tree.neighbors(neigh)))
+                yield self.get_bag(neigh)
+            except:
+                continue
+    else:
+        logger.error(f&#34;Unsupported order {order}.&#34;)
+        exit(-1)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition.draw"><code class="name flex">
+<span>def <span class="ident">draw</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Visualizes this tree decompisition by showing a plot of it.
+Mostly useful for debugging.</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self):
+    &#34;&#34;&#34;Visualizes this tree decompisition by showing a plot of it. 
+    Mostly useful for debugging.
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    import matplotlib.pyplot as plt
+    from networkx.drawing.nx_pydot import graphviz_layout
+    labels = { v : str((v, self.tree.nodes[v][&#34;bag&#34;])) for v in self.tree.nodes }
+    pos = graphviz_layout(self.tree, prog=&#34;dot&#34;)
+    nx.draw(self.tree, pos)
+    nx.draw_networkx_labels(self.tree, pos, labels)
+    plt.tight_layout()
+    plt.axis(&#34;off&#34;)
+    plt.show()</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition.find_centroid"><code class="name flex">
+<span>def <span class="ident">find_centroid</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_centroid(self):
+    import sys
+    if self.root is None:
+        self.set_root(1)
+    if self.bags == 1:
+        return 1
+    stack = queue.LifoQueue()
+    stack.put((-1, self.root, self.tree.neighbors(self.root), 0))
+    while not stack.empty():
+        finished = True
+        while finished:
+            finished = False
+            parent, cur, neighbors, count = stack.get()
+            try:
+                neigh = next(neighbors)
+                if neigh == parent:
+                    neigh = next(neighbors)
+                stack.put((parent, cur, neighbors, count))
+                stack.put((cur, neigh, self.tree.neighbors(neigh), 0))
+            except StopIteration:
+                finished = True
+                here_count = len(self.get_bag(cur).vertices.difference(self.get_bag(parent).vertices))
+                here_count += count
+                pp, pc, pn, pcount = stack.get()
+                if here_count + pcount &gt; self.vertices//2:
+                    return pc
+                stack.put((pp, pc, pn, pcount + here_count))</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition.find_containing"><code class="name flex">
+<span>def <span class="ident">find_containing</span></span>(<span>self, vertices)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find a bag containing all the vertices in <code>vertices</code>.</p>
+<h2 id="args">Args</h2>
+<p>vertices (:obj:<code>set</code>): The vertices that should be contained in the desired bag.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.graph.treedecomposition.Bag" href="#aspmc.graph.treedecomposition.Bag">Bag</a></code>: A bag containg all the vertices in <code>vertices</code> or <code>None</code> if there is no such bag.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_containing(self, vertices):
+    &#34;&#34;&#34;Find a bag containing all the vertices in `vertices`.
+
+    Args:
+        vertices (:obj:`set`): The vertices that should be contained in the desired bag.
+
+    Returns:
+        :obj:`Bag`: A bag containg all the vertices in `vertices` or `None` if there is no such bag.
+    &#34;&#34;&#34;
+    for t in self:
+        if self.tree.nodes[t][&#34;bag&#34;].vertices.issuperset(vertices):
+            return t</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition.get_bag"><code class="name flex">
+<span>def <span class="ident">get_bag</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the bag of given node.</p>
+<h2 id="args">Args</h2>
+<p>node (:obj:<code>int</code>): The id of the node in the tree decomposition.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.graph.treedecomposition.Bag" href="#aspmc.graph.treedecomposition.Bag">Bag</a></code>: The bag of the node.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bag(self, node):
+    &#34;&#34;&#34;Return the bag of given node.
+
+    Args:
+        node (:obj:`int`): The id of the node in the tree decomposition.
+
+    Returns:
+        :obj:`Bag`: The bag of the node.
+    &#34;&#34;&#34;
+    return self.tree.nodes[node][&#34;bag&#34;]</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition.get_root"><code class="name flex">
+<span>def <span class="ident">get_root</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the bag of the root node.</p>
+<h2 id="returns">Returns</h2>
+<p>:obj:<code><a title="aspmc.graph.treedecomposition.Bag" href="#aspmc.graph.treedecomposition.Bag">Bag</a></code>: The bag of the root node.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_root(self):
+    &#34;&#34;&#34;Return the bag of the root node.
+
+    Returns:
+        :obj:`Bag`: The bag of the root node.
+    &#34;&#34;&#34;
+    return self.tree.nodes[self.root][&#34;bag&#34;]</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, vertices)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove the vertices in <code>vertices</code> from all bags.</p>
+<h2 id="args">Args</h2>
+<p>vertices (:obj:<code>set</code>): The vertices that should be removed.</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, vertices):
+    &#34;&#34;&#34;Remove the vertices in `vertices` from all bags.
+
+    Args:
+        vertices (:obj:`set`): The vertices that should be removed.
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    for t in self:
+        self.tree.nodes[t][&#34;bag&#34;].vertices.difference_update(vertices)</code></pre>
+</details>
+</dd>
+<dt id="aspmc.graph.treedecomposition.TreeDecomposition.set_root"><code class="name flex">
+<span>def <span class="ident">set_root</span></span>(<span>self, root)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets the root of the tree decomposition.
+Updates the "bag" attributes of the tree so that the bags have the correct children.</p>
+<h2 id="args">Args</h2>
+<p>root (:obj:<code>int</code>): The id of the root to be.</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_root(self, root):
+    &#34;&#34;&#34;Sets the root of the tree decomposition.
+    Updates the &#34;bag&#34; attributes of the tree so that the bags have the correct children.
+
+    Args:
+        root (:obj:`int`): The id of the root to be.
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    first = self.root is None
+    self.root = root
+    stack = queue.LifoQueue()
+    stack.put((-1, self.root, self.tree.neighbors(self.root)))
+    while not stack.empty():
+        parent, cur, neighbors = stack.get()
+        try:
+            neigh = next(neighbors)
+            if neigh == parent:
+                neigh = next(neighbors)
+            stack.put((parent, cur, neighbors))
+            stack.put((cur, neigh, self.tree.neighbors(neigh)))
+        except:
+            if first:
+                vertices = self.tree.nodes[cur][&#34;bag&#34;]
+            else:
+                vertices = self.tree.nodes[cur][&#34;bag&#34;].vertices
+            self.tree.nodes[cur][&#34;bag&#34;] = Bag(cur, vertices, [ self.tree.nodes[x][&#34;bag&#34;] for x in self.tree.neighbors(cur) if x != parent ])</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aspmc.graph" href="index.html">aspmc.graph</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="aspmc.graph.treedecomposition.from_file" href="#aspmc.graph.treedecomposition.from_file">from_file</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.from_graph" href="#aspmc.graph.treedecomposition.from_graph">from_graph</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.from_hypergraph" href="#aspmc.graph.treedecomposition.from_hypergraph">from_hypergraph</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.from_stream" href="#aspmc.graph.treedecomposition.from_stream">from_stream</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="aspmc.graph.treedecomposition.Bag" href="#aspmc.graph.treedecomposition.Bag">Bag</a></code></h4>
+</li>
+<li>
+<h4><code><a title="aspmc.graph.treedecomposition.TreeDecomposition" href="#aspmc.graph.treedecomposition.TreeDecomposition">TreeDecomposition</a></code></h4>
+<ul class="two-column">
+<li><code><a title="aspmc.graph.treedecomposition.TreeDecomposition.bag_iter" href="#aspmc.graph.treedecomposition.TreeDecomposition.bag_iter">bag_iter</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.TreeDecomposition.draw" href="#aspmc.graph.treedecomposition.TreeDecomposition.draw">draw</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.TreeDecomposition.find_centroid" href="#aspmc.graph.treedecomposition.TreeDecomposition.find_centroid">find_centroid</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.TreeDecomposition.find_containing" href="#aspmc.graph.treedecomposition.TreeDecomposition.find_containing">find_containing</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.TreeDecomposition.get_bag" href="#aspmc.graph.treedecomposition.TreeDecomposition.get_bag">get_bag</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.TreeDecomposition.get_root" href="#aspmc.graph.treedecomposition.TreeDecomposition.get_root">get_root</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.TreeDecomposition.remove" href="#aspmc.graph.treedecomposition.TreeDecomposition.remove">remove</a></code></li>
+<li><code><a title="aspmc.graph.treedecomposition.TreeDecomposition.set_root" href="#aspmc.graph.treedecomposition.TreeDecomposition.set_root">set_root</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

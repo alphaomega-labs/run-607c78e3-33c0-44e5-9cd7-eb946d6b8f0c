@@ -1,0 +1,7 @@
+experiment_id: autotw_validation
+output_dir: experiments/autotw_validation/iter_2/outputs
+figures_dir: paper/figures/iter_2
+tables_dir: paper/tables/iter_2
+data_dir: paper/data/iter_2
+seeds: [3,5,7,9,11,13,17,19,23,27,29,31,37,42,43,47,59,81,101]
+smoke_seed_count: 2
