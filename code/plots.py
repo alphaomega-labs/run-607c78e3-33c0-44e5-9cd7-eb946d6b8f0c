@@ -56,7 +56,20 @@ def make_figures(exp01: pd.DataFrame, exp02: pd.DataFrame, exp03: pd.DataFrame, 
         gridspec_kw={"width_ratios": [1.25, 1.0]},
         constrained_layout=True,
     )
-    s3 = exp02.groupby(["feature_set", "fallback_policy"], as_index=False)["regret_s"].mean()
+    policy_summary = exp02.groupby(
+        ["feature_set", "fallback_policy", "uncertainty_tau"],
+        as_index=False,
+    ).agg(
+        regret_s=("regret_s", "mean"),
+        violation_rate=("bound_violation", "mean"),
+        tail_runtime_s=("tail_runtime_s", "median"),
+    )
+
+    s3 = (
+        policy_summary.sort_values(["feature_set", "fallback_policy", "regret_s", "uncertainty_tau"])
+        .groupby(["feature_set", "fallback_policy"], as_index=False)
+        .first()
+    )
     s3["feature_set"] = s3["feature_set"].map(FEATURE_SET_LABELS)
     s3["fallback_policy"] = s3["fallback_policy"].map(FALLBACK_POLICY_LABELS)
     feature_order = [FEATURE_SET_LABELS[key] for key in FEATURE_SET_LABELS]
@@ -84,9 +97,10 @@ def make_figures(exp01: pd.DataFrame, exp02: pd.DataFrame, exp03: pd.DataFrame, 
     best_col = fallback_order.index(best_location[1])
     axes[0].add_patch(plt.Rectangle((best_col, best_row), 1, 1, fill=False, edgecolor="black", linewidth=2.0))
 
-    s4 = exp02.groupby(["uncertainty_tau"], as_index=False).agg(
-        violation_rate=("bound_violation", "mean"),
-        tail_runtime_s=("tail_runtime_s", "median"),
+    s4 = (
+        policy_summary.sort_values(["uncertainty_tau", "violation_rate", "regret_s", "tail_runtime_s"])
+        .groupby("uncertainty_tau", as_index=False)
+        .first()[["uncertainty_tau", "violation_rate", "tail_runtime_s"]]
     )
     s4["tau_label"] = s4["uncertainty_tau"].map(lambda value: f"{value:.2f}")
     ax_rate = axes[1]
@@ -115,7 +129,7 @@ def make_figures(exp01: pd.DataFrame, exp02: pd.DataFrame, exp03: pd.DataFrame, 
         label="Median tail runtime (s)",
     )[0]
 
-    ax_rate.set_title("Threshold Sensitivity")
+    ax_rate.set_title("Best Observed Threshold Tradeoff")
     ax_rate.set_xlabel("Uncertainty threshold $\\tau$")
     ax_rate.set_ylabel("Violation rate")
     ax_tail.set_ylabel("Median tail runtime (s)")
