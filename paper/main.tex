@@ -99,24 +99,16 @@ Finally, recent programming-language and deployment-oriented neurosymbolic syste
 \section{Problem Setting and Assumptions}
 \label{sec:problem}
 % Expanded narrative block: formal problem setting and optimization objectives.
-We emphasize four mathematical objects that define the optimization problem. First, the decision variable for program transformation is a finite rewrite sequence $r$, constrained to feasible set $\mathcal{F}(\Pi,O)$ by guard predicates that encode admissibility under observation context. Second, the routing decision is a backend selector over $\mathcal{B}=\{\text{enum},\text{comp}\}$ conditioned on post-rewrite features. Third, the objective landscape combines structure proxies and runtime surrogates for rewrite choice, then realized runtime for routing quality. Fourth, the correctness criterion is exact stable-model invariance plus label invariance under fixed observation semantics.
+We consider grounded normal ASP programs $\Pi$ with observation constraints $O$, following stable-model semantics commonly used in NeurASP-style formulations \citep{src_012,src_019,src_039}. Let $\mathrm{SM}(\Pi,O)$ denote the stable-model set under observation $O$, and let $y(\Pi,O)$ be a deterministic label extraction map from this set. Exactness requires preserving both the stable-model set and downstream labels for accepted transformations.
 
-This decomposition separates what is directly optimized from what is guaranteed. Rewrite optimization minimizes surrogate objective \eqref{eq:objective}, not unknown true runtime. Semantic invariance is guaranteed only for guard-admissible rules satisfying local equivalence assumptions. Routing is optimized using predicted costs in \eqref{eq:predcost} and \eqref{eq:router}, while regret guarantees depend on bounded prediction error as formalized later. This distinction is important for interpreting evidence: theorem statements certify conditional properties, whereas empirical results evaluate how often those conditions hold in executed workloads.
+The optimization problem is built from four mathematical objects. First, program transformation is represented by a finite rewrite sequence $r$. Second, admissible sequences are constrained by guard predicates and collected in a feasible set $\mathcal{F}(\Pi,O)$. Third, execution after rewriting is delegated to an exact backend selector over $\mathcal{B}=\{\text{enum},\text{comp}\}$. Fourth, regime-level comparison uses an explicit utility score rather than an informal aggregate narrative. We introduce these objects in that order so later references do not depend on notation that has not yet been defined.
 
-To make the feasible-set definition operational, we distinguish three guard classes. Syntactic guards reject transformations that violate rule-shape constraints for supported templates. Semantic guards enforce local equivalence obligations derived from prior cycle-aware and reduction analyses. Audit guards require bounded empirical checks on representative grounded subsets before global acceptance. This three-tier design combines familiar ingredients into one conservative admissibility policy that prioritizes exactness even when it sacrifices potential speed gains.
-
-We also formalize regime-level utility because aggregate means can mask structural heterogeneity. Score \eqref{eq:score} uses normalized latency, task utility, exactness, and uncertainty terms with explicit weights. The purpose is not to claim a universal scalar objective for all applications; it is to create a transparent comparison functional whose components can be inspected and stress-tested. Regime-conditioned dominance statements therefore remain local to the chosen weighting and normalization conventions, and we report this locality explicitly in both methods and appendix.
-
-Finally, assumptions are chosen to match achievable evidence in this phase. We assume finite grounded instances, deterministic label extraction from stable-model sets, and auditable runtime traces for both exact backends. We do not assume complete coverage of every arithmetic rewrite class, globally calibrated uncertainty under all ablations, or universal threshold closure for all metrics. Those unresolved items are tracked as explicit gaps and influence claim support status.
-
-We consider grounded normal ASP programs $\Pi$ with observation constraints $O$, following stable-model semantics commonly used in NeurASP-style formulations \citep{src_012,src_019,src_039}. Let $\mathrm{SM}(\Pi,O)$ denote the stable-model set under observation $O$, and let $y(\Pi,O)$ be a deterministic label extraction map from this set. Exactness requires preserving both the stable-model set and downstream labels for accepted transformations. In this manuscript, the constrained rewrite objective and routing policy are the new formal components built on that semantic base.
-
-The method operates over a finite rewrite library $\mathcal{R}=\{R_1,\ldots,R_{|\mathcal{R}|}\}$ containing local transformations inspired by prior structure-aware reductions \citep{src_045,src_048,src_039}. For each candidate rule $R$ and program state, a guard predicate $\mathrm{Guard}(R,\Pi,O)\in\{0,1\}$ decides whether the rewrite is admissible. We define the feasible rewrite set
+The method operates over a finite rewrite library $\mathcal{R}$ containing local transformations inspired by prior structure-aware reductions \citep{src_045,src_048,src_039}. For a rewrite sequence $r=(R_1,\ldots,R_m)$, let $\Pi^r=R_m(\cdots R_1(\Pi)\cdots)$ denote the transformed program and let $\Pi^{r_{<j}}$ denote the intermediate program after applying the first $j-1$ rules. For each candidate rewrite $R\in\mathcal{R}$ and program state, a guard predicate $\mathrm{Guard}(R,\Pi,O)\in\{0,1\}$ decides whether the rewrite is admissible. We define the feasible rewrite set
 \begin{equation}
 \label{eq:feasible}
-\mathcal{F}(\Pi,O)=\left\{r=(R_1,\ldots,R_m): m\le m_{\max},\; \mathrm{Guard}(R_j,\Pi^{r_{<j}},O)=1\;\forall j\right\},
+\mathcal{F}(\Pi,O)=\left\{r=(R_1,\ldots,R_m): m\in\{0,\ldots,m_{\max}\},\; \mathrm{Guard}(R_j,\Pi^{r_{<j}},O)=1\;\forall j\in\{1,\ldots,m\}\right\},
 \end{equation}
-where $\Pi^{r_{<j}}$ is the intermediate program after applying the first $j-1$ rules.
+so the empty sequence is always available as a no-rewrite baseline.
 
 Following structure-aware optimization practice, we combine a width proxy $\widehat{k}(\Pi)$, a cycle burden proxy $\widehat{\sigma}(\Pi)$, and an exact-runtime proxy $\widehat{C}_{\text{exact}}(\Pi,O)$ into a constrained objective:
 \begin{equation}
@@ -144,8 +136,14 @@ S_{m,s}=w_t\,\widetilde{T}_{m,s}+w_a\,\widetilde{A}_{m,s}+w_e\,\widetilde{E}_{m,
 \end{equation}
 where $\widetilde{T},\widetilde{A},\widetilde{E},\widetilde{U}$ are normalized latency, task utility, exactness, and uncertainty terms for method $m$ in structural regime $s$. Exact-first dominance in regime $s$ is represented by $\Delta S_s=S_{\text{exact},s}-S_{\text{approx},s}>0$.
 
+This decomposition separates what is directly optimized from what is guaranteed. Rewrite optimization minimizes surrogate objective \eqref{eq:objective}, not unknown true runtime. Semantic invariance is guaranteed only for guard-admissible rules satisfying local equivalence assumptions. Routing is optimized using predicted costs in \eqref{eq:predcost} and decision rule \eqref{eq:router}, while regret guarantees depend on bounded prediction error as formalized later. This distinction matters for interpreting evidence: theorem statements certify conditional properties, whereas empirical results evaluate how often those conditions hold in executed workloads.
+
+To make the feasible-set definition operational, we distinguish three guard classes. Syntactic guards reject transformations that violate rule-shape constraints for supported templates. Semantic guards enforce local equivalence obligations derived from prior cycle-aware and reduction analyses. Audit guards require bounded empirical checks on representative grounded subsets before global acceptance. This three-tier design combines familiar ingredients into one conservative admissibility policy that prioritizes exactness even when it sacrifices potential speed gains.
+
+We also formalize regime-level utility because aggregate means can mask structural heterogeneity. Score \eqref{eq:score} uses normalized latency, task utility, exactness, and uncertainty terms with explicit weights. The purpose is not to claim a universal scalar objective for all applications; it is to create a transparent comparison functional whose components can be inspected and stress-tested. Regime-conditioned dominance statements therefore remain local to the chosen weighting and normalization conventions, and we report this locality explicitly in both methods and appendix.
+
 \paragraph{Assumptions.}
-The formulation assumes finite grounded programs, decidable guards, deterministic label extraction from stable models, and comparable runtime traces across exact backends. It does not assume global dominance of one backend or one rewrite family. This scope mirrors prior structural and compilation analyses while making the manuscript-specific objectives explicit \citep{src_002,src_003,src_039,src_045,src_048}.
+The formulation assumes finite grounded programs, decidable guards, deterministic label extraction from stable models, and comparable runtime traces across exact backends. It does not assume complete coverage of every arithmetic rewrite class, globally calibrated uncertainty under all ablations, or global dominance of one backend or one rewrite family. Those unresolved items are tracked as explicit gaps and influence claim support status. This scope mirrors prior structural and compilation analyses while making the manuscript-specific objectives explicit \citep{src_002,src_003,src_039,src_045,src_048}.
 
 \section{Methodology: AutoTW-ASP}
 \label{sec:method}
@@ -158,7 +156,7 @@ Routing combines cost prediction and risk control. Predicted backend times from 
 
 Cache design is treated as part of correctness, not only efficiency. Canonicalized keys combine normalized structural signatures with guard metadata so that identical optimization contexts map to identical cache entries. However, key canonicalization alone does not establish reliability. We therefore pair cache evaluation with replay-based counterexample diagnostics: if a suspicious hit occurs, replay traces test whether semantic drift can be reconstructed. This split between false-hit control and counterexample sensitivity explains why cache results can be mixed even when false-hit counts are low.
 
-The algorithm in \Algref{alg:autotw} summarizes the end-to-end flow. Importantly, each step emits audit metadata so claims can terminate in concrete evidence. Rewrite acceptance emits semantic checks, routing emits uncertainty and violation traces, and caching emits key-consistency plus replay diagnostics. This instrumentation is integral to the method, not supplementary engineering, because the paper's central contribution is auditable exactness-preserving optimization.
+The pseudocode below summarizes the end-to-end flow. Importantly, each step emits audit metadata so claims can terminate in concrete evidence. Rewrite acceptance emits semantic checks, routing emits uncertainty and violation traces, and caching emits key-consistency plus replay diagnostics. This instrumentation is integral to the method, not supplementary engineering, because the paper's central contribution is auditable exactness-preserving optimization.
 
 \subsection{Architecture Overview}
 AutoTW-ASP has four modules: (i) a guarded rewrite engine, (ii) a semantic-equivalence audit interface, (iii) an uncertainty-aware exact backend router, and (iv) a cache manifest with canonicalization and replay checks. The rewrite engine optimizes \eqref{eq:objective} over feasible sequences defined by \eqref{eq:feasible}. The router then minimizes predicted runtime via \eqref{eq:router} while monitoring uncertainty and activating fallback when confidence is low.
@@ -202,7 +200,7 @@ Compilation reuse is controlled through canonicalized cache keys that include no
 \section{Formal Analysis}
 \label{sec:formal}
 % Expanded narrative block: interpretation of formal claims and assumptions.
-The formal component establishes conditional guarantees that anchor the empirical narrative. Theorem~\ref{thm:semantic} gives compositional semantic invariance for accepted rewrite sequences under local guard-certified equivalence. Lemma~\ref{lem:argmin} ensures rewrite minimizers exist when feasible sets are finite and non-empty. Theorem~\ref{thm:regret} bounds per-instance routing regret by twice the worst prediction error under a two-action model. Together, these results specify what can be guaranteed independent of benchmark outcomes.
+The formal component establishes three conditional guarantees that anchor the empirical narrative: compositional semantic invariance for accepted rewrite sequences under local guard-certified equivalence, existence of a rewrite minimizer over the guarded feasible set, and a two-action routing regret bound proportional to the largest prediction error. Together, these results specify what can be guaranteed independent of benchmark outcomes.
 
 Two clarifications are important. First, the semantic theorem is conditional on the quality of local equivalence obligations encoded by guards. It does not claim that every conceivable rewrite in expressive ASP grammars is covered. This is why guard coverage is treated as an empirical artifact and why uncovered arithmetic templates are listed as unresolved gaps. Second, the regret theorem provides an error-to-regret envelope, not a direct guarantee that observed violation rates must satisfy a specific global threshold in all regimes. Achieving low violation rates in practice requires calibrated predictors whose residuals remain controlled under structural variation.
 
@@ -230,10 +228,10 @@ Since $\Pi_m=\Pi^r$, we obtain $\mathrm{SM}(\Pi,O)=\mathrm{SM}(\Pi^r,O)$. The la
 
 \begin{lemma}[Existence of a Rewrite Minimizer]
 \label{lem:argmin}
-If $\mathcal{F}(\Pi,O)$ is finite and non-empty, then the minimizer of \eqref{eq:objective} over $\mathcal{F}(\Pi,O)$ exists.
+Under the feasible-set definition in \eqref{eq:feasible}, the minimizer of \eqref{eq:objective} over $\mathcal{F}(\Pi,O)$ exists.
 \end{lemma}
 \begin{proof}
-Because $\mathcal{F}(\Pi,O)$ is finite and $J(r)$ is real-valued for each feasible $r$, the set $\{J(r): r\in\mathcal{F}(\Pi,O)\}$ is finite and has a smallest element. Any feasible sequence attaining that value is a minimizer.
+The rewrite library $\mathcal{R}$ is finite, the sequence length is bounded by $m_{\max}$, and the empty sequence belongs to $\mathcal{F}(\Pi,O)$ by \eqref{eq:feasible}. Hence $\mathcal{F}(\Pi,O)$ is finite and non-empty. Because $J(r)$ is real-valued for each feasible $r$, the set $\{J(r): r\in\mathcal{F}(\Pi,O)\}$ is finite and has a smallest element. Any feasible sequence attaining that value is a minimizer.
 \end{proof}
 
 \begin{theorem}[Two-Action Regret Envelope]
